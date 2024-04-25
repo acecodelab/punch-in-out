@@ -4,7 +4,6 @@ const restrictAccessByIP = async (req, res, next) => {
     try {
         const response = await axios.get('https://api64.ipify.org?format=json');
         const ipAddress = response.data.ip;
-        console.log(ipAddress)
         const allowedIPs = ['49.249.21.166', '122.186.85.262', '156.67.210.176'];
         const clientIP = ipAddress; // Get the client's IP address
         if (allowedIPs.includes(clientIP)) {
