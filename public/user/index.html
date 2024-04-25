@@ -137,7 +137,11 @@
                 <!-- User Basic Details -->
                 <div style="display: none;" id="details">
                     <div>
-                        <p id="details_name">Name:- Loading...</p>
+                        <p id="details_name"></p>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary" style="margin-bottom: 10px; float: right;"
+                            onclick="clearLocalStorage()">Logout</button>
                     </div>
                 </div>
 
@@ -175,227 +179,255 @@
     <script>
         // JavaScript
         // JavaScript
-        document.addEventListener('DOMContentLoaded', () => {
-            const loginForm = document.getElementById('loginForm');
-            const punchInForm = document.getElementById('punchInForm');
-            const punchOutForm = document.getElementById('punchOutForm');
-            const punchList = document.getElementById('punchList');
-            const pagination = document.getElementById('pagination');
-            const totalOutTimeDiv = document.getElementById('totalOutTime');
-            const details = document.getElementById('details');
-            const details_name = document.getElementById('details_name');
-            const punch_history = document.getElementById('punch_history');
-            let userId = '';
-            let username = '';
-            let name = '';
-            let email = '';
-            var dummyPunchHistory = [];
+        const loginForm = document.getElementById('loginForm');
+        const punchInForm = document.getElementById('punchInForm');
+        const punchOutForm = document.getElementById('punchOutForm');
+        const punchList = document.getElementById('punchList');
+        const pagination = document.getElementById('pagination');
+        const totalOutTimeDiv = document.getElementById('totalOutTime');
+        const details = document.getElementById('details');
+        const details_name = document.getElementById('details_name');
+        const punch_history = document.getElementById('punch_history');
+        let userId = '';
+        let username = '';
+        let name = '';
+        let email = '';
+        var dummyPunchHistory = [];
 
-            loginForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                const enteredUsername = loginForm.username.value.trim();
-                const enteredPassword = loginForm.password.value.trim();
+        window.onload = function () {
+            userId = localStorage.getItem('userId');
+            name = localStorage.getItem('name');
+            username = localStorage.getItem('username');
+            email = localStorage.getItem('email');
 
-                // Perform basic client-side validation (replace with backend validation)
-                if (!enteredUsername || !enteredPassword) {
-                    alert('Please enter Username and Password');
-                    return;
+            if (userId && name && username && email) {
+                showDashboard();
+            }
+        };
+
+
+        loginForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const enteredUsername = loginForm.username.value.trim();
+            const enteredPassword = loginForm.password.value.trim();
+
+            // Perform basic client-side validation (replace with backend validation)
+            if (!enteredUsername || !enteredPassword) {
+                alert('Please enter Username and Password');
+                return;
+            }
+
+            // Perform backend authentication (replace with backend API call)
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: enteredUsername, password: enteredPassword })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                userId = result.user_id;
+                name = result.name;
+                username = result.username;
+                email = result.email;
+
+                localStorage.setItem('userId', userId);
+                localStorage.setItem('name', name);
+                localStorage.setItem('username', username);
+                localStorage.setItem('email', email);
+
+                loginForm.reset();
+                showDashboard();
+            } else {
+                if (result.msg) {
+                    alert(result.msg)
                 }
-
-                // Perform backend authentication (replace with backend API call)
-                const response = await fetch('/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ username: enteredUsername, password: enteredPassword })
-                });
-
-                const result = await response.json();
-                if (result.success) {
-                    userId = result.user_id;
-                    name = result.name;
-                    username = result.username;
-                    email = result.email;
-                    loginForm.reset();
-                    showDashboard();
-                } else {
+                else {
                     alert('Invalid Username or Password');
                 }
-            });
-
-            async function showDashboard() {
-                loginForm.style.display = 'none';
-                details.style.display = 'block'
-                details_name.innerText = 'Name :- ' + name
-                punch_history.style.display = 'block'
-                await fetchPunchHistory(userId);
             }
+        });
 
-            punchInForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                await submitPunch(userId, 'in', email);
+        async function showDashboard() {
+            loginForm.style.display = 'none';
+            details.style.display = 'block'
+            details_name.innerText = 'Name :- ' + name
+            punch_history.style.display = 'block'
+            await fetchPunchHistory(userId);
+        }
+
+        punchInForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            await submitPunch(userId, 'in', email);
+        });
+
+        punchOutForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            await submitPunch(userId, 'out', email);
+        });
+
+        async function submitPunch(userId, type, email) {
+            const response = await fetch(`/punch/${type}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: userId, email: email })
             });
 
-            punchOutForm.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                await submitPunch(userId, 'out', email);
-            });
+            const result = await response.json();
 
-            async function submitPunch(userId, type, email) {
-                const response = await fetch(`/punch/${type}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ user_id: userId, email: email })
-                });
-
-                const result = await response.json();
-
-                if (result.success && result.error == null) {
-                    if (type === 'in') {
-                        hasPunchedIn = true; // Set flag to true after punch in
-                        punchInForm.style.display = 'none'; // Hide Punch In form
-                        punchOutForm.style.display = 'block'; // Show Punch Out form
-                    } else {
-                        hasPunchedIn = false; // Set flag to false after punch out
-                        punchInForm.style.display = 'block'; // Show Punch In form
-                        punchOutForm.style.display = 'none'; // Hide Punch Out form
-                    }
-                    await fetchPunchHistory(userId);
-                } else if (result.success && result.error != null) {
-                    if (type === 'in') {
-                        hasPunchedIn = true; // Set flag to true after punch in
-                        punchInForm.style.display = 'none'; // Hide Punch In form
-                        punchOutForm.style.display = 'block'; // Show Punch Out form
-                    } else {
-                        hasPunchedIn = false; // Set flag to false after punch out
-                        punchInForm.style.display = 'block'; // Show Punch In form
-                        punchOutForm.style.display = 'none'; // Hide Punch Out form
-                    }
-                    await fetchPunchHistory(userId);
-                    alert(result.error);
+            if (result.success && result.error == null) {
+                if (type === 'in') {
+                    hasPunchedIn = true; // Set flag to true after punch in
+                    punchInForm.style.display = 'none'; // Hide Punch In form
+                    punchOutForm.style.display = 'block'; // Show Punch Out form
                 } else {
-                    alert('Error: ' + result.error);
+                    hasPunchedIn = false; // Set flag to false after punch out
+                    punchInForm.style.display = 'block'; // Show Punch In form
+                    punchOutForm.style.display = 'none'; // Hide Punch Out form
                 }
+                await fetchPunchHistory(userId);
+            } else if (result.success && result.error != null) {
+                if (type === 'in') {
+                    hasPunchedIn = true; // Set flag to true after punch in
+                    punchInForm.style.display = 'none'; // Hide Punch In form
+                    punchOutForm.style.display = 'block'; // Show Punch Out form
+                } else {
+                    hasPunchedIn = false; // Set flag to false after punch out
+                    punchInForm.style.display = 'block'; // Show Punch In form
+                    punchOutForm.style.display = 'none'; // Hide Punch Out form
+                }
+                await fetchPunchHistory(userId);
+                alert(result.error);
+            } else {
+                alert('Error: ' + result.error);
             }
+        }
 
-            async function fetchPunchHistory(userId) {
-                const response = await fetch(`/punches/${userId}`);
-                const result = await response.json();
+        async function fetchPunchHistory(userId) {
+            const response = await fetch(`/punches/${userId}`);
+            const result = await response.json();
 
-                if (result.success) {
-                    dummyPunchHistory = []
-                    var punches = result.data.punches
-                    punches.forEach(punch => {
-                        dummyPunchHistory.push({ punch_type: punch.punch_type.toUpperCase(), timestamp: punch.timestamp })
-                    });
-                    if (dummyPunchHistory.length == 0) {
+            if (result.success) {
+                dummyPunchHistory = []
+                var punches = result.data.punches
+                punches.forEach(punch => {
+                    dummyPunchHistory.push({ punch_type: punch.punch_type.toUpperCase(), timestamp: punch.timestamp })
+                });
+                if (dummyPunchHistory.length == 0) {
+                    punchInForm.style.display = 'block';
+                    punchOutForm.style.display = 'none';
+                }
+                else {
+                    if (dummyPunchHistory[0].punch_type == 'IN') {
+                        punchInForm.style.display = 'none';
+                        punchOutForm.style.display = 'block';
+                    }
+                    else if (dummyPunchHistory[0].punch_type == 'OUT') {
                         punchInForm.style.display = 'block';
                         punchOutForm.style.display = 'none';
                     }
-                    else {
-                        if (dummyPunchHistory[0].punch_type == 'IN') {
-                            punchInForm.style.display = 'none';
-                            punchOutForm.style.display = 'block';
-                        }
-                        else if (dummyPunchHistory[0].punch_type == 'OUT') {
-                            punchInForm.style.display = 'block';
-                            punchOutForm.style.display = 'none';
-                        }
-                    }
-                    renderPunchHistory(dummyPunchHistory, 1);
-                    renderTotalOutTime(dummyPunchHistory);
-                } else {
-                    alert('Error: ' + result.error);
                 }
+                renderPunchHistory(dummyPunchHistory, 1);
+                renderTotalOutTime(dummyPunchHistory);
+            } else {
+                alert('Error: ' + result.error);
             }
+        }
 
+        function renderPunchHistory(punches, page = 1, pageSize = 4) {
+            const startIndex = (page - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, punches.length);
 
-            function renderPunchHistory(punches, page = 1, pageSize = 4) {
-                const startIndex = (page - 1) * pageSize;
-                const endIndex = Math.min(startIndex + pageSize, punches.length);
+            const paginatedPunches = punches.slice(startIndex, endIndex);
 
-                const paginatedPunches = punches.slice(startIndex, endIndex);
+            punchList.innerHTML = '';
+            paginatedPunches.forEach(punch => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item');
 
-                punchList.innerHTML = '';
-                paginatedPunches.forEach(punch => {
-                    const li = document.createElement('li');
-                    li.classList.add('list-group-item');
+                const time = new Date(punch.timestamp).toLocaleString();
+                li.innerHTML = `<span class="punch-time">${time}</span> - <span class="punch-type">${punch.punch_type}</span>`;
 
-                    const time = new Date(punch.timestamp).toLocaleString();
-                    li.innerHTML = `<span class="punch-time">${time}</span> - <span class="punch-type">${punch.punch_type}</span>`;
+                punchList.appendChild(li);
+            });
 
-                    punchList.appendChild(li);
+            // Update pagination
+            const totalPages = Math.ceil(punches.length / pageSize);
+            renderPagination(totalPages, page);
+        }
+        // Function to render pagination
+        function renderPagination(totalPages, currentPage) {
+            pagination.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.classList.add('page-item');
+                if (i === currentPage) {
+                    li.classList.add('active');
+                }
+
+                const link = document.createElement('a');
+                link.classList.add('page-link');
+                link.href = '#';
+                link.textContent = i;
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    renderPunchHistory(dummyPunchHistory, i);
                 });
 
-                // Update pagination
-                const totalPages = Math.ceil(punches.length / pageSize);
-                renderPagination(totalPages, page);
+                li.appendChild(link);
+                pagination.appendChild(li);
             }
+        }
 
-            // Function to render pagination
-            function renderPagination(totalPages, currentPage) {
-                pagination.innerHTML = '';
+        function renderTotalOutTime(punches) {
+            let totalMilliseconds = 0;
+            let lastInTime = null;
+            var reverse_punch = punches.reverse();
+            //punches.reverse();
+            reverse_punch.forEach(punch => {
+                if (punch.punch_type === 'IN') {
+                    lastInTime = new Date(punch.timestamp).getTime();
+                } else if (punch.punch_type === 'OUT' && lastInTime !== null) {
+                    const outTime = new Date(punch.timestamp).getTime();
+                    const duration = outTime - lastInTime;
+                    totalMilliseconds += duration;
 
-                for (let i = 1; i <= totalPages; i++) {
-                    const li = document.createElement('li');
-                    li.classList.add('page-item');
-                    if (i === currentPage) {
-                        li.classList.add('active');
-                    }
-
-                    const link = document.createElement('a');
-                    link.classList.add('page-link');
-                    link.href = '#';
-                    link.textContent = i;
-                    link.addEventListener('click', (event) => {
-                        event.preventDefault();
-                        renderPunchHistory(dummyPunchHistory, i);
-                    });
-
-                    li.appendChild(link);
-                    pagination.appendChild(li);
+                    // Display individual duration
+                    const durationSeconds = Math.floor(duration / 1000);
+                    const durationFormatted = formatDuration(durationSeconds);
+                    lastInTime = null;
                 }
-            }
+            });
 
+            const totalSeconds = totalMilliseconds / 1000;
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+            totalOutTimeDiv.textContent = `Total Out Time: ${hours}h ${minutes}m ${seconds}s`;
+            punches.reverse();
+        }
 
-            function renderTotalOutTime(punches) {
-                let totalMilliseconds = 0;
-                let lastInTime = null;
-                var reverse_punch = punches.reverse();
-                reverse_punch.forEach(punch => {
-                    if (punch.punch_type === 'IN') {
-                        lastInTime = new Date(punch.timestamp).getTime();
-                    } else if (punch.punch_type === 'OUT' && lastInTime !== null) {
-                        const outTime = new Date(punch.timestamp).getTime();
-                        const duration = outTime - lastInTime;
-                        totalMilliseconds += duration;
+        function formatDuration(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
 
-                        // Display individual duration
-                        const durationSeconds = Math.floor(duration / 1000);
-                        const durationFormatted = formatDuration(durationSeconds);
-                        console.log(`Duration: ${durationFormatted}`);
+            return `${hours}h ${minutes}m ${seconds}s`;
+        }
 
-                        lastInTime = null;
-                    }
-                });
-
-                const totalSeconds = totalMilliseconds / 1000;
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = Math.floor(totalSeconds % 60);
-                totalOutTimeDiv.textContent = `Total Out Time: ${hours}h ${minutes}m ${seconds}s`;
-            }
-            function formatDuration(totalSeconds) {
-                const hours = Math.floor(totalSeconds / 3600);
-                const minutes = Math.floor((totalSeconds % 3600) / 60);
-                const seconds = Math.floor(totalSeconds % 60);
-
-                return `${hours}h ${minutes}m ${seconds}s`;
-            }
-        });
+        function clearLocalStorage() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('name');
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            alert('Logout successfully!');
+            window.location.reload();
+        }
     </script>
 </body>
 

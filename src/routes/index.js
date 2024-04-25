@@ -2,17 +2,18 @@
 const express = require('express');
 const router = express.Router();
 const { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month, getUserList } = require('../controllers/punchController');
+const Middleware = require('../middleware/punchMiddleware');
 
 // Punch In
-router.post('/punch/in', punchIn);
+router.post('/punch/in', Middleware.restrictAccessByIP, punchIn);
 
 // Punch Out
-router.post('/punch/out', punchOut);
+router.post('/punch/out', Middleware.restrictAccessByIP, punchOut);
 
 // Get Punches and Total Out Time for a User
-router.get('/punches/:user_id', getPunchHistory);
+router.get('/punches/:user_id', Middleware.restrictAccessByIP, getPunchHistory);
 
-router.post('/login', login);
+router.post('/login', Middleware.restrictAccessByIP, login);
 
 // Today's reports
 router.get('/reports/today', today);
