@@ -10,7 +10,7 @@ class Punch {
     }
 
     static async getByUserId(user_id) {
-        const query = 'SELECT * FROM punches WHERE user_id = $1 ORDER BY timestamp DESC';
+        const query = 'SELECT * FROM punches WHERE user_id = $1 and date(timestamp)=CURRENT_DATE ORDER BY timestamp DESC';
         const { rows } = await pool.query(query, [user_id]);
         return rows;
     }
