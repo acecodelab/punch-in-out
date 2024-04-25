@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .btn {
+            margin-right: 10px;
+        }
+
+        .reports-container {
+            margin-top: 20px;
+        }
+
+        .report-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- User Select Dropdown -->
+        <div class="form-group">
+            <label for="userSelect">Select User:</label>
+            <select class="form-control" id="userSelect">
+                <!-- Default "Please select user" option -->
+                <option value="" disabled selected>Please select user</option>
+                <!-- Options will be populated via JavaScript -->
+            </select>
+        </div>
+
+        <!-- Selected User Display -->
+        <div id="selectedUser" class="mb-4 text-center"></div>
+
+        <!-- Buttons for Filter Options -->
+        <div class="btn-group mb-3 d-flex justify-content-center" role="group" aria-label="Filter options">
+            <button id="btnToday" type="button" class="btn btn-primary filter-btn" style="display: none;">Today's
+                Reports</button>
+            <button id="btnThisMonth" type="button" class="btn btn-primary filter-btn" style="display: none;">This
+                Month's Reports</button>
+            <button id="btnBetweenDates" type="button" class="btn btn-primary filter-btn" style="display: none;">Reports
+                Between Dates</button>
+        </div>
+
+        <!-- Date Range Form (Hidden by default) -->
+        <form id="dateRangeForm" class="form-inline mb-3 justify-content-center" style="display: none;">
+            <div class="form-group mr-2">
+                <label for="startDate" class="mr-2">Start Date:</label>
+                <input type="date" id="startDate" class="form-control" required>
+            </div>
+            <div class="form-group mr-2">
+                <label for="endDate" class="mr-2">End Date:</label>
+                <input type="date" id="endDate" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Get Reports</button>
+        </form>
+
+        <!-- Container for Reports -->
+        <div id="reportsContainer" class="reports-container">
+            <!-- Reports will be displayed here -->
+        </div>
+        <div id="totalOutTime"></div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script>
+        const totalOutTimeDiv = document.getElementById('totalOutTime');
+
+        // Function to toggle filter buttons based on user selection
+        function toggleFilterButtons(show) {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                if (show) {
+                    button.style.display = 'inline-block';
+                } else {
+                    button.style.display = 'none';
+                }
+            });
+        }
+
+        // Function to fetch user names
+        function fetchUsers() {
+            fetch('/users')
+                .then(response => response.json())
+                .then(data => {
+                    const userSelect = document.getElementById('userSelect');
+                    userSelect.innerHTML = ''; // Clear existing options
+
+                    // Add default "Please select user" option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.text = 'Please select user';
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    userSelect.appendChild(defaultOption);
+
+                    // Populate options with fetched users
+                    data.users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.text = user.name;
+                        option.value = user.id;
+                        userSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching users:', error));
+        }
+
+        // Function to fetch reports based on filter and user
+        function fetchReports(filterType, userId, startDate, endDate) {
+            let url = `/reports/${filterType}?userId=${userId}`;
+            if (filterType === 'between-dates') {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const reports = data.reports;
+                    const reportsContainer = document.getElementById('reportsContainer');
+                    reportsContainer.innerHTML = ''; // Clear previous reports
+
+                    if (reports.length === 0) {
+                        // If no reports, show a message
+                        const noDataMessage = document.createElement('div');
+                        noDataMessage.classList.add('text-center', 'mt-3', 'text-muted');
+                        noDataMessage.textContent = 'No reports available for this user.';
+                        reportsContainer.appendChild(noDataMessage);
+                        totalOutTimeDiv.textContent = ''
+                    } else {
+                        // Otherwise, display the reports
+                        reports.forEach(report => {
+                            const div = document.createElement('div');
+                            div.classList.add('report-item', 'p-3');
+                            var timestamp = report.timestamp;
+                            var date = new Date(timestamp);
+                            const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+                                .toString()
+                                .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+
+                            const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+
+                            const formattedDateTime = `${formattedDate} ${formattedTime}`;
+                            div.innerHTML = `<h>${report.punch_type.toUpperCase()}</h> <br> ${formattedDateTime}`;
+                            reportsContainer.appendChild(div);
+                        });
+                        renderTotalOutTime(reports)
+                    }
+
+
+                })
+                .catch(error => console.error('Error fetching reports:', error));
+        }
+
+        // Fetch users on page load
+        fetchUsers();
+
+        // User Select Change Event
+        document.getElementById('userSelect').addEventListener('change', (event) => {
+            const userId = event.target.value;
+            const selectedUser = event.target.options[event.target.selectedIndex].text;
+            document.getElementById('selectedUser').innerHTML = userId ? `<h3 style="color: red;"> Employee Name :- ${selectedUser}</h3>` : '';
+            fetchReports('today', userId); // Fetch today's reports for selected user by default
+            toggleFilterButtons(userId !== ''); // Toggle filter buttons based on user selection
+        });
+
+        // Button Event Listeners
+        document.getElementById('btnToday').addEventListener('click', () => {
+            const userId = document.getElementById('userSelect').value;
+            document.getElementById('dateRangeForm').style.display = 'none';
+            fetchReports('today', userId);
+        });
+
+        document.getElementById('btnThisMonth').addEventListener('click', () => {
+            const userId = document.getElementById('userSelect').value;
+            document.getElementById('dateRangeForm').style.display = 'none';
+            fetchReports('this-month', userId);
+        });
+
+        // Show date range form when 'Reports Between Dates' button is clicked
+        document.getElementById('btnBetweenDates').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'block';
+        });
+
+        // Form Submission for Reports Between Dates
+        document.getElementById('dateRangeForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const userId = document.getElementById('userSelect').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            fetchReports('between-dates', userId, startDate, endDate);
+        });
+
+        function renderTotalOutTime(punches) {
+            let totalMilliseconds = 0;
+            let lastInTime = null;
+            var reverse_punch = punches.reverse();
+            reverse_punch.forEach(punch => {
+                if (punch.punch_type.toUpperCase() === 'IN') {
+                    lastInTime = new Date(punch.timestamp).getTime();
+                } else if (punch.punch_type.toUpperCase() === 'OUT' && lastInTime !== null) {
+                    const outTime = new Date(punch.timestamp).getTime();
+                    const duration = outTime - lastInTime;
+                    totalMilliseconds += duration;
+
+                    // Display individual duration
+                    const durationSeconds = Math.floor(duration / 1000);
+                    const durationFormatted = formatDuration(durationSeconds);
+                    console.log(`Duration: ${durationFormatted}`);
+
+                    lastInTime = null;
+                }
+            });
+
+            const totalSeconds = totalMilliseconds / 1000;
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+            totalOutTimeDiv.textContent = `Total Out Time: ${hours}h ${minutes}m ${seconds}s`;
+        }
+        function formatDuration(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+
+            return `${hours}h ${minutes}m ${seconds}s`;
+        }
+    </script>
+</body>
+
+</html>
