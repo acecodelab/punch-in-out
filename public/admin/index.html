@@ -70,11 +70,11 @@
             <button type="submit" class="btn btn-primary">Get Reports</button>
         </form>
 
+        <div id="totalOutTime"></div>
         <!-- Container for Reports -->
         <div id="reportsContainer" class="reports-container">
             <!-- Reports will be displayed here -->
         </div>
-        <div id="totalOutTime"></div>
     </div>
 
     <!-- Bootstrap JS -->
@@ -126,7 +126,7 @@
 
         // Function to fetch reports based on filter and user
         function fetchReports(filterType, userId, startDate, endDate) {
-            let url = `/reports/${filterType}?userId=${userId}`;
+            let url = `/allLeaveRequests/${filterType}?userId=${userId}`;
             if (filterType === 'between-dates') {
                 url += `&startDate=${startDate}&endDate=${endDate}`;
             }
@@ -232,7 +232,18 @@
             const hours = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = Math.floor(totalSeconds % 60);
-            totalOutTimeDiv.textContent = `Total Out Time: ${hours}h ${minutes}m ${seconds}s`;
+            totalOutTimeDiv.textContent = `Total Working hours: ${hours}h ${minutes}m ${seconds}s`;
+            if (hours <= 7) {
+                if (minutes >= 30) {
+                    totalOutTimeDiv.style.color = 'red';
+                }
+                else {
+                    totalOutTimeDiv.style.color = 'green';
+                }
+            }
+            else {
+                totalOutTimeDiv.style.color = 'green';
+            }
         }
         function formatDuration(totalSeconds) {
             const hours = Math.floor(totalSeconds / 3600);

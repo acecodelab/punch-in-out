@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no,user-scalable=0" />
+    <title>Leave Request and Approval System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .btn {
+            margin-right: 10px;
+        }
+
+        label {
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            margin-top: 0;
+        }
+
+        .leave-request-form {
+            margin-bottom: 20px;
+        }
+
+        .leave-request-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .leave-request-form input[type="text"],
+        .leave-request-form select,
+        .leave-request-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-sizing: border-box;
+            padding: 10px;
+            text-indent: 10px;
+        }
+
+        .leave-request-form input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .leave-request-form input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .leave-request-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .leave-request {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            transition: transform 0.3s ease;
+        }
+
+        .leave-request:hover {
+            transform: translateY(-5px);
+        }
+
+        .leave-request .leave-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .leave-request .leave-actions button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .leave-request .leave-actions button:hover {
+            background-color: #ddd;
+        }
+
+        .calendar-container {
+            position: relative;
+        }
+
+        .calendar-container .flatpickr-calendar {
+            position: absolute;
+            top: 40px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 90%;
+                margin: 10px auto;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h3 style="text-align: center;">Leave Request</h3>
+        <form class="leave-request-form" id="leave-request-form">
+            <label for="leave-type">Leave Type:</label>
+            <select id="leaveType" name="leaveType" required>
+                <option value="Full Day Leave">Full Day Leave</option>
+                <option value="Half Day Leave">Half Day Leave</option>
+                <option value="Short Leave">Short Leave</option>
+                <option value="Surprise Leave">Surprise Leave</option>
+            </select>
+            <label for="leave-start-date">Leave Date:</label>
+            <div class="calendar-container">
+                <input type="text" id="leaveStartDate" name="leaveStartDate" autocomplete="off" required
+                    placeholder="Select Date">
+                <div class="flatpickr-calendar"></div>
+            </div>
+            <br>
+            <label for="leave-reason">Reason:</label>
+            <textarea id="reason" name="reason" rows="4" required></textarea>
+            <input type="submit" value="Request Leave">
+        </form>
+        <button id="showRequest" onclick="showRequest()" class="btn"
+            style="   background-color: #007bff;color: #fff;cursor: pointer;margin-bottom: 10px;">Show
+            All Requests</button>
+        <button id="hideRequest" onclick="hideRequest()" class="btn"
+            style="display: none;   background-color: #007bff;color: #fff;cursor: pointer;margin-bottom: 10px;">Hide
+            All Requests</button>
+
+        <div id="allRequestDiv" style="display: none;">
+            <h3 id="filter_type">Filters (All Requests)</h3>
+            <div id="filter_button_div" style="display: block;">
+                <!-- Buttons for Filter Options -->
+                <div class="btn-group mb-3 d-flex justify-content-center inner" role="group"
+                    aria-label="Filter options">
+                    <button id="btnToday" type="button" class="btn btn-primary filter-btn"
+                        style="display: block;">Today's
+                        Request</button>
+                    <button id="btnThisMonth" type="button" class="btn btn-primary filter-btn" style="display: block;">
+                        Month's Request</button>
+                    <button id="btnBetweenDates" type="button" class="btn btn-primary filter-btn"
+                        style="display: block;">
+                        Request b/w Dates</button>
+                </div>
+                <!-- Date Range Form (Hidden by default) -->
+                <form id="dateRangeForm" class="form-inline mb-3 justify-content-center" style="display: none;">
+                    <div class="form-group mr-2">
+                        <label for="startDate" class="mr-2">Start Date:</label>
+                        <input type="date" id="startDate" class="form-control" required>
+                    </div>
+                    <div class="form-group mr-2">
+                        <label for="endDate" class="mr-2">End Date:</label>
+                        <input type="date" id="endDate" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Get Reports</button>
+                </form>
+            </div>
+            <ul class="leave-request-counts">
+                <!-- Leave requests will be dynamically added here -->
+            </ul>
+            <ul class="leave-request-list">
+                <!-- Leave requests will be dynamically added here -->
+            </ul>
+            <div id="no_request" style="display: none;">
+                <p>No Request Found</p>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        let userId = '';
+        let username = '';
+        let name = '';
+        let email = '';
+
+        window.onload = function () {
+            userId = localStorage.getItem('userId');
+            name = localStorage.getItem('name');
+            username = localStorage.getItem('username');
+            email = localStorage.getItem('email');
+
+            if (!userId || !name || !username || !email) {
+                window.location.href = "/user/";
+            }
+        };
+
+        document.getElementById('leave-request-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const formData = new FormData(event.target);
+            const requestBody = Object.fromEntries(formData.entries());
+            requestBody.userId = userId
+            try {
+                const response = await fetch('/submitLeave/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (response.status) {
+                    alert('Leave request submitted successfully');
+                    window.location.reload();
+                } else {
+                    const responseData = await response.json();
+                    alert(responseData.message || 'Failed to submit leave request');
+                }
+            } catch (error) {
+                console.error('Error submitting leave request:', error);
+                alert('Failed to submit leave request');
+            }
+        });
+
+        // Simulated leave requests data
+        var leaveRequests = [];
+        var totalCount = [];
+
+        async function getLeaveRequest(userId) {
+            leaveRequests = []
+            totalCount = []
+            const response = await fetch(`/myLeaveRequests/${userId}`);
+            const result = await response.json();
+            if (result.data.length > 0) {
+                for (let i = 0; i < result.data.length; i++) {
+                    var date_ = result.data[i].leave_start_date.split('T')[0]
+                    leaveRequests.push({
+                        id: result.data[i].id, employeeName: result.data[i].name, leaveType: result.data[i].leave_type, leave_start_date: date_, reason: result.data[i].reason, status: result.data[i].status
+                    })
+                }
+
+                for (let i = 0; i < result.dataCount.length; i++) {
+                    var count = result.dataCount[i].count
+                    var status = result.dataCount[i].status
+                    totalCount.push({
+                        count: count, status: status,
+                    })
+                }
+            }
+            else {
+                leaveRequests = []
+                totalCount = []
+            }
+            // Initial rendering of leave requests
+            renderLeaveRequests();
+        }
+        // Function to render leave requests
+        function renderLeaveRequests() {
+            const leaveRequestList = document.querySelector('.leave-request-list');
+            leaveRequestList.innerHTML = '';
+
+            const leaveRequestCount = document.querySelector('.leave-request-counts');
+            leaveRequestCount.innerHTML = '';
+            if (leaveRequests.length == 0) {
+                document.getElementById('filter_button_div').style.display = 'none';
+                document.getElementById("no_request").style.display = 'block'
+            }
+            else {
+                document.getElementById('filter_button_div').style.display = 'block';
+                document.getElementById("no_request").style.display = 'none'
+            }
+            totalCount.forEach(request => {
+                const leaveRequestItemCount = document.createElement('li');
+                leaveRequestItemCount.classList.add('leave-request');
+                if (request.status == 'Approve') {
+                    leaveRequestItemCount.style.backgroundColor = 'green'
+                }
+                else if (request.status == 'Reject') {
+                    leaveRequestItemCount.style.backgroundColor = 'red'
+                }
+                else if (request.status == 'Pending') {
+                    leaveRequestItemCount.style.backgroundColor = 'grey'
+                }
+                else {
+                    leaveRequestItemCount.style.backgroundColor = 'blue'
+                }
+                leaveRequestItemCount.innerHTML = `
+                <div class="leave-info">
+                    <div style="color:white">
+                        <strong>Status:</strong> ${request.status}(${request.count})<br>
+                    </div>
+                </div>
+            `;
+                leaveRequestCount.appendChild(leaveRequestItemCount);
+            });
+
+            leaveRequests.forEach(request => {
+                const leaveRequestItem = document.createElement('li');
+                leaveRequestItem.classList.add('leave-request');
+                leaveRequestItem.innerHTML = `
+                <div class="leave-info">
+                    <div>
+                        <strong>Employee Name:</strong> ${request.employeeName}<br>
+                        <strong>Leave Type:</strong> ${request.leaveType}<br>
+                        <strong>Date:</strong> ${request.leave_start_date}<br>
+                        <strong>Reason:</strong> ${request.reason}<br>
+                        <strong>Status:</strong> ${request.status}
+                    </div>
+                    <div class="leave-actions">
+                        <button onclick="cancelRequest(${request.id})" ${request.status !== 'Pending' ? 'disabled' : ''}>${request.status !== 'Pending' ? `${request.status}` : 'Cancel Request'}</button>
+                    </div>
+                </div>
+            `;
+                leaveRequestList.appendChild(leaveRequestItem);
+            });
+        }
+
+        // Function to approve a leave request
+        async function cancelRequest(id) {
+            const response = await fetch(`/cancelLeaveRequest/${userId}/${id}`);
+            const result = await response.json();
+            if (result.status) {
+                alert('Request cancelled successfully')
+                window.location.reload();
+            }
+            else {
+                alert('Something went wrong')
+            }
+        }
+
+        // Function to reject a leave request
+        function rejectRequest(id) {
+            const request = leaveRequests.find(req => req.id === id);
+            if (request) {
+                request.status = 'Rejected';
+                renderLeaveRequests();
+            }
+        }
+
+        // Initialize flatpickr
+        const leaveStartDatePicker = flatpickr("#leaveStartDate", {
+            enableTime: false,
+            dateFormat: "Y-m-d",
+        });
+
+        // Button Event Listeners
+        document.getElementById('btnToday').addEventListener('click', () => {
+            document.getElementById("dateRangeForm").style.display = 'none';
+            document.getElementById("filter_type").textContent = "Filter (Today's Request)";
+            getLeaveRequestFilter('today', userId);
+        });
+
+        document.getElementById('btnThisMonth').addEventListener('click', () => {
+            document.getElementById("dateRangeForm").style.display = 'none';
+            document.getElementById("filter_type").textContent = "Filter (Month's Request)";
+            getLeaveRequestFilter('this-month', userId);
+        });
+
+        // Show date range form when 'Reports Between Dates' button is clicked
+        document.getElementById('btnBetweenDates').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'block';
+        });
+
+        // Form Submission for Reports Between Dates
+        document.getElementById('dateRangeForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            document.getElementById("filter_type").textContent = "Filter (Request b/w dates Request)";
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            getLeaveRequestFilter('between-dates', userId, startDate, endDate);
+        });
+
+        async function getLeaveRequestFilter(filterType, userId, startDate, endDate) {
+            leaveRequests = []
+            totalCount = []
+            let url = `/myLeaveRequest/${filterType}?userId=${userId}`;
+            if (filterType === 'between-dates') {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+            var response = await fetch(url)
+            const result = await response.json();
+            console.log(result)
+            if (result.data.length > 0) {
+                for (let i = 0; i < result.data.length; i++) {
+                    var date_ = result.data[i].leave_start_date.split('T')[0]
+                    leaveRequests.push({
+                        id: result.data[i].id, employeeName: result.data[i].name, leaveType: result.data[i].leave_type, leave_start_date: date_, reason: result.data[i].reason, status: result.data[i].status
+                    })
+                }
+                for (let i = 0; i < result.dataCount.length; i++) {
+                    var count = result.dataCount[i].count
+                    var status = result.dataCount[i].status
+                    totalCount.push({
+                        count: count, status: status,
+                    })
+                }
+            }
+            else {
+                leaveRequests = []
+                totalCount = []
+            }
+            renderLeaveRequests();
+            document.getElementById('filter_button_div').style.display = 'block';
+            document.getElementById("no_request").style.display = 'none'
+        }
+        function showRequest() {
+            document.getElementById("showRequest").style.display = 'none';
+            document.getElementById("hideRequest").style.display = 'block';
+            document.getElementById("allRequestDiv").style.display = 'block';
+            getLeaveRequest(userId)
+        }
+        function hideRequest() {
+            document.getElementById("showRequest").style.display = 'block';
+            document.getElementById("hideRequest").style.display = 'none';
+            document.getElementById("allRequestDiv").style.display = 'none';
+        }
+
+    </script>
+</body>
+
+</html>

@@ -14,8 +14,8 @@ const punchIn = async (req, res) => {
                 port: 587, // TLS port
                 secure: false,//true for port  465 , false for others
                 auth: {
-                    user: 'rajat.thakur.1903@gmail.com', // Your Gmail address
-                    pass: 'jcif zxgu nbvi mhhs' // Your Gmail password or App Password if 2-Step Verification is enabled
+                    user: 'infonxtgenvirtue@gmail.com', // Your Gmail address
+                    pass: 'pwuh rpja vilo zkkb' // Your Gmail password or App Password if 2-Step Verification is enabled
                 }
             });
 
@@ -62,7 +62,9 @@ const getPunchHistory = async (req, res) => {
     try {
         const punches = await Punch.getByUserId(user_id);
         const totalOutTime = calculateTotalOutTime(punches);
-        res.json({ success: true, data: { punches, totalOutTime } });
+        const punchesMonth = await Punch.getByUserIdForMonth(user_id)
+        const totalOutTimeMonth = calculateTotalOutTime(punchesMonth);
+        res.json({ success: true, data: { punches, totalOutTime, punchesMonth, totalOutTimeMonth } });
     } catch (error) {
         console.error('Error fetching punches:', error);
         res.status(500).json({ success: false, error: 'Internal server error' });
@@ -147,4 +149,15 @@ const getUserList = async (req, res) => {
     }
 
 }
-module.exports = { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month, getUserList };
+
+const updatePassword = async (req, res) => {
+    const { c_password, n_password, userId } = req.body
+    const data = await Punch.updatePassword(c_password, n_password, userId);
+    if (data) {
+        res.json({ status: true });
+    }
+    else {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+module.exports = { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month, getUserList, updatePassword };

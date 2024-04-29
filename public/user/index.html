@@ -14,6 +14,36 @@
             padding-top: 20px;
         }
 
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="text"],
+        button {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        #outer {
+            width: 100%;
+            text-align: center;
+        }
+
+        .inner {
+            display: inline-block;
+            margin-left: 5px;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            cursor: pointer;
+        }
+
         .container {
             max-width: 500px;
             margin: 0 auto;
@@ -42,6 +72,10 @@
             width: 100%;
             font-size: 18px;
             background-color: #DD3333;
+        }
+
+        .btn {
+            margin-right: 10px;
         }
 
         #punchList li {
@@ -117,6 +151,7 @@
             </div>
             <div class="card-body">
                 <!-- User Login Form -->
+
                 <form id="loginForm">
                     <div class="form-group">
                         <label for="username">Username:</label>
@@ -133,38 +168,102 @@
                         </centre>
                     </div>
                 </form>
-
                 <!-- User Basic Details -->
                 <div style="display: none;" id="details">
                     <div>
-                        <p id="details_name"></p>
+                        <b>
+                            <p id="details_name"></p>
+                            <p id="total_time_till_now"></p>
+                        </b>
                     </div>
-                    <div>
-                        <button type="button" class="btn btn-primary" style="margin-bottom: 10px; float: right;"
-                            onclick="clearLocalStorage()">Logout</button>
+
+
+                    <div id="action_button_div">
+                        <div class="btn-group mb-3 d-flex justify-content-center inner" role="group"
+                            aria-label="Filter options">
+                            <div id="outer">
+                                <button type="button" class="inner btn-primary"
+                                    style="margin-bottom: 10px; float: right;background-color: #6c757d;"
+                                    onclick="clearLocalStorage()">Logout</button>
+                                <button type="button" class=" inner btn-primary"
+                                    style="margin-bottom: 10px; float: right;background-color: #6c757d;"
+                                    onclick="changePassword()"> Password</button>
+                                <button type="button" class=" inner btn-primary"
+                                    style="margin-bottom: 10px; float: right;background-color: #6c757d;"
+                                    onclick="leaveManagement()">Leaves</button>
+
+                            </div>
+                        </div>
                     </div>
+
+                    <div id="filter_button_div">
+                        <!-- Buttons for Filter Options -->
+                        <div class="btn-group mb-3 d-flex justify-content-center inner" role="group"
+                            aria-label="Filter options">
+                            <button id="btnToday" type="button" class="btn btn-primary filter-btn"
+                                style="display: block;">Today's
+                                Reports</button>
+                            <button id="btnThisMonth" type="button" class="btn btn-primary filter-btn"
+                                style="display: block;">
+                                Month's Report</button>
+                            <button id="btnBetweenDates" type="button" class="btn btn-primary filter-btn"
+                                style="display: block;">
+                                Report b/w Dates</button>
+                        </div>
+                        <!-- Date Range Form (Hidden by default) -->
+                        <form id="dateRangeForm" class="form-inline mb-3 justify-content-center" style="display: none;">
+                            <div class="form-group mr-2">
+                                <label for="startDate" class="mr-2">Start Date:</label>
+                                <input type="date" id="startDate" class="form-control" required>
+                            </div>
+                            <div class="form-group mr-2">
+                                <label for="endDate" class="mr-2">End Date:</label>
+                                <input type="date" id="endDate" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Get Reports</button>
+                        </form>
+                    </div>
+                    <div id="p_change_div" style="display: none;">
+                        <form id="myForm">
+                            <label for="name">Current Password:</label>
+                            <input type="text" id="c_password" name="c_password">
+
+                            <label for="email">New Password:</label>
+                            <input type="text" id="n_password" name="n_password">
+                            <br><br>
+                            <button type="button" onclick="savePassword()">Update</button>
+                            <button type="button" onclick="cancelPasswordChange()">Cancel</button>
+                        </form>
+                    </div>
+
                 </div>
 
-                <!-- Punch In Form - Initially Hidden -->
-                <form id="punchInForm" style="display: none;">
-                    <button type="submit" class="btn btn-primary btn-block">Punch In</button>
-                </form>
 
-                <!-- Punch Out Form - Initially Hidden -->
-                <form id="punchOutForm" style="display: none;">
-                    <button type="submit" class="btn btn-danger btn-block">Punch Out</button>
-                </form>
+                <div id="main_div">
+                    <!-- Punch In Form - Initially Hidden -->
+                    <form id="punchInForm" style="display: none;">
+                        <button type="submit" class="btn btn-primary btn-block">Punch In</button>
+                    </form>
 
-                <!-- Punch History -->
-                <div class="card-body" id="punch_history" style="display: none;">
+                    <!-- Punch Out Form - Initially Hidden -->
+                    <form id="punchOutForm" style="display: none;">
+                        <button type="submit" class="btn btn-danger btn-block">Punch Out</button>
+                    </form>
+
                     <!-- Punch History -->
-                    <h3>Punch History</h3>
-                    <ul id="punchList" class="list-group"></ul>
-                    <div id="totalOutTime"></div>
-                    <!-- Pagination -->
-                    <nav>
-                        <ul id="pagination" class="pagination justify-content-center"></ul>
-                    </nav>
+                    <div class="card-body" id="punch_history" style="display: none;">
+                        <!-- Punch History -->
+                        <h3>Punch History</h3>
+                        <ul id="punchList" class="list-group"></ul>
+                        <b>
+                            <div style="color: green;" id="time_req">Total hours requierd:- 8 hours </div>
+                        </b>
+                        <div id="totalOutTime"></div>
+                        <!-- Pagination -->
+                        <nav>
+                            <ul id="pagination" class="pagination justify-content-center"></ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
@@ -177,8 +276,6 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <script>
-        // JavaScript
-        // JavaScript
         const loginForm = document.getElementById('loginForm');
         const punchInForm = document.getElementById('punchInForm');
         const punchOutForm = document.getElementById('punchOutForm');
@@ -193,6 +290,7 @@
         let name = '';
         let email = '';
         var dummyPunchHistory = [];
+        var dummyPunchHistoryMonth = [];
 
         window.onload = function () {
             userId = localStorage.getItem('userId');
@@ -204,7 +302,6 @@
                 showDashboard();
             }
         };
-
 
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
@@ -313,9 +410,15 @@
 
             if (result.success) {
                 dummyPunchHistory = []
+                dummyPunchHistoryMonth = []
                 var punches = result.data.punches
+                var monthPunches = result.data.punchesMonth
+                console.log(result)
                 punches.forEach(punch => {
                     dummyPunchHistory.push({ punch_type: punch.punch_type.toUpperCase(), timestamp: punch.timestamp })
+                });
+                monthPunches.forEach(punch => {
+                    dummyPunchHistoryMonth.push({ punch_type: punch.punch_type.toUpperCase(), timestamp: punch.timestamp })
                 });
                 if (dummyPunchHistory.length == 0) {
                     punchInForm.style.display = 'block';
@@ -332,7 +435,8 @@
                     }
                 }
                 renderPunchHistory(dummyPunchHistory, 1);
-                renderTotalOutTime(dummyPunchHistory);
+                renderTotalOutTime(dummyPunchHistory, 'today');
+                renderTotalOutTime(dummyPunchHistoryMonth, 'month');
             } else {
                 alert('Error: ' + result.error);
             }
@@ -384,7 +488,7 @@
             }
         }
 
-        function renderTotalOutTime(punches) {
+        function renderTotalOutTime(punches, type) {
             let totalMilliseconds = 0;
             let lastInTime = null;
             var reverse_punch = punches.reverse();
@@ -408,7 +512,30 @@
             const hours = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = Math.floor(totalSeconds % 60);
-            totalOutTimeDiv.textContent = `Total Out Time: ${hours}h ${minutes}m ${seconds}s`;
+            if (type == 'today') {
+                totalOutTimeDiv.textContent = `Today working hours: ${hours}h ${minutes}m ${seconds}s`;
+            }
+            else if (type == 'month') {
+                document.getElementById("total_time_till_now").textContent = `Month working hours: ${hours}h ${minutes}m ${seconds}s`
+                document.getElementById("total_time_till_now").style.color = 'red';
+            }
+            if (hours <= 7) {
+                if (minutes >= 30) {
+                    if (type == 'today') {
+                        totalOutTimeDiv.style.color = 'red';
+                    }
+                }
+                else {
+                    if (type == 'today') {
+                        totalOutTimeDiv.style.color = 'green';
+                    }
+                }
+            }
+            else {
+                if (type == 'today') {
+                    totalOutTimeDiv.style.color = 'green';
+                }
+            }
             punches.reverse();
         }
 
@@ -428,6 +555,90 @@
             alert('Logout successfully!');
             window.location.reload();
         }
+
+        function changePassword() {
+            document.getElementById("p_change_div").style.display = 'block'
+            document.getElementById("main_div").style.display = 'none'
+            document.getElementById("filter_button_div").style.display = 'none'
+        }
+
+        function cancelPasswordChange() {
+            document.getElementById("p_change_div").style.display = 'none'
+            document.getElementById("main_div").style.display = 'block'
+            document.getElementById("filter_button_div").style.display = 'block'
+        }
+
+        function leaveManagement() {
+            window.location.href = "/user/leave.html";
+        }
+        async function savePassword() {
+            var c_password = document.getElementById("c_password").value;
+            var n_password = document.getElementById("n_password").value;
+
+            const response = await fetch(`/updatePassword/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ c_password: c_password, n_password: n_password, userId: userId })
+            });
+
+            const result = await response.json();
+            if (result.status) {
+                alert('Password changed successfully')
+            }
+            else {
+                alert('Unable to update password')
+            }
+        }
+
+        function fetchReports(filterType, userId, startDate, endDate) {
+            let url = `/reports/${filterType}?userId=${userId}`;
+            if (filterType === 'between-dates') {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const reports = data.reports;
+                    dummyPunchHistory = []
+                    reports.forEach(report => {
+                        dummyPunchHistory.push({ punch_type: report.punch_type.toUpperCase(), timestamp: report.timestamp })
+                    });
+
+                    renderPunchHistory(dummyPunchHistory, 1);
+                    renderTotalOutTime(dummyPunchHistory, 'today');
+
+                })
+                .catch(error => console.error('Error fetching reports:', error));
+        }
+
+        // Button Event Listeners
+        document.getElementById('btnToday').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'none';
+            document.getElementById('time_req').style.display = 'block';
+            fetchReports('today', userId);
+        });
+
+        document.getElementById('btnThisMonth').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'none';
+            document.getElementById('time_req').style.display = 'none';
+            fetchReports('this-month', userId);
+        });
+
+        document.getElementById('btnBetweenDates').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'block';
+            document.getElementById('time_req').style.display = 'none';
+        });
+
+        // Form Submission for Reports Between Dates
+        document.getElementById('dateRangeForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            fetchReports('between-dates', userId, startDate, endDate);
+        });
     </script>
 </body>
 

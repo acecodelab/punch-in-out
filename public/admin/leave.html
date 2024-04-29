@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leave Request and Approval System</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .btn {
+            margin-right: 10px;
+        }
+
+        label {
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            margin-top: 0;
+        }
+
+        .leave-request-form {
+            margin-bottom: 20px;
+        }
+
+        .leave-request-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .leave-request-form input[type="text"],
+        .leave-request-form select,
+        .leave-request-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-sizing: border-box;
+            padding: 10px;
+            text-indent: 10px;
+        }
+
+        .leave-request-form input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .leave-request-form input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .leave-request-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .leave-request {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            transition: transform 0.3s ease;
+        }
+
+        .leave-request:hover {
+            transform: translateY(-5px);
+        }
+
+        .leave-request .leave-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .leave-request .leave-actions button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .leave-request .leave-actions button:hover {
+            background-color: #ddd;
+        }
+
+        .calendar-container {
+            position: relative;
+        }
+
+        .calendar-container .flatpickr-calendar {
+            position: absolute;
+            top: 40px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 90%;
+                margin: 10px auto;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="form-group">
+            <label for="userSelect">Select User:</label>
+            <select class="form-control" id="userSelect">
+                <!-- Default "Please select user" option -->
+                <option value="" disabled selected>Please select user</option>
+                <!-- Options will be populated via JavaScript -->
+            </select>
+        </div>
+
+        <div id="filter_button_div" style="display: none;">
+            <!-- Buttons for Filter Options -->
+            <div class="btn-group mb-3 d-flex justify-content-center inner" role="group" aria-label="Filter options">
+                <button id="btnToday" type="button" class="btn btn-primary filter-btn" style="display: block;">Today's
+                    Request</button>
+                <button id="btnThisMonth" type="button" class="btn btn-primary filter-btn" style="display: block;">
+                    Month's Request</button>
+                <button id="btnBetweenDates" type="button" class="btn btn-primary filter-btn" style="display: block;">
+                    Request b/w Dates</button>
+            </div>
+            <!-- Date Range Form (Hidden by default) -->
+            <form id="dateRangeForm" class="form-inline mb-3 justify-content-center" style="display: none;">
+                <div class="form-group mr-2">
+                    <label for="startDate" class="mr-2">Start Date:</label>
+                    <input type="date" id="startDate" class="form-control" required>
+                </div>
+                <div class="form-group mr-2">
+                    <label for="endDate" class="mr-2">End Date:</label>
+                    <input type="date" id="endDate" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Get Reports</button>
+            </form>
+        </div>
+
+        <ul class="leave-request-counts">
+            <!-- Leave requests will be dynamically added here -->
+        </ul>
+        <ul class="leave-request-list" id="list_request">
+            <!-- Leave requests will be dynamically added here -->
+        </ul>
+        <div id="no_request" style="display: none;">
+            <p>No Request Found</p>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+
+        // Function to fetch user names
+        function fetchUsers() {
+            fetch('/users')
+                .then(response => response.json())
+                .then(data => {
+                    const userSelect = document.getElementById('userSelect');
+                    userSelect.innerHTML = ''; // Clear existing options
+
+                    // Add default "Please select user" option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.text = 'Please select user';
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    userSelect.appendChild(defaultOption);
+
+                    // Populate options with fetched users
+                    data.users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.text = user.name;
+                        option.value = user.id;
+                        userSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching users:', error));
+        }
+        fetchUsers();
+
+        document.getElementById('userSelect').addEventListener('change', (event) => {
+            const userId = event.target.value;
+            const selectedUser = event.target.options[event.target.selectedIndex].text;
+            getLeaveRequest(userId); // Fetch today's reports for selected user by default
+        });
+
+        // Simulated leave requests data
+        var leaveRequests = [];
+        var totalCount = [];
+
+        async function getLeaveRequest(userId) {
+            leaveRequests = []
+            totalCount = []
+            const response = await fetch(`/allLeaveRequests/${userId}`);
+            const result = await response.json();
+            if (result.data.length > 0) {
+                for (let i = 0; i < result.data.length; i++) {
+                    var date_ = result.data[i].leave_start_date.split('T')[0]
+                    leaveRequests.push({
+                        id: result.data[i].id, employeeName: result.data[i].name, leaveType: result.data[i].leave_type, leave_start_date: date_, reason: result.data[i].reason, status: result.data[i].status
+                    })
+                }
+
+                for (let i = 0; i < result.dataCount.length; i++) {
+                    var count = result.dataCount[i].count
+                    var status = result.dataCount[i].status
+                    totalCount.push({
+                        count: count, status: status,
+                    })
+                }
+            }
+            else {
+                leaveRequests = []
+                totalCount = []
+            }
+            // Initial rendering of leave requests
+            renderLeaveRequests();
+        }
+        // Function to render leave requests
+        function renderLeaveRequests() {
+            const leaveRequestList = document.querySelector('.leave-request-list');
+            leaveRequestList.innerHTML = '';
+
+            const leaveRequestCount = document.querySelector('.leave-request-counts');
+            leaveRequestCount.innerHTML = '';
+            if (leaveRequests.length == 0) {
+                document.getElementById('filter_button_div').style.display = 'none';
+                document.getElementById("no_request").style.display = 'block'
+            }
+            else {
+                document.getElementById('filter_button_div').style.display = 'block';
+                document.getElementById("no_request").style.display = 'none'
+            }
+            totalCount.forEach(request => {
+                const leaveRequestItemCount = document.createElement('li');
+                leaveRequestItemCount.classList.add('leave-request');
+                if (request.status == 'Approve') {
+                    leaveRequestItemCount.style.backgroundColor = 'green'
+                }
+                else if (request.status == 'Reject') {
+                    leaveRequestItemCount.style.backgroundColor = 'red'
+                }
+                else if (request.status == 'Pending') {
+                    leaveRequestItemCount.style.backgroundColor = 'grey'
+                }
+                else {
+                    leaveRequestItemCount.style.backgroundColor = 'blue'
+                }
+                leaveRequestItemCount.innerHTML = `
+                <div class="leave-info">
+                    <div style="color:white">
+                        <strong>Status:</strong> ${request.status}(${request.count})<br>
+                    </div>
+                </div>
+            `;
+                leaveRequestCount.appendChild(leaveRequestItemCount);
+            });
+
+            leaveRequests.forEach(request => {
+                const leaveRequestItem = document.createElement('li');
+                leaveRequestItem.classList.add('leave-request');
+                leaveRequestItem.innerHTML = `
+                <div class="leave-info">
+                    <div>
+                        <strong>Employee Name:</strong> ${request.employeeName}<br>
+                        <strong>Leave Type:</strong> ${request.leaveType}<br>
+                        <strong>Date:</strong> ${request.leave_start_date}<br>
+                        <strong>Reason:</strong> ${request.reason}<br>
+                        <strong>Status:</strong> ${request.status}
+                    </div>
+                    <div class="leave-actions">
+                        <button style="margin-bottom:10px;width:100%;background-color:green;color:white;  ${request.status !== 'Pending' ? 'display:none;' : ''}" onclick="approveRequest(${request.id})" ${request.status !== 'Pending' ? 'disabled' : ''}>Approve</button>
+                        <button style="margin-bottom:10px;width:100%;background-color:red;color:white; ${request.status !== 'Pending' ? 'display:none;' : ''}" onclick="rejectRequest(${request.id})" ${request.status !== 'Pending' ? 'disabled' : ''}>Reject</button>
+                    </div>
+                </div>
+            `;
+                leaveRequestList.appendChild(leaveRequestItem);
+            });
+        }
+
+        // Function to approve a leave request
+        async function approveRequest(id) {
+            const response = await fetch(`/approveLeaveRequest/${id}`);
+            const result = await response.json();
+            if (result.status) {
+                alert('Request approved successfully')
+                window.location.reload();
+            }
+            else {
+                alert('Something went wrong')
+            }
+        }
+
+        // Function to reject a leave request
+        async function rejectRequest(id) {
+            const response = await fetch(`/rejectLeaveRequest/${id}`);
+            const result = await response.json();
+            if (result.status) {
+                alert('Request approved successfully')
+                window.location.reload();
+            }
+            else {
+                alert('Something went wrong')
+            }
+        }
+
+        // Initialize flatpickr
+        const leaveStartDatePicker = flatpickr("#leaveStartDate", {
+            enableTime: false,
+            dateFormat: "Y-m-d",
+        });
+
+        // Button Event Listeners
+        document.getElementById('btnToday').addEventListener('click', () => {
+            const userId = document.getElementById('userSelect').value;
+            document.getElementById("dateRangeForm").style.display = 'none'
+            getLeaveRequestFilter('today', userId);
+        });
+
+        document.getElementById('btnThisMonth').addEventListener('click', () => {
+            const userId = document.getElementById('userSelect').value;
+            document.getElementById("dateRangeForm").style.display = 'none'
+            getLeaveRequestFilter('this-month', userId);
+        });
+
+        // Show date range form when 'Reports Between Dates' button is clicked
+        document.getElementById('btnBetweenDates').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'block';
+        });
+
+        // Form Submission for Reports Between Dates
+        document.getElementById('dateRangeForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const userId = document.getElementById('userSelect').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            getLeaveRequestFilter('between-dates', userId, startDate, endDate);
+        });
+
+        async function getLeaveRequestFilter(filterType, userId, startDate, endDate) {
+            leaveRequests = []
+            totalCount = []
+            let url = `/allLeaveRequest/${filterType}?userId=${userId}`;
+            if (filterType === 'between-dates') {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+            var response = await fetch(url)
+            const result = await response.json();
+            console.log(result)
+            if (result.data.length > 0) {
+                for (let i = 0; i < result.data.length; i++) {
+                    var date_ = result.data[i].leave_start_date.split('T')[0]
+                    leaveRequests.push({
+                        id: result.data[i].id, employeeName: result.data[i].name, leaveType: result.data[i].leave_type, leave_start_date: date_, reason: result.data[i].reason, status: result.data[i].status
+                    })
+                }
+                for (let i = 0; i < result.dataCount.length; i++) {
+                    var count = result.dataCount[i].count
+                    var status = result.dataCount[i].status
+                    totalCount.push({
+                        count: count, status: status,
+                    })
+                }
+            }
+            else {
+                leaveRequests = []
+                totalCount = []
+            }
+            renderLeaveRequests();
+            document.getElementById('filter_button_div').style.display = 'block';
+            document.getElementById("no_request").style.display = 'none'
+        }
+    </script>
+</body>
+
+</html>

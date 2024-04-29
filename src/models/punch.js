@@ -15,6 +15,12 @@ class Punch {
         return rows;
     }
 
+    static async getByUserIdForMonth(user_id) {
+        const query = `SELECT * FROM punches WHERE user_id = $1 and DATE_PART('month', timestamp) = DATE_PART('month', CURRENT_DATE) ORDER BY timestamp DESC`;
+        const { rows } = await pool.query(query, [user_id]);
+        return rows;
+    }
+
     static async loginUser(username, password) {
         const result = await pool.query('SELECT * FROM users WHERE username = $1 AND password = $2', [username, password]);
         const user = result.rows[0];
@@ -51,6 +57,19 @@ class Punch {
         const getUserList = 'SELECT * from users';
         const { rows } = await pool.query(getUserList);
         return rows;
+    }
+
+    static async updatePassword(c_password, n_password, userId) {
+        const checkPassword = 'SELECT * from users where id=$1';
+        const { rows } = await pool.query(checkPassword, [userId]);
+        if (rows[0].password == c_password) {
+            const updatePassword = 'UPDATE users set password=$1 where id=$2';
+            await pool.query(updatePassword, [n_password, userId]);
+            return true;
+        }
+        else {
+            return false
+        }
     }
 }
 
