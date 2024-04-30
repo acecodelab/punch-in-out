@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Nxtgen Virtue</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
@@ -102,7 +102,6 @@
         }
 
         #totalOutTime {
-            margin-top: 20px;
             font-size: 18px;
         }
 
@@ -149,6 +148,7 @@
             <div class="card-header">
                 <h1 class="text-center">Nxtgen Virtue</h1>
             </div>
+
             <div class="card-body">
                 <!-- User Login Form -->
 
@@ -173,7 +173,6 @@
                     <div>
                         <b>
                             <p id="details_name"></p>
-                            <p id="total_time_till_now"></p>
                         </b>
                     </div>
 
@@ -191,7 +190,6 @@
                                 <button type="button" class=" inner btn-primary"
                                     style="margin-bottom: 10px; float: right;background-color: #6c757d;"
                                     onclick="leaveManagement()">Leaves</button>
-
                             </div>
                         </div>
                     </div>
@@ -255,10 +253,9 @@
                         <!-- Punch History -->
                         <h3>Punch History</h3>
                         <ul id="punchList" class="list-group"></ul>
-                        <b>
-                            <div style="color: green;" id="time_req">Total hours requierd:- 8 hours </div>
-                        </b>
+                        <div id="total_time_till_now"></div>
                         <div id="totalOutTime"></div>
+                        <div id="countdown" style="margin-bottom: 10px;"></div>
                         <!-- Pagination -->
                         <nav>
                             <ul id="pagination" class="pagination justify-content-center"></ul>
@@ -285,24 +282,53 @@
         const details = document.getElementById('details');
         const details_name = document.getElementById('details_name');
         const punch_history = document.getElementById('punch_history');
+        const countdownElement = document.getElementById('countdown');
         let userId = '';
         let username = '';
         let name = '';
         let email = '';
         var dummyPunchHistory = [];
         var dummyPunchHistoryMonth = [];
-
         window.onload = function () {
             userId = localStorage.getItem('userId');
             name = localStorage.getItem('name');
             username = localStorage.getItem('username');
             email = localStorage.getItem('email');
-
-            if (userId && name && username && email) {
-                showDashboard();
-            }
+            checkecived()
         };
+        async function checkecived() {
+            if (localStorage.getItem('ecived') == 'm') {
+                if (userId && name && username && email) {
+                    punchInForm.style.display = 'none'
+                    punchOutForm.style.display = 'none'
+                    showDashboard('m');
+                }
+            }
+            else if (localStorage.getItem('ecived') == 'd') {
+                if (userId && name && username && email) {
+                    showDashboard('d');
+                }
+            }
+            else {
+                if (/Mobi/.test(navigator.userAgent)) {
+                    localStorage.setItem('ecived', 'm');
+                    if (userId && name && username && email) {
+                        showDashboard('d');
+                        punchInForm.style.display = 'none'
+                        punchOutForm.style.display = 'none'
+                    }
+                }
+                else {
+                    localStorage.setItem('ecived', 'd');
+                    if (userId && name && username && email) {
+                        showDashboard('d');
+                        punchInForm.style.display = 'block'
+                        punchOutForm.style.display = 'block'
 
+                    }
+                }
+            }
+        }
         loginForm.addEventListener('submit', async (event) => {
             event.preventDefault();
             const enteredUsername = loginForm.username.value.trim();
@@ -334,9 +360,8 @@
                 localStorage.setItem('name', name);
                 localStorage.setItem('username', username);
                 localStorage.setItem('email', email);
-
                 loginForm.reset();
-                showDashboard();
+                checkecived();
             } else {
                 if (result.msg) {
                     alert(result.msg)
@@ -347,12 +372,12 @@
             }
         });
 
-        async function showDashboard() {
+        async function showDashboard(type) {
             loginForm.style.display = 'none';
             details.style.display = 'block'
             details_name.innerText = 'Name :- ' + name
             punch_history.style.display = 'block'
-            await fetchPunchHistory(userId);
+            await fetchPunchHistory(userId, type);
         }
 
         punchInForm.addEventListener('submit', async (event) => {
@@ -404,7 +429,10 @@
             }
         }
 
-        async function fetchPunchHistory(userId) {
+        async function fetchPunchHistory(userId, type) {
+            if (type == 'm') {
+                return;
+            }
             const response = await fetch(`/punches/${userId}`);
             const result = await response.json();
 
@@ -413,7 +441,6 @@
                 dummyPunchHistoryMonth = []
                 var punches = result.data.punches
                 var monthPunches = result.data.punchesMonth
-                console.log(result)
                 punches.forEach(punch => {
                     dummyPunchHistory.push({ punch_type: punch.punch_type.toUpperCase(), timestamp: punch.timestamp })
                 });
@@ -552,6 +579,7 @@
             localStorage.removeItem('name');
             localStorage.removeItem('username');
             localStorage.removeItem('email');
+            localStorage.removeItem('ecived');
             alert('Logout successfully!');
             window.location.reload();
         }
@@ -639,6 +667,52 @@
             const endDate = document.getElementById('endDate').value;
             fetchReports('between-dates', userId, startDate, endDate);
         });
+
+        // Set the target time for the countdown (9:30 AM and 6:30 PM)
+
+        const targetTimes = [
+            { hour: 9, minute: 30 },
+            { hour: 19, minute: 0 }
+        ];
+        // Function to calculate remaining time
+        function calculateTimeRemaining() {
+            const now = new Date();
+            let targetTime;
+            // Set the target time to 6:30 PM if current time is past 9:30 AM, else set it to 9:30 AM
+            if (now.getHours() < 9 || (now.getHours() === 9 && now.getMinutes() < 30)) {
+                targetTime = new Date(now);
+                targetTime.setHours(targetTimes[0].hour);
+                targetTime.setMinutes(targetTimes[0].minute);
+            } else {
+                targetTime = new Date(now);
+                targetTime.setHours(targetTimes[1].hour);
+                targetTime.setMinutes(targetTimes[1].minute);
+            }
+
+            const totalSeconds = Math.floor((targetTime - now) / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+
+            return { hours, minutes, seconds };
+        }
+
+        // Function to update the countdown display
+        function updateCountdown() {
+            const { hours, minutes, seconds } = calculateTimeRemaining();
+            countdownElement.innerHTML = `Time Remaining: ${hours} hours, ${minutes} minutes`;
+
+            // Check if the countdown has reached 0, if so, stop updating
+            if (hours === 0 && minutes === 0 && seconds === 0) {
+                clearInterval(countdownInterval);
+            }
+        }
+
+        // Initial call to update countdown display
+        updateCountdown();
+
+        // Update countdown display every second
+        const countdownInterval = setInterval(updateCountdown, 1000);
     </script>
 </body>
 

@@ -2,11 +2,28 @@
 const pool = require('../db/db');
 
 class Punch {
-    static async create({ user_id, punch_type }) {
-        const query = 'INSERT INTO punches (user_id, punch_type) VALUES ($1, $2) RETURNING *';
-        const values = [user_id, punch_type];
-        const { rows } = await pool.query(query, values);
-        return rows[0];
+    static async create({ user_id, punch_type, type }) {
+        const queryCheck = 'SELECT * from punches where user_id=$1 and date(timestamp)=date(CURRENT_DATE) order by id desc LIMIT 1';
+        var { rows } = await pool.query(queryCheck, [user_id])
+        if (rows.length > 0) {
+            if (rows[0].punch_type == 'out' && punch_type == 'out') {
+                return rows[0];
+            }
+            else if (rows[0].punch_type == 'out' && punch_type == 'in' || rows[0].punch_type == 'in' && punch_type == 'out') {
+                const query = 'INSERT INTO punches (user_id, punch_type,type) VALUES ($1, $2, $3) RETURNING *';
+                const values = [user_id, punch_type, type];
+                var { rows } = await pool.query(query, values);
+                return rows[0];
+            }
+
+        }
+        else {
+            const query = 'INSERT INTO punches (user_id, punch_type,type) VALUES ($1, $2, $3) RETURNING *';
+            const values = [user_id, punch_type, type];
+            var { rows } = await pool.query(query, values);
+            return rows[0];
+        }
+
     }
 
     static async getByUserId(user_id) {
@@ -53,7 +70,7 @@ class Punch {
         return rows;
     }
 
-    static async getUserList(startDate, endDate) {
+    static async getUserList() {
         const getUserList = 'SELECT * from users';
         const { rows } = await pool.query(getUserList);
         return rows;
@@ -70,6 +87,12 @@ class Punch {
         else {
             return false
         }
+    }
+
+    static async punchOutNow() {
+        const checkOpenpunchOut = `WITH LastEntry AS (SELECT user_id, punch_type, timestamp FROM punches WHERE (user_id, timestamp) IN (SELECT user_id, MAX(timestamp) AS max_timestamp FROM punches GROUP BY user_id)) INSERT INTO punches (user_id, punch_type, timestamp) SELECT user_id, 'out', NOW() FROM LastEntry WHERE punch_type = 'in';`;
+        await pool.query(checkOpenpunchOut);
+        return true;
     }
 }
 

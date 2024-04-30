@@ -1,12 +1,42 @@
 // src/controllers/punchController.js
 const Punch = require('../models/punch.js');
 const nodemailer = require('nodemailer');
-
 const punchIn = async (req, res) => {
     const { user_id, email } = req.body;
     try {
-        const punchCount = await Punch.count_punch_in(user_id)
+        var type = null;
+        if (isSevenPMOrLater()) {
+            type = 'Overtime'
+            const transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 587, // TLS port
+                secure: false,//true for port  465 , false for others
+                auth: {
+                    user: 'infonxtgenvirtue@gmail.com', // Your Gmail address
+                    pass: 'pwuh rpja vilo zkkb' // Your Gmail password or App Password if 2-Step Verification is enabled
+                }
+            });
 
+            const mailOptions = {
+                from: 'infonxtgenvirtue@gmail.com',
+                to: 'rajat.thakur@nxtgenvirtue.com', // User's email address
+                //bcc: 'piyush@nxtgenvirtue.com',
+                subject: 'Overtime by ' + email,
+                text: 'Overtime by' + email
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.error('Error sending email:', error);
+                } else {
+                    console.log('Email sent:', info.response);
+                }
+            });
+        }
+        else {
+            type = 'Normal'
+        }
+        const punchCount = await Punch.count_punch_in(user_id)
         if (punchCount >= 4) {
             // Create a transporter using Gmail SMTP
             const transporter = nodemailer.createTransport({
@@ -34,10 +64,12 @@ const punchIn = async (req, res) => {
                     console.log('Email sent:', info.response);
                 }
             });
-            const punch = await Punch.create({ user_id, punch_type: 'in' });
+
+            const punch = await Punch.create({ user_id, punch_type: 'in', type });
             res.json({ success: true, error: 'Exceeded maximum punch in limit for today.Your details are forward to Officials', data: punch });
         } else {
-            const punch = await Punch.create({ user_id, punch_type: 'in' });
+
+            const punch = await Punch.create({ user_id, punch_type: 'in', type });
             res.json({ success: true, data: punch, error: null });
         }
     } catch (error) {
@@ -49,7 +81,14 @@ const punchIn = async (req, res) => {
 const punchOut = async (req, res) => {
     const { user_id } = req.body;
     try {
-        const punch = await Punch.create({ user_id, punch_type: 'out' });
+        var type = null;
+        if (isSevenPMOrLater()) {
+            type = 'Overtime'
+        }
+        else {
+            type = 'Normal'
+        }
+        const punch = await Punch.create({ user_id, punch_type: 'out', type });
         res.json({ success: true, data: punch });
     } catch (error) {
         console.error('Error punching out:', error);
@@ -160,4 +199,17 @@ const updatePassword = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
-module.exports = { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month, getUserList, updatePassword };
+
+const punchOutNow = async () => {
+    await Punch.punchOutNow()
+    return true;
+}
+
+function isSevenPMOrLater() {
+    const currentTime = new Date();
+    const currentHour = currentTime.getHours();
+
+    // Check if the current hour is 7 or later
+    return currentHour >= 19;
+}
+module.exports = { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month, getUserList, updatePassword, punchOutNow };
