@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title id="title"></title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container-fluid {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background-color: #333;
+            color: #fff;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+        }
+
+        .menu-item {
+            padding: 10px 20px;
+            border-bottom: 1px solid #555;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: #555;
+        }
+
+        .dashboard {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            margin-right: 10px;
+        }
+
+        .punch-status {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Hamburger menu styles */
+        .hamburger-menu {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 1001;
+            /* Increased z-index */
+        }
+
+        .hamburger-menu .line {
+            width: 30px;
+            height: 3px;
+            background-color: #ce0101;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.active .line:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger-menu.active .line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active .line:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Style for the overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* semi-transparent black */
+            display: none;
+            /* Hide by default */
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Style for the alert box */
+        .alert-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+                left: -250px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .hamburger-menu {
+                display: block;
+            }
+
+            .totalOutTime {
+                display: none;
+            }
+
+            .hide_button {
+                display: none;
+            }
+
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* semi-transparent black */
+            display: none;
+            /* Hide by default */
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Style for the alert box */
+        .alert-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+            animation: slideIn 0.5s;
+        }
+
+        /* Slide in animation */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Style for the button */
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <!-- Hamburger Menu -->
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+                <div class="sidebar-sticky">
+                    <h5 class="text-center mt-3">Menu</h5>
+                    <ul class="nav flex-column">
+                        <li class="nav-item menu-item">Attendance</li>
+                        <li class="nav-item menu-item" onclick="moveToLeave();">Leave Management</li>
+                        <li class="nav-item menu-item" onclick="changePassword();">Change Password</li>
+                        <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="dashboard mt-3">
+                    <div class="totalOutTime" id="totalOutTime" style="float: right;"></div>
+                    <div class="totalOutTime" id="total_time_till_now" style="float: left;"></div>
+                    <br>
+                    <h4 class="text-center" id="userName"> </h4>
+                    <p class="text-center" id="timer"></p>
+
+                    <div class="hide_button">
+                        <button class="btn btn-primary mt-3" id="punchBtn" style="display: none;">Punch
+                            In</button>
+                    </div>
+
+                    <div class="text-center" id="countdown"></div>
+                </div>
+
+                <div class="info-box mt-3">
+                    <div id="filter_button_div">
+                        <!-- Buttons for Filter Options -->
+                        <div class="btn-group mb-3 d-flex justify-content-center inner" role="group"
+                            aria-label="Filter options">
+                            <button id="btnToday" type="button" class="btn btn-primary filter-btn"
+                                style="display: block;">Today's
+                                Reports</button>
+                            <button id="btnThisMonth" type="button" class="btn btn-primary filter-btn"
+                                style="display: block;">
+                                Month's Report</button>
+                            <button id="btnBetweenDates" type="button" class="btn btn-primary filter-btn"
+                                style="display: block;">
+                                Report b/w Dates</button>
+                        </div>
+                        <!-- Date Range Form (Hidden by default) -->
+                        <form id="dateRangeForm" class="form-inline mb-3 justify-content-center" style="display: none;">
+                            <div class="form-group mr-2">
+                                <label for="startDate" class="mr-2">Start Date:</label>
+                                <input type="date" id="startDate" class="form-control" required>
+                            </div>
+                            <div class="form-group mr-2">
+                                <label for="endDate" class="mr-2">End Date:</label>
+                                <input type="date" id="endDate" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Get Reports</button>
+                        </form>
+                    </div>
+                    <h3>History</h3>
+                    <ul id="punchList" class="list-group"></ul>
+
+                    <!-- Pagination -->
+                    <nav style="margin-top: 10px;">
+                        <ul id="pagination" class="pagination justify-content-center"></ul>
+                    </nav>
+                </div>
+
+                <!-- <div class="info-box mt-3">
+                    <h3>Information Box 2</h3>
+                    <p>This is some information in the second box.</p>
+                </div>
+
+                <div class="info-box mt-3">
+                    <h3>Information Box 3</h3>
+                    <p>This is some information in the third box.</p>
+                </div> -->
+                <div id="overlay" class="overlay">
+                    <div id="alertBox" class="alert-box">
+                        <h2 id="alertHeader">Custom Alert</h2>
+                        <p id="alertMessage">This is a custom alert box.</p>
+                        <button onclick="hideAlert('logout')">Ok</button>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        var punchStatus = document.getElementById("punchStatus");
+        var userName = document.getElementById("userName");
+        var btn = document.getElementById("punchBtn");
+        const punchList = document.getElementById('punchList');
+        const totalOutTimeDiv = document.getElementById('totalOutTime');
+        const countdownElement = document.getElementById('countdown');
+
+        let userId = '';
+        let username = '';
+        let name = '';
+        let email = '';
+        var dummyPunchHistory = [];
+        var dummyPunchHistoryMonth = [];
+        let intervalId;
+
+        window.onload = function () {
+            userId = localStorage.getItem('userId');
+            name = localStorage.getItem('name');
+            username = localStorage.getItem('username');
+            email = localStorage.getItem('email');
+            checkecived()
+        };
+
+        async function checkecived() {
+            if (localStorage.getItem('ecived') == 'm') {
+                if (userId && name && username && email) {
+                    document.getElementById("punchBtn").style.display = 'none'
+                    showDashboard('m');
+                }
+                else {
+                    window.location.href = "/user/";
+                }
+            }
+            else if (localStorage.getItem('ecived') == 'd') {
+                if (userId && name && username && email) {
+                    showDashboard('d');
+                }
+                else {
+                    window.location.href = "/user/";
+                }
+            }
+            else {
+                if (/Mobi/.test(navigator.userAgent)) {
+                    localStorage.setItem('ecived', 'm');
+                    if (userId && name && username && email) {
+                        showDashboard('d');
+                        document.getElementById("punchBtn").style.display = 'none'
+                    }
+                    else {
+                        window.location.href = "/user/";
+                    }
+                }
+                else {
+                    localStorage.setItem('ecived', 'd');
+                    if (userId && name && username && email) {
+                        showDashboard('d');
+                        document.getElementById("punchBtn").style.display = 'block'
+                    }
+                    else {
+                        window.location.href = "/user/";
+                    }
+                }
+            }
+        }
+
+        async function showDashboard(type) {
+            userName.innerText = "Welcome, " + name;
+            document.getElementById("title").innerHTML = name
+            await fetchPunchHistory(userId, type);
+        }
+
+        document.getElementById("punchBtn").addEventListener("click", async function () {
+            if (btn.innerText === "Punch In") {
+                btn.innerText = "Punch Out";
+                btn.classList.remove("btn-primary");
+                btn.classList.add("btn-danger");
+                await submitPunch(userId, 'in', email);
+            } else {
+                btn.innerText = "Punch In";
+                btn.classList.remove("btn-danger");
+                btn.classList.add("btn-primary");
+                await submitPunch(userId, 'out', email);
+            }
+        });
+
+        async function submitPunch(userId, type, email) {
+            const response = await fetch(`/punch/${type}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_id: userId, email: email })
+            });
+
+            const result = await response.json();
+
+            if (result.success && result.error == null) {
+                await fetchPunchHistory(userId);
+            } else if (result.success && result.error != null) {
+                await fetchPunchHistory(userId);
+                alert(result.error);
+            } else {
+                alert('Error: ' + result.error);
+            }
+        }
+
+        async function fetchPunchHistory(userId, type) {
+            if (type == 'm') {
+                return;
+            }
+            const response = await fetch(`/punches/${userId}`);
+            const result = await response.json();
+
+            if (result.success) {
+                dummyPunchHistory = []
+                dummyPunchHistoryMonth = []
+                var punches = result.data.punches
+                var monthPunches = result.data.punchesMonth
+                punches.forEach(punch => {
+                    dummyPunchHistory.push({ punch_type: punch.punch_type.toUpperCase(), timestamp: punch.timestamp })
+                });
+                monthPunches.forEach(punch => {
+                    dummyPunchHistoryMonth.push({ punch_type: punch.punch_type.toUpperCase(), timestamp: punch.timestamp })
+                });
+                if (dummyPunchHistory.length == 0) {
+                    document.getElementById("punchBtn").style.display = 'block'
+
+                }
+                else {
+                    if (dummyPunchHistory[0].punch_type == 'IN') {
+                        document.getElementById("punchBtn").style.display = 'block'
+                        btn.innerText = "Punch Out";
+                        btn.classList.remove("btn-primary");
+                        btn.classList.add("btn-danger");
+                        var databaseDateTime = new Date(dummyPunchHistory[0].timestamp);
+                        var currentTime = new Date();
+                        var difference = currentTime - databaseDateTime;
+
+                        var hours = Math.floor(difference / 3600000); // 1 hour = 3600000 milliseconds
+                        var minutes = Math.floor((difference % 3600000) / 60000); // 1 minute = 60000 milliseconds
+                        var seconds = Math.floor(((difference % 3600000) % 60000) / 1000); // 
+                        startTimer(hours, minutes, seconds);
+                    }
+                    else if (dummyPunchHistory[0].punch_type == 'OUT') {
+                        document.getElementById("punchBtn").style.display = 'block'
+                        btn.innerText = "Punch In";
+                        btn.classList.remove("btn-danger");
+                        btn.classList.add("btn-primary");
+                        stopTimer();
+                    }
+                }
+                renderPunchHistory(dummyPunchHistory, 1);
+                renderTotalOutTime(dummyPunchHistory, 'today');
+                renderTotalOutTime(dummyPunchHistoryMonth, 'month');
+            } else {
+                alert('Error: ' + result.error);
+            }
+        }
+
+        function renderPunchHistory(punches, page = 1, pageSize = 4) {
+            const startIndex = (page - 1) * pageSize;
+            const endIndex = Math.min(startIndex + pageSize, punches.length);
+
+            const paginatedPunches = punches.slice(startIndex, endIndex);
+
+            punchList.innerHTML = '';
+            paginatedPunches.forEach(punch => {
+                const li = document.createElement('li');
+                li.classList.add('list-group-item');
+
+                const time = new Date(punch.timestamp).toLocaleString();
+                li.innerHTML = `<span class="punch-time">${time}</span> - <span class="punch-type">${punch.punch_type}</span>`;
+
+                punchList.appendChild(li);
+            });
+
+            // Update pagination
+            const totalPages = Math.ceil(punches.length / pageSize);
+            renderPagination(totalPages, page);
+        }
+
+        function renderPagination(totalPages, currentPage) {
+            pagination.innerHTML = '';
+
+            for (let i = 1; i <= totalPages; i++) {
+                const li = document.createElement('li');
+                li.classList.add('page-item');
+                if (i === currentPage) {
+                    li.classList.add('active');
+                }
+
+                const link = document.createElement('a');
+                link.classList.add('page-link');
+                link.href = '#';
+                link.textContent = i;
+                link.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    renderPunchHistory(dummyPunchHistory, i);
+                });
+
+                li.appendChild(link);
+                pagination.appendChild(li);
+            }
+        }
+
+        function renderTotalOutTime(punches, type) {
+            let totalMilliseconds = 0;
+            let lastInTime = null;
+            var reverse_punch = punches.reverse();
+            //punches.reverse();
+            reverse_punch.forEach(punch => {
+                if (punch.punch_type === 'IN') {
+                    lastInTime = new Date(punch.timestamp).getTime();
+                } else if (punch.punch_type === 'OUT' && lastInTime !== null) {
+                    const outTime = new Date(punch.timestamp).getTime();
+                    const duration = outTime - lastInTime;
+                    totalMilliseconds += duration;
+
+                    // Display individual duration
+                    const durationSeconds = Math.floor(duration / 1000);
+                    const durationFormatted = formatDuration(durationSeconds);
+                    lastInTime = null;
+                }
+            });
+
+            const totalSeconds = totalMilliseconds / 1000;
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+
+            if (type == 'today') {
+                totalOutTimeDiv.textContent = `Today's office working hours: ${hours}h ${minutes}m ${seconds}s`;
+            }
+            else if (type == 'month') {
+                document.getElementById("total_time_till_now").textContent = `Monthly office working hours: ${hours}h ${minutes}m ${seconds}s`
+                document.getElementById("total_time_till_now").style.color = 'red';
+            }
+            if (hours <= 7) {
+                if (hours == 7 && hours >= 30) {
+                    if (type == 'today') {
+                        totalOutTimeDiv.style.color = 'green';
+                    }
+                }
+                else {
+                    if (type == 'today') {
+                        totalOutTimeDiv.style.color = 'red';
+                    }
+                }
+            }
+            else {
+                if (type == 'today') {
+                    totalOutTimeDiv.style.color = 'green';
+                }
+            }
+            punches.reverse();
+        }
+
+        function formatDuration(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+
+            return `${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        function clearLocalStorage() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('name');
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('ecived');
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+            document.getElementById("overlay").style.display = "flex";
+            document.getElementById("alertHeader").innerHTML = "Bye " + name.split(' ')[0]
+            document.getElementById("alertMessage").innerHTML = "Have a nice day"
+        }
+
+        function moveToLeave() {
+            window.location.href = '/user/leave.html'
+        }
+
+        function changePassword() {
+            window.location.href = '/user/password.html'
+        }
+
+
+        const targetTimes = [
+            { hour: 9, minute: 30 },
+            { hour: 19, minute: 0 }
+        ];
+        // Function to calculate remaining time
+        function calculateTimeRemaining() {
+            const now = new Date();
+            let targetTime;
+            // Set the target time to 6:30 PM if current time is past 9:30 AM, else set it to 9:30 AM
+            if (now.getHours() < 9 || (now.getHours() === 9 && now.getMinutes() < 30)) {
+                targetTime = new Date(now);
+                targetTime.setHours(targetTimes[0].hour);
+                targetTime.setMinutes(targetTimes[0].minute);
+            } else {
+                targetTime = new Date(now);
+                targetTime.setHours(targetTimes[1].hour);
+                targetTime.setMinutes(targetTimes[1].minute);
+            }
+
+            const totalSeconds = Math.floor((targetTime - now) / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+
+            return { hours, minutes, seconds };
+        }
+
+        // Function to update the countdown display
+        function updateCountdown() {
+            const { hours, minutes, seconds } = calculateTimeRemaining();
+            countdownElement.innerHTML = `Office Time Remaining: ${hours} hours, ${minutes} minutes`;
+
+            // Check if the countdown has reached 0, if so, stop updating
+            if (hours === 0 && minutes === 0 && seconds === 0) {
+                clearInterval(countdownInterval);
+            }
+        }
+
+        // Initial call to update countdown display
+        updateCountdown();
+
+        // Update countdown display every second
+        const countdownInterval = setInterval(updateCountdown, 1000);
+
+
+        function startTimer(startHours, startMinutes, startSeconds) {
+            let seconds = startSeconds || 0;
+            let minutes = startMinutes || 0;
+            let hours = startHours || 0;
+
+            intervalId = setInterval(function () {
+                seconds++;
+                if (seconds === 60) {
+                    seconds = 0;
+                    minutes++;
+                    if (minutes === 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+                }
+
+                const formattedTime = "Last punch in before: " + pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+                document.getElementById("timer").textContent = formattedTime;
+            }, 1000);
+        }
+
+        function pad(num) {
+            return (num < 10 ? "0" : "") + num;
+        }
+
+        function stopTimer() {
+            clearInterval(intervalId);
+        }
+
+        function fetchReports(filterType, userId, startDate, endDate) {
+            let url = `/reports/${filterType}?userId=${userId}`;
+            if (filterType === 'between-dates') {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const reports = data.reports;
+                    dummyPunchHistory = []
+                    reports.forEach(report => {
+                        dummyPunchHistory.push({ punch_type: report.punch_type.toUpperCase(), timestamp: report.timestamp })
+                    });
+
+                    renderPunchHistory(dummyPunchHistory, 1);
+                    renderTotalOutTime(dummyPunchHistory, 'today');
+
+                })
+                .catch(error => console.error('Error fetching reports:', error));
+        }
+
+        // Button Event Listeners
+        document.getElementById('btnToday').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'none';
+            fetchReports('today', userId);
+        });
+
+        document.getElementById('btnThisMonth').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'none';
+            fetchReports('this-month', userId);
+        });
+
+        document.getElementById('btnBetweenDates').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'block';
+        });
+
+        // Form Submission for Reports Between Dates
+        document.getElementById('dateRangeForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            fetchReports('between-dates', userId, startDate, endDate);
+        });
+
+        // Function to hide the custom alert
+        function hideAlert(type) {
+            if (type == 'logout') {
+                document.getElementById("overlay").style.display = "none";
+                window.location.href = "/user/";
+            }
+        }
+
+
+        document.getElementById("hamburgerMenu").addEventListener("click", function () {
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        });
+    </script>
+</body>
+
+</html>
