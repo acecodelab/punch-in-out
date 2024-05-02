@@ -26,6 +26,14 @@
             <button type="submit">Login</button>
         </form>
     </div>
+    <div id="overlay" class="overlay">
+        <div id="alertBox" class="alert-box">
+            <h2 id="alertHeader">Custom Alert</h2>
+            <p id="alertMessage">This is a custom alert box.</p>
+            <button onclick="hideAlert()">Ok</button>
+        </div>
+    </div>
+
     <footer>
         <p>&copy; 2024 Your Company. All rights reserved.</p>
     </footer>
@@ -72,13 +80,22 @@
                 window.location.href = "/user/attendance.html";
             } else {
                 if (result.msg) {
-                    alert(result.msg)
+                    document.getElementById("overlay").style.display = "flex";
+                    document.getElementById("alertHeader").innerHTML = name.split(' ')[0]
+                    document.getElementById("alertMessage").innerHTML = "Please try again"
                 }
                 else {
-                    alert('Invalid Username or Password');
+                    document.getElementById("overlay").style.display = "flex";
+                    document.getElementById("alertHeader").innerHTML = name.split(' ')[0]
+                    document.getElementById("alertMessage").innerHTML = "Invalid Username or Password"
+
                 }
             }
         });
+        function hideAlert() {
+            document.getElementById("overlay").style.display = "none";
+            window.location.reload();
+        }
     </script>
 </body>
 
