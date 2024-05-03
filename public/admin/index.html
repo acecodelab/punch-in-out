@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="logo" id="logo-img"><img src="logo_white.png" alt="Your Logo"></div>
+    </header>
+    <div class="login-container">
+        <h2>Admin Panel</h2>
+        <form id="login-form">
+            <div class="input-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit">Login</button>
+        </form>
+    </div>
+    <div id="overlay" class="overlay">
+        <div id="alertBox" class="alert-box">
+            <h2 id="alertHeader">Custom Alert</h2>
+            <p id="alertMessage">This is a custom alert box.</p>
+            <button onclick="hideAlert()">Ok</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 Your Company. All rights reserved.</p>
+    </footer>
+    <script>
+        let userId = '';
+        let username = '';
+        let name = '';
+        let email = '';
+        document.getElementById('login-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+            // You can handle login logic here
+            const enteredUsername = document.getElementById("username").value.trim();
+            const enteredPassword = document.getElementById("password").value.trim();
+
+            // Perform basic client-side validation (replace with backend validation)
+            if (!enteredUsername || !enteredPassword) {
+                alert('Please enter Username and Password');
+                return;
+            }
+
+            // Perform backend authentication (replace with backend API call)
+            const response = await fetch('/loginAdmin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username: enteredUsername, password: enteredPassword })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                userId = result.user_id;
+                name = result.name;
+                username = result.username;
+                email = result.email;
+
+                localStorage.setItem('userId', userId);
+                localStorage.setItem('name', name);
+                localStorage.setItem('username', username);
+                localStorage.setItem('email', email);
+                document.getElementById("username").value = ''
+                document.getElementById("password").value = ''
+
+                window.location.href = "/admin/dashboard.html";
+            } else {
+                if (result.msg) {
+                    document.getElementById("overlay").style.display = "flex";
+                    document.getElementById("alertHeader").innerHTML = name.split(' ')[0]
+                    document.getElementById("alertMessage").innerHTML = "Please try again"
+                }
+                else {
+                    document.getElementById("overlay").style.display = "flex";
+                    document.getElementById("alertHeader").innerHTML = name.split(' ')[0]
+                    document.getElementById("alertMessage").innerHTML = "Invalid Username or Password"
+
+                }
+            }
+        });
+        function hideAlert() {
+            document.getElementById("overlay").style.display = "none";
+            window.location.reload();
+        }
+    </script>
+</body>
+
+
+</html>

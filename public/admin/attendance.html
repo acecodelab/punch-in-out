@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nxtgen Virtue</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+
+        .btn {
+            margin-right: 10px;
+        }
+
+        .reports-container {
+            margin-top: 20px;
+        }
+
+        .report-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Media Query for Mobile */
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 90%;
+                margin-top: 50px;
+                /* Adjust the distance from the top */
+            }
+        }
+
+        .container-fluid {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background-color: #333;
+            color: #fff;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+        }
+
+        .menu-item {
+            padding: 10px 20px;
+            border-bottom: 1px solid #555;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: #555;
+        }
+
+        .dashboard {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            margin-right: 10px;
+        }
+
+        .punch-status {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Hamburger menu styles */
+        .hamburger-menu {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 1001;
+            /* Increased z-index */
+        }
+
+        .hamburger-menu .line {
+            width: 30px;
+            height: 3px;
+            background-color: #ce0101;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.active .line:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger-menu.active .line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active .line:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Style for the overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* semi-transparent black */
+            display: none;
+            /* Hide by default */
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Style for the alert box */
+        .alert-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+                left: -250px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .hamburger-menu {
+                display: block;
+            }
+
+            .totalOutTime {
+                display: none;
+            }
+
+            .hide_button {
+                display: none;
+            }
+
+            .logo-img {
+                visibility: hidden;
+            }
+
+            .logo {
+                visibility: hidden;
+            }
+
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* semi-transparent black */
+            display: none;
+            /* Hide by default */
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Style for the alert box */
+        .alert-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+            animation: slideIn 0.5s;
+        }
+
+        /* Slide in animation */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Style for the button */
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .logo {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        .logo img {
+            width: 200px;
+            /* Adjust width as needed */
+            height: auto;
+            /* Maintain aspect ratio */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+            width: calc(33.33% - 40px);
+            /* Three cards per row */
+            max-width: 300px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 30%;
+            height: auto;
+            object-fit: fill;
+        }
+
+        .card-content {
+            padding: 20px;
+            color: #fff;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @media screen and (max-width: 768px) {
+            .card {
+                width: calc(50% - 20px);
+                /* Two cards per row on tablets */
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .card {
+                width: calc(100% - 20px);
+                /* One card per row on mobile */
+            }
+        }
+
+        /* Your CSS styles for the table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Additional styles for the popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+                <div class="sidebar-sticky">
+                    <div class="logo" id="logo-img"><img src="logo_white.png" alt="Your Logo">
+                        <hr style="background-color: white;">
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item menu-item" onclick="moveToDashboard();">Dashboard</li>
+                        <li class=" nav-item menu-item">Attendance</li>
+                        <li class="nav-item menu-item" onclick="moveToLeave();">Leave Management</li>
+                        <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="form-group">
+                    <select class="form-control" id="userSelect">
+                        <!-- Default "Please select user" option -->
+                        <option value="" disabled selected>Please select user</option>
+                        <!-- Options will be populated via JavaScript -->
+                    </select>
+                </div>
+                <div class="btn-group mb-3 d-flex justify-content-center" role="group" aria-label="Filter options">
+                    <button id="btnToday" type="button" class="btn btn-primary filter-btn"
+                        style="display: none;">Today's
+                        Reports</button>
+                    <button id="btnThisMonth" type="button" class="btn btn-primary filter-btn"
+                        style="display: none;">This
+                        Month's Reports</button>
+                    <button id="btnBetweenDates" type="button" class="btn btn-primary filter-btn"
+                        style="display: none;">Reports
+                        Between Dates</button>
+                </div>
+
+                <!-- Date Range Form (Hidden by default) -->
+                <form id="dateRangeForm" class="form-inline mb-3 justify-content-center" style="display: none;">
+                    <div class="form-group mr-2">
+                        <label for="startDate" class="mr-2">Start Date:</label>
+                        <input type="date" id="startDate" class="form-control" required>
+                    </div>
+                    <div class="form-group mr-2">
+                        <label for="endDate" class="mr-2">End Date:</label>
+                        <input type="date" id="endDate" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Get Reports</button>
+                </form>
+
+                <div id="totalOutTime"></div>
+                <!-- Container for Reports -->
+                <div id="reportsContainer" class="reports-container">
+                    <!-- Reports will be displayed here -->
+                </div>
+                <div id="overlay" class="overlay">
+                    <div id="alertBox" class="alert-box">
+                        <h2 id="alertHeader">Custom Alert</h2>
+                        <p id="alertMessage">This is a custom alert box.</p>
+                        <button onclick="hideAlert('logout')" id="logoutButton" style="display: none;">Ok</button>
+                        <button onclick="hideAlert('ok')" id="okButton" style="display: none;">Ok</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <!-- Buttons for Filter Options -->
+
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Custom JavaScript -->
+    <script>
+        const totalOutTimeDiv = document.getElementById('totalOutTime');
+
+        window.onload = function () {
+            userId = localStorage.getItem('userId');
+            name = localStorage.getItem('name');
+            username = localStorage.getItem('username');
+            email = localStorage.getItem('email');
+            if (!userId || !name || !username || !email) {
+                window.location.href = "/admin/";
+            }
+            else {
+                const user_id = new URLSearchParams(window.location.search).get('user_id');
+                if (user_id) {
+                    document.getElementById("userSelect").style.display = 'none'
+                    fetchReports('today', user_id); // Fetch today's reports for selected user by default
+                    toggleFilterButtons(userId !== ''); // Toggle filter buttons based on user selection     
+                }
+            }
+        };
+
+        // Function to toggle filter buttons based on user selection
+        function toggleFilterButtons(show) {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                if (show) {
+                    button.style.display = 'inline-block';
+                } else {
+                    button.style.display = 'none';
+                }
+            });
+        }
+
+        // Function to fetch reports based on filter and user
+        function fetchReports(filterType, user_id, startDate, endDate) {
+            let url = `/reports/${filterType}?userId=${user_id}`;
+            if (filterType === 'between-dates') {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const reports = data.reports;
+                    const reportsContainer = document.getElementById('reportsContainer');
+                    reportsContainer.innerHTML = ''; // Clear previous reports
+
+                    if (reports.length === 0) {
+                        // If no reports, show a message
+                        const noDataMessage = document.createElement('div');
+                        noDataMessage.classList.add('text-center', 'mt-3', 'text-muted');
+                        noDataMessage.textContent = 'No reports available for this user.';
+                        reportsContainer.appendChild(noDataMessage);
+                        totalOutTimeDiv.textContent = ''
+                    } else {
+                        // Otherwise, display the reports
+                        reports.forEach(report => {
+                            const div = document.createElement('div');
+                            div.classList.add('report-item', 'p-3');
+                            var timestamp = report.timestamp;
+                            var date = new Date(timestamp);
+                            const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
+                                .toString()
+                                .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+
+                            const formattedTime = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+
+                            const formattedDateTime = `${formattedDate} ${formattedTime}`;
+                            div.innerHTML = `<h>${report.punch_type.toUpperCase()}</h> <br> ${formattedDateTime}`;
+                            reportsContainer.appendChild(div);
+                        });
+                        renderTotalOutTime(reports)
+                    }
+
+
+                })
+                .catch(error => console.error('Error fetching reports:', error));
+        }
+
+        // Button Event Listeners
+        document.getElementById('btnToday').addEventListener('click', () => {
+            var user_id = new URLSearchParams(window.location.search).get('user_id');
+            if (!user_id) {
+                user_id = document.getElementById('userSelect').value;
+            }
+            document.getElementById('dateRangeForm').style.display = 'none';
+            fetchReports('today', user_id);
+        });
+
+        document.getElementById('btnThisMonth').addEventListener('click', () => {
+            var user_id = new URLSearchParams(window.location.search).get('user_id');
+            if (!user_id) {
+                user_id = document.getElementById('userSelect').value;
+            }
+            document.getElementById('dateRangeForm').style.display = 'none';
+            fetchReports('this-month', user_id);
+        });
+
+        // Show date range form when 'Reports Between Dates' button is clicked
+        document.getElementById('btnBetweenDates').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'block';
+        });
+
+        // Form Submission for Reports Between Dates
+        document.getElementById('dateRangeForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            var user_id = new URLSearchParams(window.location.search).get('user_id');
+            if (!user_id) {
+                user_id = document.getElementById('userSelect').value;
+            }
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            fetchReports('between-dates', user_id, startDate, endDate);
+        });
+
+        function renderTotalOutTime(punches) {
+            let totalMilliseconds = 0;
+            let lastInTime = null;
+            var reverse_punch = punches.reverse();
+            reverse_punch.forEach(punch => {
+                if (punch.punch_type.toUpperCase() === 'IN') {
+                    lastInTime = new Date(punch.timestamp).getTime();
+                } else if (punch.punch_type.toUpperCase() === 'OUT' && lastInTime !== null) {
+                    const outTime = new Date(punch.timestamp).getTime();
+                    const duration = outTime - lastInTime;
+                    totalMilliseconds += duration;
+
+                    // Display individual duration
+                    const durationSeconds = Math.floor(duration / 1000);
+                    const durationFormatted = formatDuration(durationSeconds);
+                    lastInTime = null;
+                }
+            });
+
+            const totalSeconds = totalMilliseconds / 1000;
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+            totalOutTimeDiv.textContent = `Total Working hours: ${hours}h ${minutes}m ${seconds}s`;
+            if (hours <= 7) {
+                if (minutes >= 30) {
+                    totalOutTimeDiv.style.color = 'red';
+                }
+                else {
+                    totalOutTimeDiv.style.color = 'green';
+                }
+            }
+            else {
+                totalOutTimeDiv.style.color = 'green';
+            }
+        }
+        function formatDuration(totalSeconds) {
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
+
+            return `${hours}h ${minutes}m ${seconds}s`;
+        }
+
+        document.getElementById("hamburgerMenu").addEventListener("click", function () {
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        });
+
+        function clearLocalStorage() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('name');
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('ecived');
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+            document.getElementById("overlay").style.display = "flex";
+            document.getElementById("okButton").style.display = 'block';
+            document.getElementById("alertHeader").innerHTML = "Bye " + name.split(' ')[0]
+            document.getElementById("alertMessage").innerHTML = "Have a nice day"
+        }
+        function moveToAttendance() {
+            window.location.href = '/admin/attendance.html'
+        }
+        function moveToLeave() {
+            window.location.href = '/admin/leave.html'
+        }
+        function moveToDashboard() {
+            window.location.href = '/admin/dashboard.html'
+        }
+        function hideAlert(type) {
+            if (type == 'ok') {
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("okButton").style.display = 'none';
+                window.location.reload();
+            }
+            else if (type == 'logout') {
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("logoutButton").style.display = 'none';
+                window.location.reload();
+            }
+        }
+        // Function to fetch user names
+        function fetchUsers() {
+            fetch('/users')
+                .then(response => response.json())
+                .then(data => {
+                    const userSelect = document.getElementById('userSelect');
+                    userSelect.innerHTML = ''; // Clear existing options
+
+                    // Add default "Please select user" option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.text = 'Please select user';
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    userSelect.appendChild(defaultOption);
+
+                    // Populate options with fetched users
+                    data.users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.text = user.name;
+                        option.value = user.id;
+                        userSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching users:', error));
+        }
+        // Fetch users on page load
+        fetchUsers();
+
+        // User Select Change Event
+        document.getElementById('userSelect').addEventListener('change', (event) => {
+            const user_id = event.target.value;
+            fetchReports('today', user_id); // Fetch today's reports for selected user by default
+            toggleFilterButtons(userId !== ''); // Toggle filter buttons based on user selection
+        });
+    </script>
+</body>
+
+</html>

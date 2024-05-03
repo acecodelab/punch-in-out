@@ -43,6 +43,11 @@ class Punch {
         const user = result.rows[0];
         return user;
     }
+    static async loginAdmin(username, password, usertype) {
+        const result = await pool.query('SELECT * FROM users WHERE username = $1 AND password = $2 AND usertype=$3', [username, password, usertype]);
+        const user = result.rows[0];
+        return user;
+    }
     static async count_punch_in(user_id) {
         const result = await pool.query('SELECT COUNT(*) FROM punches WHERE user_id = $1 AND punch_type = $2 AND date(timestamp) = CURRENT_DATE', [user_id, 'in']);
         const punchCount = parseInt(result.rows[0].count, 10);
@@ -93,6 +98,85 @@ class Punch {
         const checkOpenpunchOut = `WITH LastEntry AS (SELECT user_id, punch_type, timestamp FROM punches WHERE (user_id, timestamp) IN (SELECT user_id, MAX(timestamp) AS max_timestamp FROM punches GROUP BY user_id)) INSERT INTO punches (user_id, punch_type, timestamp) SELECT user_id, 'out', NOW() FROM LastEntry WHERE punch_type = 'in';`;
         await pool.query(checkOpenpunchOut);
         return true;
+    }
+
+    static async todaysDetail() {
+
+        const getUserList = `SELECT 
+        all_statuses.status,
+        COALESCE(counts.user_count, 0) AS user_count
+    FROM (
+        SELECT 
+            punch_status AS status,
+            COUNT(*) AS user_count
+        FROM (
+            SELECT 
+                user_id,
+                CASE 
+                    WHEN punch_type = 'in' THEN 'Online'
+                    WHEN punch_type = 'out' THEN 'Offline'
+                    ELSE 'Unknown'
+                END AS punch_status,
+                ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY id DESC) AS row_num
+            FROM 
+                punches
+            WHERE 
+                date(timestamp) = date(CURRENT_DATE)  -- Filter for today's transactions
+        ) AS sub
+        WHERE 
+            row_num = 1
+        GROUP BY 
+            punch_status
+    ) AS counts
+    RIGHT JOIN (
+        SELECT 'Online' AS status
+        UNION ALL
+        SELECT 'Offline' AS status
+    ) AS all_statuses
+    ON counts.status = all_statuses.status;
+    `;
+        const { rows } = await pool.query(getUserList);
+        return rows;
+    }
+
+    static async todaysDetailMore() {
+
+        const getUserListMOre = `SELECT 
+        p.user_id,
+        u.name,
+        u.email,
+        CASE 
+            WHEN p.punch_type = 'in' THEN 'Online'
+            WHEN p.punch_type = 'out' THEN 'Offline'
+            ELSE 'Unknown'
+        END AS punch_type
+    FROM (
+        SELECT 
+            user_id,
+            punch_type,
+            ROW_NUMBER() OVER (PARTITION BY user_id ORDER BY id DESC) AS row_num
+        FROM 
+            punches
+        WHERE 
+            date(timestamp) = date(CURRENT_DATE)  -- Filter for today's transactions
+    ) AS p
+    LEFT JOIN users u ON p.user_id = u.id
+    WHERE 
+        p.row_num = 1`
+        const { rows } = await pool.query(getUserListMOre);
+        return rows;
+    }
+
+    static async todaysLeaveDetail() {
+        const getUserListMOre = `select count(*) from leave_requests where date(leave_start_date)=date(CURRENT_DATE) and status='Approve'`
+        const { rows } = await pool.query(getUserListMOre);
+        return rows;
+    }
+
+    static async fetchLeaveDetails() {
+        const getUserListMOre = `select t1.*,t2.name from leave_requests t1,users t2 where date(t1.leave_start_date)=date(CURRENT_DATE) and t1.userid=t2.id and t1.status='Approve'`
+        const { rows } = await pool.query(getUserListMOre);
+        return rows;
     }
 }
 

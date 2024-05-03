@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nxtgen Virtue</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .btn {
+            margin-right: 10px;
+        }
+
+        label {
+            margin-bottom: 10px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1,
+        h2 {
+            margin-top: 0;
+        }
+
+        .leave-request-form {
+            margin-bottom: 20px;
+        }
+
+        .leave-request-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .leave-request-form input[type="text"],
+        .leave-request-form select,
+        .leave-request-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-sizing: border-box;
+            padding: 10px;
+            text-indent: 10px;
+        }
+
+        .leave-request-form input[type="submit"] {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .leave-request-form input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .leave-request-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .leave-request {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            transition: transform 0.3s ease;
+        }
+
+        .leave-request:hover {
+            transform: translateY(-5px);
+        }
+
+        .leave-request .leave-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .leave-request .leave-actions button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .leave-request .leave-actions button:hover {
+            background-color: #ddd;
+        }
+
+        .calendar-container {
+            position: relative;
+        }
+
+        .calendar-container .flatpickr-calendar {
+            position: absolute;
+            top: 40px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            z-index: 1000;
+        }
+
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 90%;
+                margin: 10px auto;
+                padding: 10px;
+            }
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Media Query for Mobile */
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 90%;
+                margin-top: 50px;
+                /* Adjust the distance from the top */
+            }
+        }
+
+        .container-fluid {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background-color: #333;
+            color: #fff;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+        }
+
+        .menu-item {
+            padding: 10px 20px;
+            border-bottom: 1px solid #555;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: #555;
+        }
+
+        .dashboard {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            margin-right: 10px;
+        }
+
+        .punch-status {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Hamburger menu styles */
+        .hamburger-menu {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 1001;
+            /* Increased z-index */
+        }
+
+        .hamburger-menu .line {
+            width: 30px;
+            height: 3px;
+            background-color: #ce0101;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.active .line:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger-menu.active .line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active .line:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Style for the overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* semi-transparent black */
+            display: none;
+            /* Hide by default */
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Style for the alert box */
+        .alert-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+                left: -250px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .hamburger-menu {
+                display: block;
+            }
+
+            .totalOutTime {
+                display: none;
+            }
+
+            .hide_button {
+                display: none;
+            }
+
+            .logo-img {
+                visibility: hidden;
+            }
+
+            .logo {
+                visibility: hidden;
+            }
+
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* semi-transparent black */
+            display: none;
+            /* Hide by default */
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Style for the alert box */
+        .alert-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+            animation: slideIn 0.5s;
+        }
+
+        /* Slide in animation */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Style for the button */
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .logo {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        .logo img {
+            width: 200px;
+            /* Adjust width as needed */
+            height: auto;
+            /* Maintain aspect ratio */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+            width: calc(33.33% - 40px);
+            /* Three cards per row */
+            max-width: 300px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 30%;
+            height: auto;
+            object-fit: fill;
+        }
+
+        .card-content {
+            padding: 20px;
+            color: #fff;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @media screen and (max-width: 768px) {
+            .card {
+                width: calc(50% - 20px);
+                /* Two cards per row on tablets */
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .card {
+                width: calc(100% - 20px);
+                /* One card per row on mobile */
+            }
+        }
+
+        /* Your CSS styles for the table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Additional styles for the popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        /* Apply responsive styles */
+        @media screen and (max-width: 600px) {
+            table {
+                border: 0;
+            }
+
+            table caption {
+                font-size: 1.3em;
+            }
+
+            table thead {
+                display: none;
+            }
+
+            table tr {
+                border-bottom: 3px solid #ddd;
+                display: block;
+                margin-bottom: .625em;
+            }
+
+            table td {
+                border-bottom: 0;
+                display: block;
+                text-align: right;
+            }
+
+            table td::before {
+                content: attr(data-label);
+                font-weight: bold;
+                float: left;
+                text-transform: uppercase;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+                <div class="sidebar-sticky">
+                    <div class="logo" id="logo-img"><img src="logo_white.png" alt="Your Logo">
+                        <hr style="background-color: white;">
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item menu-item" onclick="moveToDashboard();">Dashboard</li>
+                        <li class=" nav-item menu-item" onclick="moveToAttendance()">Attendance</li>
+                        <li class="nav-item menu-item" onclick="moveToLeave();">Leave Management</li>
+                        <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
+                    </ul>
+                </div>
+            </nav>
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+                <table>
+                    <caption>Today's Leave</caption>
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Leave Type</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table-body">
+                        <tr>
+                            <td data-label="Month">January</td>
+                            <td data-label="Savings">$100</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Month">February</td>
+                            <td data-label="Savings">$150</td>
+                        </tr>
+                        <tr>
+                            <td data-label="Month">March</td>
+                            <td data-label="Savings">$200</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="form-group" style="margin-top: 10px;">
+                    <select class="form-control" id="userSelect">
+                        <!-- Default "Please select user" option -->
+                        <option value="" disabled selected>Please select user</option>
+                        <!-- Options will be populated via JavaScript -->
+                    </select>
+                </div>
+
+                <div id="filter_button_div" style="display: none;">
+                    <!-- Buttons for Filter Options -->
+                    <div class="btn-group mb-3 d-flex justify-content-center inner" role="group"
+                        aria-label="Filter options">
+                        <button id="btnToday" type="button" class="btn btn-primary filter-btn"
+                            style="display: block;">Today's
+                            Request</button>
+                        <button id="btnThisMonth" type="button" class="btn btn-primary filter-btn"
+                            style="display: block;">
+                            Month's Request</button>
+                        <button id="btnBetweenDates" type="button" class="btn btn-primary filter-btn"
+                            style="display: block;">
+                            Request b/w Dates</button>
+                    </div>
+                    <!-- Date Range Form (Hidden by default) -->
+                    <form id="dateRangeForm" class="form-inline mb-3 justify-content-center" style="display: none;">
+                        <div class="form-group mr-2">
+                            <label for="startDate" class="mr-2">Start Date:</label>
+                            <input type="date" id="startDate" class="form-control" required>
+                        </div>
+                        <div class="form-group mr-2">
+                            <label for="endDate" class="mr-2">End Date:</label>
+                            <input type="date" id="endDate" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Get Reports</button>
+                    </form>
+                </div>
+
+                <ul class="leave-request-counts">
+                    <!-- Leave requests will be dynamically added here -->
+                </ul>
+                <ul class="leave-request-list" id="list_request">
+                    <!-- Leave requests will be dynamically added here -->
+                </ul>
+                <div id="no_request" style="display: none;">
+                    <p>No Request Found</p>
+                </div>
+                <div id="overlay" class="overlay">
+                    <div id="alertBox" class="alert-box">
+                        <h2 id="alertHeader">Custom Alert</h2>
+                        <p id="alertMessage">This is a custom alert box.</p>
+                        <button onclick="hideAlert('logout')" id="logoutButton" style="display: none;">Ok</button>
+                        <button onclick="hideAlert('ok')" id="okButton" style="display: none;">Ok</button>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        window.onload = function () {
+            userId = localStorage.getItem('userId');
+            name = localStorage.getItem('name');
+            username = localStorage.getItem('username');
+            email = localStorage.getItem('email');
+            if (!userId || !name || !username || !email) {
+                window.location.href = "/admin/";
+            }
+            else {
+                const user_id = new URLSearchParams(window.location.search).get('user_id');
+                if (user_id) {
+                    document.getElementById("userSelect").style.display = 'none'
+                }
+            }
+        };
+        // Function to fetch user names
+        function fetchUsers() {
+            fetch('/users')
+                .then(response => response.json())
+                .then(data => {
+                    const userSelect = document.getElementById('userSelect');
+                    userSelect.innerHTML = ''; // Clear existing options
+
+                    // Add default "Please select user" option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.text = 'Please select user';
+                    defaultOption.disabled = true;
+                    defaultOption.selected = true;
+                    userSelect.appendChild(defaultOption);
+
+                    // Populate options with fetched users
+                    data.users.forEach(user => {
+                        const option = document.createElement('option');
+                        option.text = user.name;
+                        option.value = user.id;
+                        userSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching users:', error));
+        }
+        fetchUsers();
+
+        function fetchLeaveDetails() {
+            fetch('/fetchLeaveDetails')
+                .then(response => response.json())
+                .then(data => {
+                    data = data.data
+                    var tableBody = document.getElementById("table-body");
+                    tableBody.innerHTML = ""; // Clear previous data
+                    data.forEach(function (row) {
+                        var newRow = "<tr><td data-label='Month'>" + row.name + "</td><td data-label='Savings'>" + row.leave_type + "</td></tr>";
+                        tableBody.innerHTML += newRow;
+                    });
+                })
+                .catch(error => console.error('Error fetching users:', error));
+        }
+        fetchLeaveDetails();
+
+        document.getElementById('userSelect').addEventListener('change', (event) => {
+            const userId = event.target.value;
+            const selectedUser = event.target.options[event.target.selectedIndex].text;
+            getLeaveRequest(userId); // Fetch today's reports for selected user by default
+        });
+
+        // Simulated leave requests data
+        var leaveRequests = [];
+        var totalCount = [];
+
+        async function getLeaveRequest(userId) {
+            leaveRequests = []
+            totalCount = []
+            const response = await fetch(`/allLeaveRequests/${userId}`);
+            const result = await response.json();
+            if (result.data.length > 0) {
+                for (let i = 0; i < result.data.length; i++) {
+                    var date_ = result.data[i].leave_start_date.split('T')[0]
+                    leaveRequests.push({
+                        id: result.data[i].id, employeeName: result.data[i].name, leaveType: result.data[i].leave_type, leave_start_date: date_, reason: result.data[i].reason, status: result.data[i].status
+                    })
+                }
+
+                for (let i = 0; i < result.dataCount.length; i++) {
+                    var count = result.dataCount[i].count
+                    var status = result.dataCount[i].status
+                    totalCount.push({
+                        count: count, status: status,
+                    })
+                }
+            }
+            else {
+                leaveRequests = []
+                totalCount = []
+            }
+            // Initial rendering of leave requests
+            renderLeaveRequests();
+        }
+        // Function to render leave requests
+        function renderLeaveRequests() {
+            const leaveRequestList = document.querySelector('.leave-request-list');
+            leaveRequestList.innerHTML = '';
+
+            const leaveRequestCount = document.querySelector('.leave-request-counts');
+            leaveRequestCount.innerHTML = '';
+            if (leaveRequests.length == 0) {
+                document.getElementById('filter_button_div').style.display = 'none';
+                document.getElementById("no_request").style.display = 'block'
+            }
+            else {
+                document.getElementById('filter_button_div').style.display = 'block';
+                document.getElementById("no_request").style.display = 'none'
+            }
+            totalCount.forEach(request => {
+                const leaveRequestItemCount = document.createElement('li');
+                leaveRequestItemCount.classList.add('leave-request');
+                if (request.status == 'Approve') {
+                    leaveRequestItemCount.style.backgroundColor = 'green'
+                }
+                else if (request.status == 'Reject') {
+                    leaveRequestItemCount.style.backgroundColor = 'red'
+                }
+                else if (request.status == 'Pending') {
+                    leaveRequestItemCount.style.backgroundColor = 'grey'
+                }
+                else {
+                    leaveRequestItemCount.style.backgroundColor = 'blue'
+                }
+                leaveRequestItemCount.innerHTML = `
+                <div class="leave-info">
+                    <div style="color:white">
+                        <strong>Status:</strong> ${request.status}(${request.count})<br>
+                    </div>
+                </div>
+            `;
+                leaveRequestCount.appendChild(leaveRequestItemCount);
+            });
+
+            leaveRequests.forEach(request => {
+                const leaveRequestItem = document.createElement('li');
+                leaveRequestItem.classList.add('leave-request');
+                leaveRequestItem.innerHTML = `
+                <div class="leave-info">
+                    <div>
+                        <strong>Employee Name:</strong> ${request.employeeName}<br>
+                        <strong>Leave Type:</strong> ${request.leaveType}<br>
+                        <strong>Date:</strong> ${request.leave_start_date}<br>
+                        <strong>Reason:</strong> ${request.reason}<br>
+                        <strong>Status:</strong> ${request.status}
+                    </div>
+                    <div class="leave-actions">
+                        <button style="margin-bottom:10px;width:100%;background-color:green;color:white;  ${request.status !== 'Pending' ? 'display:none;' : ''}" onclick="approveRequest(${request.id})" ${request.status !== 'Pending' ? 'disabled' : ''}>Approve</button>
+                        <button style="margin-bottom:10px;width:100%;background-color:red;color:white; ${request.status !== 'Pending' ? 'display:none;' : ''}" onclick="rejectRequest(${request.id})" ${request.status !== 'Pending' ? 'disabled' : ''}>Reject</button>
+                    </div>
+                </div>
+            `;
+                leaveRequestList.appendChild(leaveRequestItem);
+            });
+        }
+
+        // Function to approve a leave request
+        async function approveRequest(id) {
+            const response = await fetch(`/approveLeaveRequest/${id}`);
+            const result = await response.json();
+            if (result.status) {
+                alert('Request approved successfully')
+                window.location.reload();
+            }
+            else {
+                alert('Something went wrong')
+            }
+        }
+
+        // Function to reject a leave request
+        async function rejectRequest(id) {
+            const response = await fetch(`/rejectLeaveRequest/${id}`);
+            const result = await response.json();
+            if (result.status) {
+                alert('Request approved successfully')
+                window.location.reload();
+            }
+            else {
+                alert('Something went wrong')
+            }
+        }
+
+        // Initialize flatpickr
+        const leaveStartDatePicker = flatpickr("#leaveStartDate", {
+            enableTime: false,
+            dateFormat: "Y-m-d",
+        });
+
+        // Button Event Listeners
+        document.getElementById('btnToday').addEventListener('click', () => {
+            const userId = document.getElementById('userSelect').value;
+            document.getElementById("dateRangeForm").style.display = 'none'
+            getLeaveRequestFilter('today', userId);
+        });
+
+        document.getElementById('btnThisMonth').addEventListener('click', () => {
+            const userId = document.getElementById('userSelect').value;
+            document.getElementById("dateRangeForm").style.display = 'none'
+            getLeaveRequestFilter('this-month', userId);
+        });
+
+        // Show date range form when 'Reports Between Dates' button is clicked
+        document.getElementById('btnBetweenDates').addEventListener('click', () => {
+            document.getElementById('dateRangeForm').style.display = 'block';
+        });
+
+        // Form Submission for Reports Between Dates
+        document.getElementById('dateRangeForm').addEventListener('submit', (event) => {
+            event.preventDefault();
+            const userId = document.getElementById('userSelect').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            getLeaveRequestFilter('between-dates', userId, startDate, endDate);
+        });
+
+        async function getLeaveRequestFilter(filterType, userId, startDate, endDate) {
+            leaveRequests = []
+            totalCount = []
+            let url = `/allLeaveRequest/${filterType}?userId=${userId}`;
+            if (filterType === 'between-dates') {
+                url += `&startDate=${startDate}&endDate=${endDate}`;
+            }
+            var response = await fetch(url)
+            const result = await response.json();
+            console.log(result)
+            if (result.data.length > 0) {
+                for (let i = 0; i < result.data.length; i++) {
+                    var date_ = result.data[i].leave_start_date.split('T')[0]
+                    leaveRequests.push({
+                        id: result.data[i].id, employeeName: result.data[i].name, leaveType: result.data[i].leave_type, leave_start_date: date_, reason: result.data[i].reason, status: result.data[i].status
+                    })
+                }
+                for (let i = 0; i < result.dataCount.length; i++) {
+                    var count = result.dataCount[i].count
+                    var status = result.dataCount[i].status
+                    totalCount.push({
+                        count: count, status: status,
+                    })
+                }
+            }
+            else {
+                leaveRequests = []
+                totalCount = []
+            }
+            renderLeaveRequests();
+            document.getElementById('filter_button_div').style.display = 'block';
+            document.getElementById("no_request").style.display = 'none'
+        }
+
+        document.getElementById("hamburgerMenu").addEventListener("click", function () {
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        });
+
+        function clearLocalStorage() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('name');
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('ecived');
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+            document.getElementById("overlay").style.display = "flex";
+            document.getElementById("okButton").style.display = 'block';
+            document.getElementById("alertHeader").innerHTML = "Bye " + name.split(' ')[0]
+            document.getElementById("alertMessage").innerHTML = "Have a nice day"
+        }
+        function moveToAttendance() {
+            window.location.href = '/admin/attendance.html'
+        }
+        function moveToDashboard() {
+            window.location.href = '/admin/dashboard.html'
+        }
+        function hideAlert(type) {
+            if (type == 'ok') {
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("okButton").style.display = 'none';
+                window.location.reload();
+            }
+            else if (type == 'logout') {
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("logoutButton").style.display = 'none';
+                window.location.reload();
+            }
+        }
+    </script>
+</body>
+
+</html>

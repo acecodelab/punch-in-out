@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nxtgen Virtue</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Media Query for Mobile */
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 90%;
+                margin-top: 50px;
+                /* Adjust the distance from the top */
+            }
+        }
+
+        .container-fluid {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background-color: #333;
+            color: #fff;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+        }
+
+        .menu-item {
+            padding: 10px 20px;
+            border-bottom: 1px solid #555;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: #555;
+        }
+
+        .dashboard {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            margin-right: 10px;
+        }
+
+        .punch-status {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Hamburger menu styles */
+        .hamburger-menu {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 1001;
+            /* Increased z-index */
+        }
+
+        .hamburger-menu .line {
+            width: 30px;
+            height: 3px;
+            background-color: #ce0101;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.active .line:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger-menu.active .line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active .line:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Style for the overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* semi-transparent black */
+            display: none;
+            /* Hide by default */
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Style for the alert box */
+        .alert-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+                left: -250px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .hamburger-menu {
+                display: block;
+            }
+
+            .totalOutTime {
+                display: none;
+            }
+
+            .hide_button {
+                display: none;
+            }
+
+            .logo-img {
+                visibility: hidden;
+            }
+
+            .logo {
+                visibility: hidden;
+            }
+
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* semi-transparent black */
+            display: none;
+            /* Hide by default */
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Style for the alert box */
+        .alert-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+            animation: slideIn 0.5s;
+        }
+
+        /* Slide in animation */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Style for the button */
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .logo {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        .logo img {
+            width: 200px;
+            /* Adjust width as needed */
+            height: auto;
+            /* Maintain aspect ratio */
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+            overflow: hidden;
+            width: calc(33.33% - 40px);
+            /* Three cards per row */
+            max-width: 300px;
+            transition: transform 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card img {
+            width: 30%;
+            height: auto;
+            object-fit: fill;
+        }
+
+        .card-content {
+            padding: 20px;
+            color: #fff;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 20px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        @media screen and (max-width: 768px) {
+            .card {
+                width: calc(50% - 20px);
+                /* Two cards per row on tablets */
+            }
+        }
+
+        @media screen and (max-width: 480px) {
+            .card {
+                width: calc(100% - 20px);
+                /* One card per row on mobile */
+            }
+        }
+
+        /* Your CSS styles for the table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Additional styles for the popup */
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+                <div class="sidebar-sticky">
+                    <div class="logo" id="logo-img"><img src="logo_white.png" alt="Your Logo">
+                        <hr style="background-color: white;">
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item menu-item">Dashboard</li>
+                        <li class=" nav-item menu-item" onclick="moveToAttendance();">Attendance</li>
+                        <li class="nav-item menu-item" onclick="moveToLeave();">Leave Management</li>
+                        <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
+                    </ul>
+                </div>
+            </nav>
+            <!-- Main Content -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="container">
+                    <div class="card" style=" background: linear-gradient(to right top, #12d226, #fff);">
+                        <img src="online.png" alt="Logo 1">
+                        <div class="card-content">
+                            <h2 class="card-title">Employee Status</h2>
+                            <p class="card-description" id="online_employee"></p>
+                            <p class="card-description" id="offline_employee" style="color: RED;"></p>
+                            <button onclick="moreDetailsEmployee();">More Details</button>
+                        </div>
+                    </div>
+
+                    <div class="card" style=" background: linear-gradient(to right top, #ff0006, #fff);">
+                        <img src="leave.png" alt="Logo 2">
+                        <div class="card-content">
+                            <h2 class="card-title">On Leave</h2>
+                            <p class="card-description" id="todayOnLeave"></p>
+                            <button onclick="moreDetailsLeave();" style="background-color: #440102;">More
+                                Details</button>
+                        </div>
+                    </div>
+
+                    <div class="card" style=" background: linear-gradient(to right top, #1456d9, #fff);">
+                        <img src="attendance.png" alt="Logo 3">
+                        <div class="card-content">
+                            <h2 class="card-title">Attendance</h2>
+                            <p class="card-description">Check employee attendance</p>
+                            <button onclick="moreDetailsAttendance();" style="background-color: #0458b1;">More
+                                Details</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="popup-overlay" id="popupOverlay"></div>
+
+                <div class="popup" id="popupTable">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>More Details</th>
+                                <th>Punch Out</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+                    <br>
+                    <button id="closePopup">Close</button>
+                </div>
+                <div id="overlay" class="overlay">
+                    <div id="alertBox" class="alert-box">
+                        <h2 id="alertHeader">Custom Alert</h2>
+                        <p id="alertMessage">This is a custom alert box.</p>
+                        <button onclick="hideAlert('logout')" id="logoutButton" style="display: none;">Ok</button>
+                        <button onclick="hideAlert('ok')" id="okButton" style="display: none;">Ok</button>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+</body>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    const closePopupBtn = document.getElementById('closePopup');
+    const popupOverlay = document.getElementById('popupOverlay');
+    const popupTable = document.getElementById('popupTable');
+
+    let userId = '';
+    let username = '';
+    let name = '';
+    let email = '';
+    window.onload = function () {
+        userId = localStorage.getItem('userId');
+        name = localStorage.getItem('name');
+        username = localStorage.getItem('username');
+        email = localStorage.getItem('email');
+        if (!userId || !name || !username || !email) {
+            window.location.href = "/user/";
+        }
+    };
+
+    document.getElementById("hamburgerMenu").addEventListener("click", function () {
+        var sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("active");
+    });
+
+    function clearLocalStorage() {
+        localStorage.removeItem('userId');
+        localStorage.removeItem('name');
+        localStorage.removeItem('username');
+        localStorage.removeItem('email');
+        localStorage.removeItem('ecived');
+        var sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("active");
+        document.getElementById("overlay").style.display = "flex";
+        document.getElementById("okButton").style.display = 'block';
+        document.getElementById("alertHeader").innerHTML = "Bye " + name.split(' ')[0]
+        document.getElementById("alertMessage").innerHTML = "Have a nice day"
+    }
+    function moveToAttendance() {
+        window.location.href = '/admin/attendance.html'
+    }
+    function moveToLeave() {
+        window.location.href = '/admin/leave.html'
+    }
+    function hideAlert(type) {
+        if (type == 'ok') {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("okButton").style.display = 'none';
+            window.location.reload();
+        }
+        else if (type == 'logout') {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("logoutButton").style.display = 'none';
+            window.location.reload();
+        }
+    }
+
+    function fetchUsers() {
+        fetch('/todaysDetail')
+            .then(response => response.json())
+            .then(data => {
+                for (let i = 0; i < data.data.length; i++) {
+                    if (data.data[i].status == 'Online') {
+                        document.getElementById("online_employee").innerHTML = "Online : " + data.data[i].user_count
+                    }
+                    else if (data.data[i].status == 'Offline') {
+                        document.getElementById("offline_employee").innerHTML = "Offline : " + data.data[i].user_count
+                    }
+                }
+            })
+            .catch(error => console.error('Error fetching users:', error));
+
+        fetch('/todaysLeaveDetail')
+            .then(response => response.json())
+            .then(data => {
+                if (data.data.length > 0) {
+                    var count = data.data[0].count;
+                    document.getElementById("todayOnLeave").innerHTML = "Total :" + count
+                }
+                else {
+                    document.getElementById("todayOnLeave").innerHTML = "Total :" + ' 0'
+                }
+
+            })
+            .catch(error => console.error('Error fetching users:', error));
+
+    }
+    fetchUsers();
+
+    function moreDetailsEmployee() {
+        fetch('/todaysDetailMore')
+            .then(response => response.json())
+            .then(data => {
+                data = data.data
+                popupTable.style.display = 'block';
+                popupOverlay.style.display = 'block';
+
+                const tbody = document.querySelector('#popupTable tbody');
+                tbody.innerHTML = '';
+                data.forEach(item => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>${item.punch_type}</td>
+                    <td><button  value=${item.user_id} onclick="moreDetails(${item.user_id});">Click Here</button></td>
+                    ${item.punch_type == 'Online' ? ` <td><button onclick="punchOut(${item.user_id},'${item.email}');">Click Here</button></td>` : ''}
+                   
+            `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => console.error('Error fetching users:', error));
+    }
+
+    function moreDetailsAttendance() {
+        window.location.href = '/admin/attendance.html'
+    }
+
+    function moreDetailsLeave() {
+        window.location.href = '/admin/leave.html'
+    }
+    async function punchOut(user_id, email) {
+        var type = 'out';
+        const response = await fetch(`/punch/${type}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ user_id: user_id, email: email })
+        });
+
+        const result = await response.json();
+
+        if (result.success && result.error == null) {
+            popupTable.style.display = 'none';
+            popupOverlay.style.display = 'none';
+            document.getElementById("overlay").style.display = "flex";
+            document.getElementById("alertHeader").innerHTML = "Punch Out"
+            document.getElementById("alertMessage").innerHTML = "Action Completed"
+            document.getElementById("okButton").style.display = 'block';
+
+        } else if (result.success && result.error != null) {
+
+            alert(result.error);
+        } else {
+            alert('Error: ' + result.error);
+        }
+    }
+
+    async function moreDetails(user_id) {
+        window.location.href = '/admin/attendance.html?user_id=' + user_id
+    }
+    closePopupBtn.addEventListener('click', function () {
+        popupTable.style.display = 'none';
+        popupOverlay.style.display = 'none';
+    });
+
+
+</script>
+
+</html>

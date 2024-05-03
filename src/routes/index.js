@@ -2,7 +2,7 @@
 const express = require('express');
 const router = express.Router();
 const { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month,
-    getUserList, updatePassword } = require('../controllers/punchController');
+    getUserList, updatePassword, loginAdmin, todaysDetail, todaysDetailMore, todaysLeaveDetail, fetchLeaveDetails } = require('../controllers/punchController');
 const { submitLeave, myLeaveRequests, approveLeave, rejectLeave, getRequests,
     cancelLeaveRequest, allLeaveRequeststoday, allLeaveRequeststhis_month,
     allLeaveRequestsbetween_month } = require('../controllers/leaveController');
@@ -16,7 +16,8 @@ router.post('/punch/out', Middleware.restrictAccessByIP, punchOut);
 // Get Punches and Total Out Time for a User
 router.get('/punches/:user_id', Middleware.restrictAccessByIP, getPunchHistory);
 //LOGIN MIDDLEWARE 
-router.post('/login', Middleware.restrictAccessByIP, login);
+router.post('/login', login);
+router.post('/loginAdmin', loginAdmin);
 //Update Password
 router.post('/updatePassword', updatePassword);
 
@@ -30,6 +31,11 @@ router.get('/reports/this-month', this_month);
 router.get('/reports/between-dates', between_month);
 //User list
 router.get('/users', getUserList);
+
+router.get('/todaysDetail', todaysDetail);
+router.get('/todaysDetailMore', todaysDetailMore);
+router.get('/todaysLeaveDetail', todaysLeaveDetail)
+
 
 
 //EMPLOYEE Leaves API 
@@ -53,5 +59,7 @@ router.get('/allLeaveRequest/today', allLeaveRequeststoday);
 router.get('/allLeaveRequest/this-month', allLeaveRequeststhis_month);
 // Reports between two dates
 router.get('/allLeaveRequest/between-dates', allLeaveRequestsbetween_month);
+
+router.get('/fetchLeaveDetails', fetchLeaveDetails)
 
 module.exports = router;

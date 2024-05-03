@@ -144,6 +144,24 @@ const login = async (req, res) => {
     }
 }
 
+const loginAdmin = async (req, res) => {
+    const { username, password } = req.body;
+
+    try {
+        const user = await Punch.loginAdmin(username, password, 'admin')
+        if (user) {
+            // Successful login
+            res.json({ success: true, user_id: user.id, name: user.name, username: user.username, email: user.email });
+        } else {
+            // Invalid credentials
+            res.status(401).json({ success: false, error: 'Invalid username or password' });
+        }
+    } catch (error) {
+        console.error('Error during login:', error.message);
+        res.status(500).json({ success: false, error: 'Internal server error' });
+    }
+}
+
 const today = async (req, res) => {
     const { userId } = req.query;
     const data = await Punch.today(userId)
@@ -212,4 +230,48 @@ function isSevenPMOrLater() {
     // Check if the current hour is 7 or later
     return currentHour >= 19;
 }
-module.exports = { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month, getUserList, updatePassword, punchOutNow };
+
+const todaysDetail = async (req, res) => {
+    const data = await Punch.todaysDetail();
+    if (data) {
+        res.json({ "data": data });
+    }
+    else {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+const todaysDetailMore = async (req, res) => {
+    const data = await Punch.todaysDetailMore();
+    if (data) {
+        res.json({ "data": data });
+    }
+    else {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+const todaysLeaveDetail = async (req, res) => {
+    const data = await Punch.todaysLeaveDetail();
+    if (data) {
+        res.json({ "data": data });
+    }
+    else {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+const fetchLeaveDetails = async (req, res) => {
+    const data = await Punch.fetchLeaveDetails();
+    if (data) {
+        res.json({ "data": data });
+    }
+    else {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+module.exports = {
+    punchIn, punchOut, getPunchHistory, login, today, this_month, between_month,
+    getUserList, updatePassword, punchOutNow, loginAdmin, todaysDetail, todaysDetailMore,
+    todaysLeaveDetail, fetchLeaveDetails
+};
