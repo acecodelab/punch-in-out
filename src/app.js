@@ -11,11 +11,18 @@ app.use(useragent.express());
 // Schedule cron job to run at 7:00 PM daily
 cron.schedule('0 19 * * *', async () => {
     await punchOut.punchOutNow();
-    console.log('Punch Out Time');
+    console.log('Punch Out Office over Time');
 }, {
     timezone: 'Asia/Kolkata' // Specify your timezone, e.g., 'Asia/Kolkata'
 });
 
+// Schedule the task to run at 1:30 PM every day
+cron.schedule('30 13 * * *', async () => {
+    await punchOut.punchOutNow();
+    console.log('Punch Out Lunch Time');
+}, {
+    timezone: 'Asia/Kolkata' // Specify your timezone, e.g., 'Asia/Kolkata'
+});
 
 // Middleware
 app.use(cors());
