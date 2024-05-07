@@ -76,7 +76,7 @@ class Punch {
     }
 
     static async getUserList() {
-        const getUserList = 'SELECT * from users';
+        const getUserList = `SELECT * from users where usertype='employee' and status='active'`;
         const { rows } = await pool.query(getUserList);
         return rows;
     }
