@@ -37,7 +37,7 @@ const punchIn = async (req, res) => {
             type = 'Normal'
         }
         const punchCount = await Punch.count_punch_in(user_id)
-        if (punchCount >= 4) {
+        if (punchCount >= 9) {
             // Create a transporter using Gmail SMTP
             const transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',
