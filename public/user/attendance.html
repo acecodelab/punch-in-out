@@ -538,14 +538,20 @@
             });
 
             const totalSeconds = totalMilliseconds / 1000;
-            const hours = Math.floor(totalSeconds / 3600);
-            const minutes = Math.floor((totalSeconds % 3600) / 60);
-            const seconds = Math.floor(totalSeconds % 60);
+            var hours = Math.floor(totalSeconds / 3600);
+            var minutes = Math.floor((totalSeconds % 3600) / 60);
+            var seconds = Math.floor(totalSeconds % 60);
             punches.reverse();
             if (type == 'today') {
-                console.log("Hii")
                 if (punches[0].punch_type === 'IN') {
-                    startTimerOffice(hours, minutes, seconds);
+                    var databaseDateTime = new Date(punches[0].timestamp);
+                    var currentTime = new Date();
+                    var difference = currentTime - databaseDateTime;
+
+                    var hoursOffice = Math.floor(difference / 3600000); // 1 hour = 3600000 milliseconds
+                    var minutesOffice = Math.floor((difference % 3600000) / 60000); // 1 minute = 60000 milliseconds
+                    var secondsOffice = Math.floor(((difference % 3600000) % 60000) / 1000); // 
+                    startTimerOffice(hoursOffice, minutesOffice, secondsOffice);
                 }
             }
             else if (type == 'month') {
@@ -644,7 +650,6 @@
 
         // Update countdown display every second
         const countdownInterval = setInterval(updateCountdown, 1000);
-
 
         function startTimerOffice(startHours, startMinutes, startSeconds) {
             let seconds = startSeconds || 0;
