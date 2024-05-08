@@ -333,7 +333,6 @@
         let email = '';
         var dummyPunchHistory = [];
         var dummyPunchHistoryMonth = [];
-        let intervalId;
         let intervalIdOfice;
 
         window.onload = function () {
@@ -455,22 +454,12 @@
                         btn.innerText = "Punch Out";
                         btn.classList.remove("btn-primary");
                         btn.classList.add("btn-danger");
-                        var databaseDateTime = new Date(dummyPunchHistory[0].timestamp);
-                        var currentTime = new Date();
-                        var difference = currentTime - databaseDateTime;
-
-                        var hours = Math.floor(difference / 3600000); // 1 hour = 3600000 milliseconds
-                        var minutes = Math.floor((difference % 3600000) / 60000); // 1 minute = 60000 milliseconds
-                        var seconds = Math.floor(((difference % 3600000) % 60000) / 1000); // 
-                        startTimer(hours, minutes, seconds);
-
                     }
                     else if (dummyPunchHistory[0].punch_type == 'OUT') {
                         document.getElementById("punchBtn").style.display = 'block'
                         btn.innerText = "Punch In";
                         btn.classList.remove("btn-danger");
                         btn.classList.add("btn-primary");
-                        stopTimer();
                         stopTimerOffice()
                     }
                 }
@@ -558,7 +547,6 @@
                 if (punches[0].punch_type === 'IN') {
                     startTimerOffice(hours, minutes, seconds);
                 }
-                //totalOutTimeDiv.textContent = `Today's office working hours: ${hours}h ${minutes}m ${seconds}s`;
             }
             else if (type == 'month') {
                 document.getElementById("total_time_till_now").textContent = `Monthly office working hours: ${hours}h ${minutes}m ${seconds}s`
@@ -657,31 +645,6 @@
         // Update countdown display every second
         const countdownInterval = setInterval(updateCountdown, 1000);
 
-
-        function startTimer(startHours, startMinutes, startSeconds) {
-            let seconds = startSeconds || 0;
-            let minutes = startMinutes || 0;
-            let hours = startHours || 0;
-
-            intervalId = setInterval(function () {
-                seconds++;
-                if (seconds === 60) {
-                    seconds = 0;
-                    minutes++;
-                    if (minutes === 60) {
-                        minutes = 0;
-                        hours++;
-                    }
-                }
-
-                const formattedTime = "Last punch in before: " + pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
-                document.getElementById("timer").textContent = formattedTime;
-            }, 1000);
-        }
-
-        function stopTimer() {
-            clearInterval(intervalId);
-        }
 
         function startTimerOffice(startHours, startMinutes, startSeconds) {
             let seconds = startSeconds || 0;
