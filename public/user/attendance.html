@@ -333,7 +333,7 @@
         let email = '';
         var dummyPunchHistory = [];
         var dummyPunchHistoryMonth = [];
-        let intervalIdOfice;
+        let intervalId;
 
         window.onload = function () {
             userId = localStorage.getItem('userId');
@@ -454,13 +454,21 @@
                         btn.innerText = "Punch Out";
                         btn.classList.remove("btn-primary");
                         btn.classList.add("btn-danger");
+                        var databaseDateTime = new Date(dummyPunchHistory[0].timestamp);
+                        var currentTime = new Date();
+                        var difference = currentTime - databaseDateTime;
+
+                        var hours = Math.floor(difference / 3600000); // 1 hour = 3600000 milliseconds
+                        var minutes = Math.floor((difference % 3600000) / 60000); // 1 minute = 60000 milliseconds
+                        var seconds = Math.floor(((difference % 3600000) % 60000) / 1000); // 
+                        startTimer(hours, minutes, seconds);
                     }
                     else if (dummyPunchHistory[0].punch_type == 'OUT') {
                         document.getElementById("punchBtn").style.display = 'block'
                         btn.innerText = "Punch In";
                         btn.classList.remove("btn-danger");
                         btn.classList.add("btn-primary");
-                        stopTimerOffice()
+                        stopTimer();
                     }
                 }
                 renderPunchHistory(dummyPunchHistory, 1);
@@ -538,22 +546,12 @@
             });
 
             const totalSeconds = totalMilliseconds / 1000;
-            var hours = Math.floor(totalSeconds / 3600);
-            var minutes = Math.floor((totalSeconds % 3600) / 60);
-            var seconds = Math.floor(totalSeconds % 60);
-            punches.reverse();
-            if (type == 'today') {
-                if (punches[0].punch_type === 'IN') {
-                    var databaseDateTime = new Date(punches[(punches.length - 1)].timestamp);
-                    console.log(databaseDateTime)
-                    var currentTime = new Date();
-                    var difference = currentTime - databaseDateTime;
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = Math.floor(totalSeconds % 60);
 
-                    var hoursOffice = Math.floor(difference / 3600000); // 1 hour = 3600000 milliseconds
-                    var minutesOffice = Math.floor((difference % 3600000) / 60000); // 1 minute = 60000 milliseconds
-                    var secondsOffice = Math.floor(((difference % 3600000) % 60000) / 1000); // 
-                    startTimerOffice(hoursOffice, minutesOffice, secondsOffice);
-                }
+            if (type == 'today') {
+                totalOutTimeDiv.textContent = `Today's office working hours: ${hours}h ${minutes}m ${seconds}s`;
             }
             else if (type == 'month') {
                 document.getElementById("total_time_till_now").textContent = `Monthly office working hours: ${hours}h ${minutes}m ${seconds}s`
@@ -576,6 +574,7 @@
                     totalOutTimeDiv.style.color = 'green';
                 }
             }
+            punches.reverse();
         }
 
         function formatDuration(totalSeconds) {
@@ -652,12 +651,13 @@
         // Update countdown display every second
         const countdownInterval = setInterval(updateCountdown, 1000);
 
-        function startTimerOffice(startHours, startMinutes, startSeconds) {
+
+        function startTimer(startHours, startMinutes, startSeconds) {
             let seconds = startSeconds || 0;
             let minutes = startMinutes || 0;
             let hours = startHours || 0;
 
-            intervalIdOfice = setInterval(function () {
+            intervalId = setInterval(function () {
                 seconds++;
                 if (seconds === 60) {
                     seconds = 0;
@@ -668,21 +668,18 @@
                     }
                 }
 
-                const formattedTime = "Today's office working hours: " + pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
-                totalOutTimeDiv.textContent = formattedTime;
-
+                const formattedTime = "Last punch in before: " + pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+                document.getElementById("timer").textContent = formattedTime;
             }, 1000);
-        }
-
-        function stopTimerOffice() {
-            clearInterval(intervalIdOfice);
         }
 
         function pad(num) {
             return (num < 10 ? "0" : "") + num;
         }
 
-
+        function stopTimer() {
+            clearInterval(intervalId);
+        }
 
         function fetchReports(filterType, userId, startDate, endDate) {
             let url = `/reports/${filterType}?userId=${userId}`;
