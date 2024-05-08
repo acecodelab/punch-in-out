@@ -544,7 +544,8 @@
             punches.reverse();
             if (type == 'today') {
                 if (punches[0].punch_type === 'IN') {
-                    var databaseDateTime = new Date(punches[0].timestamp);
+                    var databaseDateTime = new Date(punches[(punches.length - 1)].timestamp);
+                    console.log(databaseDateTime)
                     var currentTime = new Date();
                     var difference = currentTime - databaseDateTime;
 
