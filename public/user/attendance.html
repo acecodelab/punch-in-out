@@ -334,6 +334,7 @@
         var dummyPunchHistory = [];
         var dummyPunchHistoryMonth = [];
         let intervalId;
+        let intervalIdOfice;
 
         window.onload = function () {
             userId = localStorage.getItem('userId');
@@ -462,6 +463,7 @@
                         var minutes = Math.floor((difference % 3600000) / 60000); // 1 minute = 60000 milliseconds
                         var seconds = Math.floor(((difference % 3600000) % 60000) / 1000); // 
                         startTimer(hours, minutes, seconds);
+
                     }
                     else if (dummyPunchHistory[0].punch_type == 'OUT') {
                         document.getElementById("punchBtn").style.display = 'block'
@@ -469,6 +471,7 @@
                         btn.classList.remove("btn-danger");
                         btn.classList.add("btn-primary");
                         stopTimer();
+                        stopTimerOffice()
                     }
                 }
                 renderPunchHistory(dummyPunchHistory, 1);
@@ -549,9 +552,13 @@
             const hours = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
             const seconds = Math.floor(totalSeconds % 60);
-
+            punches.reverse();
             if (type == 'today') {
-                totalOutTimeDiv.textContent = `Today's office working hours: ${hours}h ${minutes}m ${seconds}s`;
+                console.log("Hii")
+                if (punches[0].punch_type === 'IN') {
+                    startTimerOffice(hours, minutes, seconds);
+                }
+                //totalOutTimeDiv.textContent = `Today's office working hours: ${hours}h ${minutes}m ${seconds}s`;
             }
             else if (type == 'month') {
                 document.getElementById("total_time_till_now").textContent = `Monthly office working hours: ${hours}h ${minutes}m ${seconds}s`
@@ -574,7 +581,6 @@
                     totalOutTimeDiv.style.color = 'green';
                 }
             }
-            punches.reverse();
         }
 
         function formatDuration(totalSeconds) {
@@ -673,13 +679,41 @@
             }, 1000);
         }
 
+        function stopTimer() {
+            clearInterval(intervalId);
+        }
+
+        function startTimerOffice(startHours, startMinutes, startSeconds) {
+            let seconds = startSeconds || 0;
+            let minutes = startMinutes || 0;
+            let hours = startHours || 0;
+
+            intervalIdOfice = setInterval(function () {
+                seconds++;
+                if (seconds === 60) {
+                    seconds = 0;
+                    minutes++;
+                    if (minutes === 60) {
+                        minutes = 0;
+                        hours++;
+                    }
+                }
+
+                const formattedTime = "Today's office working hours: " + pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+                totalOutTimeDiv.textContent = formattedTime;
+
+            }, 1000);
+        }
+
+        function stopTimerOffice() {
+            clearInterval(intervalIdOfice);
+        }
+
         function pad(num) {
             return (num < 10 ? "0" : "") + num;
         }
 
-        function stopTimer() {
-            clearInterval(intervalId);
-        }
+
 
         function fetchReports(filterType, userId, startDate, endDate) {
             let url = `/reports/${filterType}?userId=${userId}`;
