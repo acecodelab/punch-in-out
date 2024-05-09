@@ -161,11 +161,18 @@ const allLeaveRequestsbetween_month = async (req, res) => {
 
 }
 
-const getRequests = async (req, res) => {
-
+const leaveCount = async (req, res) => {
+    const { userId } = req.params;
+    const data = await Leave.leaveCount(userId);
+    if (data.length > 0) {
+        res.json({ "data": data });
+    }
+    else {
+        res.status(200).json({ "status": false, error: 'Internal server error', data: [], dataCount: [] });
+    }
 }
 
 module.exports = {
-    submitLeave, myLeaveRequests, approveLeave, rejectLeave, getRequests,
+    submitLeave, myLeaveRequests, approveLeave, rejectLeave, leaveCount,
     cancelLeaveRequest, allLeaveRequeststoday, allLeaveRequeststhis_month, allLeaveRequestsbetween_month
 };

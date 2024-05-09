@@ -173,6 +173,13 @@ class Leave {
         return rows[0];
     }
 
+    static async leaveCount(userId) {
+        const query = 'SELECT * from salary where user_id=$1 and EXTRACT(YEAR FROM CURRENT_DATE)=year';
+        const values = [userId];
+        const { rows } = await pool.query(query, values);
+        return rows;
+    }
+
 }
 
 module.exports = Leave;

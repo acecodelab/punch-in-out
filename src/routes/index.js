@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month,
     getUserList, updatePassword, loginAdmin, todaysDetail, todaysDetailMore, todaysLeaveDetail, fetchLeaveDetails } = require('../controllers/punchController');
-const { submitLeave, myLeaveRequests, approveLeave, rejectLeave, getRequests,
+const { submitLeave, myLeaveRequests, approveLeave, rejectLeave, leaveCount,
     cancelLeaveRequest, allLeaveRequeststoday, allLeaveRequeststhis_month,
     allLeaveRequestsbetween_month } = require('../controllers/leaveController');
 const Middleware = require('../middleware/punchMiddleware');
@@ -44,6 +44,7 @@ router.post('/submitLeave', submitLeave);
 router.get('/myLeaveRequests/:userId', myLeaveRequests);
 router.get('/cancelLeaveRequest/:userId/:id', cancelLeaveRequest);
 router.get('/myLeaveRequest/today', allLeaveRequeststoday);
+router.get('/leaveCount/:userId', leaveCount);
 // This month's reports
 router.get('/myLeaveRequest/this-month', allLeaveRequeststhis_month);
 // Reports between two dates

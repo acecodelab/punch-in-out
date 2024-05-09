@@ -167,7 +167,7 @@
         }
 
         .btn {
-            width: 100%;
+            width: auto;
             margin-right: 10px;
         }
 
@@ -325,6 +325,97 @@
         button:hover {
             background-color: #45a049;
         }
+
+        h4 {
+            margin: 0;
+            /* Remove default margin */
+        }
+
+        /* Container styles */
+        .h4-container {
+            display: flex;
+            justify-content: space-between;
+            /* Align items evenly along the main axis */
+        }
+
+        /* Responsive styles */
+        @media only screen and (max-width: 600px) {
+            .h4-container {
+                flex-direction: column;
+                /* Stack items vertically on smaller screens */
+                align-items: center;
+                /* Center items vertically */
+            }
+        }
+
+        /* Styles for dropdown */
+        .dropdown_filter {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            padding: 12px 16px;
+            z-index: 1;
+        }
+
+        .dropdown_filter:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Style for dropdown items */
+        .dropdown-content a {
+            color: black;
+            padding: 8px 0;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        /* Responsive styles */
+        @media only screen and (max-width: 600px) {
+            .dropdown_filter {
+                display: block;
+                margin-bottom: 10px;
+            }
+
+            .dropdown-content {
+                width: 100%;
+            }
+        }
+
+        /* Common styles for form elements */
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            margin-right: 5px;
+        }
+
+        /* Responsive styles */
+        @media only screen and (max-width: 600px) {
+            .form-inline .inner {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .form-group {
+                margin-right: 0;
+            }
+        }
+
+        /* Initially hidden */
+        #dateRangeForm {
+            display: none;
+        }
     </style>
 </head>
 
@@ -351,7 +442,14 @@
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="dashboard mt-3">
-                    <h4 class="text-center" id="userName"></h4>
+                    <h2 class="text-center" id="userName"></h2>
+                    <br>
+                    <div class="h4-container">
+                        <h4 style="text-align: left;" id="totalLeave"></h4>
+                        <h4 style="text-align: center;" id="usedLeave"></h4>
+                        <h4 style="text-align: right;" id="pendingLeave"></h4>
+                    </div>
+                    <br>
                     <form class="leave-request-form" id="leave-request-form">
                         <label for="leave-type">Leave Type:</label>
                         <select id="leaveType" name="leaveType" required>
@@ -379,10 +477,9 @@
                         All Requests</button>
 
                     <div id="allRequestDiv" style="display: none;">
-                        <h3 id="filter_type">Filters (All Requests)</h3>
                         <div id="filter_button_div" style="display: block;">
                             <!-- Buttons for Filter Options -->
-                            <div class="btn-group mb-3 d-flex justify-content-center inner" role="group"
+                            <!-- <div class="btn-group mb-3 d-flex justify-content-center inner" role="group"
                                 aria-label="Filter options">
                                 <button id="btnToday" type="button" class="btn btn-primary filter-btn"
                                     style="display: block;">Today's
@@ -393,21 +490,33 @@
                                 <button id="btnBetweenDates" type="button" class="btn btn-primary filter-btn"
                                     style="display: block;">
                                     Request b/w Dates</button>
+                            </div> -->
+                            <div class="dropdown_filter" style="float: right;">
+                                <button class="dropbtn">Filter</button>
+                                <div class="dropdown-content">
+                                    <a id="btnToday">Today's Reports</a>
+                                    <a id="btnThisMonth">Month's Report</a>
+                                    <a id="btnBetweenDates">Report b/w Dates</a>
+                                </div>
                             </div>
+                            <br>
                             <!-- Date Range Form (Hidden by default) -->
                             <form id="dateRangeForm" class="form-inline mb-3 justify-content-center"
                                 style="display: none;">
-                                <div class="form-group mr-2">
-                                    <label for="startDate" class="mr-2">Start Date:</label>
-                                    <input type="date" id="startDate" class="form-control" required>
+                                <div class="btn-group mb-3 d-flex inner" role="group" aria-label="Filter options">
+                                    <div class="form-group mr-2">
+                                        <label for="startDate" class="mr-2">Start Date:</label>
+                                        <input type="date" id="startDate" class="form-control" required>
+                                    </div>
+                                    <div class="form-group mr-2">
+                                        <label for="endDate" class="mr-2">End Date:</label>
+                                        <input type="date" id="endDate" class="form-control" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Get Report</button>
                                 </div>
-                                <div class="form-group mr-2">
-                                    <label for="endDate" class="mr-2">End Date:</label>
-                                    <input type="date" id="endDate" class="form-control" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary">Get Reports</button>
                             </form>
                         </div>
+                        <br>
                         <ul class="leave-request-counts">
                             <!-- Leave requests will be dynamically added here -->
                         </ul>
@@ -452,6 +561,7 @@
             }
             else {
                 document.getElementById("userName").innerHTML = name
+                countLeave(userId);
             }
         };
 
@@ -601,6 +711,38 @@
             }
         }
 
+        async function countLeave(userId) {
+            const response = await fetch(`/leaveCount/${userId}`);
+            const result = await response.json();
+            if (result.data.length > 0) {
+                var total_leaves = result.data[0].total_leaves
+                var available = result.data[0].available
+                var leave = result.data[0].leave
+
+                if (total_leaves > 6) {
+                    document.getElementById('totalLeave').style.color = 'green'
+                }
+                else {
+                    document.getElementById('totalLeave').style.color = 'red'
+                }
+                if (leave > 5) {
+                    document.getElementById('usedLeave').style.color = 'red'
+                }
+                else {
+                    document.getElementById('usedLeave').style.color = 'grey'
+                }
+
+                if (available > 6) {
+                    document.getElementById('pendingLeave').style.color = 'green'
+                }
+                else {
+                    document.getElementById('pendingLeave').style.color = 'red'
+                }
+                document.getElementById('totalLeave').innerHTML = "Total : " + total_leaves
+                document.getElementById('usedLeave').innerHTML = "Used : " + leave
+                document.getElementById('pendingLeave').innerHTML = "Pending : " + available
+            }
+        }
         // Initialize flatpickr
         const leaveStartDatePicker = flatpickr("#leaveStartDate", {
             enableTime: false,
@@ -610,13 +752,11 @@
         // Button Event Listeners
         document.getElementById('btnToday').addEventListener('click', () => {
             document.getElementById("dateRangeForm").style.display = 'none';
-            document.getElementById("filter_type").textContent = "Filter (Today's Request)";
             getLeaveRequestFilter('today', userId);
         });
 
         document.getElementById('btnThisMonth').addEventListener('click', () => {
             document.getElementById("dateRangeForm").style.display = 'none';
-            document.getElementById("filter_type").textContent = "Filter (Month's Request)";
             getLeaveRequestFilter('this-month', userId);
         });
 
@@ -628,7 +768,6 @@
         // Form Submission for Reports Between Dates
         document.getElementById('dateRangeForm').addEventListener('submit', (event) => {
             event.preventDefault();
-            document.getElementById("filter_type").textContent = "Filter (Request b/w dates Request)";
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
             getLeaveRequestFilter('between-dates', userId, startDate, endDate);
