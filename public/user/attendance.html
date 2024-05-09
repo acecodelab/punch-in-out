@@ -640,6 +640,7 @@
 
             if (type == 'today') {
                 //startTimer(hours, minutes, seconds, type)
+                totalOutTimeDiv.textContent = `Today's office working hours: ${hours}h ${minutes}m ${seconds}s`;
             }
             else if (type == 'month') {
                 document.getElementById("total_time_till_now").textContent = `Monthly office working hours: ${hours}h ${minutes}m ${seconds}s`
@@ -760,7 +761,7 @@
                     document.getElementById("timer").textContent = formattedTime;
                 }
                 else {
-                    totalOutTimeDiv.textContent = `Today's office working hours: ${hours}h ${minutes}m ${seconds}s`;
+                    //totalOutTimeDiv.textContent = `Today's office working hours: ${hours}h ${minutes}m ${seconds}s`;
                 }
 
             }, 1000);

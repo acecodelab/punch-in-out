@@ -1,5 +1,7 @@
 // src/routes/index.js
 const express = require('express');
+const puppeteer = require('puppeteer');
+
 const router = express.Router();
 const { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month,
     getUserList, updatePassword, loginAdmin, todaysDetail, todaysDetailMore, todaysLeaveDetail, fetchLeaveDetails } = require('../controllers/punchController');
@@ -62,5 +64,6 @@ router.get('/allLeaveRequest/this-month', allLeaveRequeststhis_month);
 router.get('/allLeaveRequest/between-dates', allLeaveRequestsbetween_month);
 
 router.get('/fetchLeaveDetails', fetchLeaveDetails)
+
 
 module.exports = router;
