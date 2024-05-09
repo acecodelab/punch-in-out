@@ -56,7 +56,7 @@
         }
 
         .btn {
-            width: 100%;
+            width: auto;
             margin-right: 10px;
         }
 
@@ -214,6 +214,76 @@
         button:hover {
             background-color: #45a049;
         }
+
+        /* Styles for dropdown */
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            padding: 12px 16px;
+            z-index: 1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Style for dropdown items */
+        .dropdown-content a {
+            color: black;
+            padding: 8px 0;
+            display: block;
+            text-decoration: none;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #ddd;
+        }
+
+        /* Responsive styles */
+        @media only screen and (max-width: 600px) {
+            .dropdown {
+                display: block;
+                margin-bottom: 10px;
+            }
+
+            .dropdown-content {
+                width: 100%;
+            }
+        }
+
+        /* Common styles for form elements */
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        label {
+            margin-right: 5px;
+        }
+
+        /* Responsive styles */
+        @media only screen and (max-width: 600px) {
+            .form-inline .inner {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .form-group {
+                margin-right: 0;
+            }
+        }
+
+        /* Initially hidden */
+        #dateRangeForm {
+            display: none;
+        }
     </style>
 </head>
 
@@ -249,7 +319,7 @@
                     <p class="text-center" id="timer"></p>
 
                     <div class="hide_button">
-                        <button class="btn btn-primary mt-3" id="punchBtn" style="display: none;">Punch
+                        <button class="btn btn-primary mt-3" id="punchBtn" style="display: none; width: 100%;">Punch
                             In</button>
                     </div>
 
@@ -259,9 +329,8 @@
                 <div class="info-box mt-3">
                     <div id="filter_button_div">
                         <!-- Buttons for Filter Options -->
-                        <div class="btn-group mb-3 d-flex justify-content-center inner" role="group"
-                            aria-label="Filter options">
-                            <button id="btnToday" type="button" class="btn btn-primary filter-btn"
+                        <div class="btn-group mb-3 d-flex inner" role="group" aria-label="Filter options">
+                            <!-- <button id="btnToday" type="button" class="btn btn-primary filter-btn"
                                 style="display: block;">Today's
                                 Reports</button>
                             <button id="btnThisMonth" type="button" class="btn btn-primary filter-btn"
@@ -269,22 +338,33 @@
                                 Month's Report</button>
                             <button id="btnBetweenDates" type="button" class="btn btn-primary filter-btn"
                                 style="display: block;">
-                                Report b/w Dates</button>
+                                Report b/w Dates</button> -->
+
+                            <div class="dropdown">
+                                <button class="dropbtn">Filter</button>
+                                <div class="dropdown-content">
+                                    <a id="btnToday">Today's Reports</a>
+                                    <a id="btnThisMonth">Month's Report</a>
+                                    <a id="btnBetweenDates">Report b/w Dates</a>
+                                </div>
+                            </div>
                         </div>
                         <!-- Date Range Form (Hidden by default) -->
                         <form id="dateRangeForm" class="form-inline mb-3 justify-content-center" style="display: none;">
-                            <div class="form-group mr-2">
-                                <label for="startDate" class="mr-2">Start Date:</label>
-                                <input type="date" id="startDate" class="form-control" required>
+                            <div class="btn-group mb-3 d-flex inner" role="group" aria-label="Filter options">
+                                <div class="form-group mr-2">
+                                    <label for="startDate" class="mr-2">Start Date:</label>
+                                    <input type="date" id="startDate" class="form-control" required>
+                                </div>
+                                <div class="form-group mr-2">
+                                    <label for="endDate" class="mr-2">End Date:</label>
+                                    <input type="date" id="endDate" class="form-control" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Get Report</button>
                             </div>
-                            <div class="form-group mr-2">
-                                <label for="endDate" class="mr-2">End Date:</label>
-                                <input type="date" id="endDate" class="form-control" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Get Reports</button>
                         </form>
                     </div>
-                    <h3>History</h3>
+
                     <ul id="punchList" class="list-group"></ul>
 
                     <!-- Pagination -->
@@ -333,6 +413,7 @@
         let email = '';
         var dummyPunchHistory = [];
         var dummyPunchHistoryMonth = [];
+        let intervalIdArray = [];
         let intervalId;
 
         window.onload = function () {
@@ -458,10 +539,17 @@
                         var currentTime = new Date();
                         var difference = currentTime - databaseDateTime;
 
-                        var hours = Math.floor(difference / 3600000); // 1 hour = 3600000 milliseconds
-                        var minutes = Math.floor((difference % 3600000) / 60000); // 1 minute = 60000 milliseconds
-                        var seconds = Math.floor(((difference % 3600000) % 60000) / 1000); // 
-                        startTimer(hours, minutes, seconds);
+                        var hours = Math.floor(difference / 3600000);
+                        var minutes = Math.floor((difference % 3600000) / 60000);
+                        var seconds = Math.floor(((difference % 3600000) % 60000) / 1000);
+                        startTimer(hours, minutes, seconds, 'left');
+
+                        databaseDateTime = new Date(dummyPunchHistory[dummyPunchHistory.length - 1].timestamp);
+                        difference = currentTime - databaseDateTime;
+                        hours = Math.floor(difference / 3600000);
+                        minutes = Math.floor((difference % 3600000) / 60000);
+                        seconds = Math.floor(((difference % 3600000) % 60000) / 1000);
+                        startTimer(hours, minutes, seconds, 'office');
                     }
                     else if (dummyPunchHistory[0].punch_type == 'OUT') {
                         document.getElementById("punchBtn").style.display = 'block'
@@ -551,7 +639,7 @@
             const seconds = Math.floor(totalSeconds % 60);
 
             if (type == 'today') {
-                totalOutTimeDiv.textContent = `Today's office working hours: ${hours}h ${minutes}m ${seconds}s`;
+                //startTimer(hours, minutes, seconds, type)
             }
             else if (type == 'month') {
                 document.getElementById("total_time_till_now").textContent = `Monthly office working hours: ${hours}h ${minutes}m ${seconds}s`
@@ -652,7 +740,7 @@
         const countdownInterval = setInterval(updateCountdown, 1000);
 
 
-        function startTimer(startHours, startMinutes, startSeconds) {
+        function startTimer(startHours, startMinutes, startSeconds, type) {
             let seconds = startSeconds || 0;
             let minutes = startMinutes || 0;
             let hours = startHours || 0;
@@ -667,10 +755,16 @@
                         hours++;
                     }
                 }
+                if (type == 'left') {
+                    const formattedTime = "Last punch in before: " + pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
+                    document.getElementById("timer").textContent = formattedTime;
+                }
+                else {
+                    totalOutTimeDiv.textContent = `Today's office working hours: ${hours}h ${minutes}m ${seconds}s`;
+                }
 
-                const formattedTime = "Last punch in before: " + pad(hours) + ":" + pad(minutes) + ":" + pad(seconds);
-                document.getElementById("timer").textContent = formattedTime;
             }, 1000);
+            intervalIdArray.push({ "id": intervalId, "type": type })
         }
 
         function pad(num) {
@@ -678,7 +772,10 @@
         }
 
         function stopTimer() {
-            clearInterval(intervalId);
+            for (let i = 0; i < intervalIdArray.length; i++) {
+                clearInterval(intervalIdArray[i].id);
+            }
+            intervalIdArray = []
         }
 
         function fetchReports(filterType, userId, startDate, endDate) {
