@@ -416,10 +416,21 @@
         #dateRangeForm {
             display: none;
         }
+
+        /* Header Styles */
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
+    <header>
+        <h1>LEAVES</h1>
+    </header>
     <div class="container-fluid">
         <div class="hamburger-menu" id="hamburgerMenu">
             <div class="line"></div>
@@ -434,6 +445,7 @@
                     <ul class="nav flex-column">
                         <li class="nav-item menu-item" onclick="moveToAttendance();">Attendance</li>
                         <li class="nav-item menu-item">Leave Management</li>
+                        <li class="nav-item menu-item" onclick="taskUpdate()">Task Management</li>
                         <li class="nav-item menu-item" onclick="changePassword();">Change Password</li>
                         <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
                     </ul>
@@ -442,7 +454,7 @@
 
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="dashboard mt-3">
-                    <h2 class="text-center" id="userName"></h2>
+
                     <br>
                     <div class="h4-container">
                         <h4 style="text-align: left;" id="totalLeave"></h4>
@@ -560,7 +572,7 @@
                 window.location.href = "/user/";
             }
             else {
-                document.getElementById("userName").innerHTML = name
+                // document.getElementById("userName").innerHTML = name
                 countLeave(userId);
             }
         };
@@ -832,6 +844,10 @@
 
         function moveToAttendance() {
             window.location.href = '/user/attendance.html'
+        }
+
+        function taskUpdate() {
+            window.location.href = '/user/task.html'
         }
 
         function changePassword() {

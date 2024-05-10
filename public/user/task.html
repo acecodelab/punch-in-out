@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no,user-scalable=0" />
+    <title>Leave Request and Approval System</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="
+    https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css
+    " rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Media Query for Mobile */
+        @media only screen and (max-width: 600px) {
+            .container {
+                width: 90%;
+                margin-top: 50px;
+                /* Adjust the distance from the top */
+            }
+        }
+
+        .container-fluid {
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            background-color: #333;
+            color: #fff;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: left 0.3s ease-in-out;
+            z-index: 1000;
+        }
+
+        .menu-item {
+            padding: 10px 20px;
+            border-bottom: 1px solid #555;
+            cursor: pointer;
+        }
+
+        .menu-item:hover {
+            background-color: #555;
+        }
+
+        .dashboard {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box {
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            margin-right: 10px;
+        }
+
+        .punch-status {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 24px;
+            color: #333;
+        }
+
+        /* Hamburger menu styles */
+        .hamburger-menu {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            cursor: pointer;
+            z-index: 1001;
+            /* Increased z-index */
+        }
+
+        .hamburger-menu .line {
+            width: 30px;
+            height: 3px;
+            background-color: #ce0101;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-menu.active .line:nth-child(1) {
+            transform: translateY(8px) rotate(45deg);
+        }
+
+        .hamburger-menu.active .line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger-menu.active .line:nth-child(3) {
+            transform: translateY(-8px) rotate(-45deg);
+        }
+
+        /* Style for the overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* semi-transparent black */
+            display: none;
+            /* Hide by default */
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Style for the alert box */
+        .alert-box {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 250px;
+                left: -250px;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .sidebar.active {
+                left: 0;
+            }
+
+            .hamburger-menu {
+                display: block;
+            }
+
+            .totalOutTime {
+                display: none;
+            }
+
+            .hide_button {
+                display: none;
+            }
+
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* semi-transparent black */
+            display: none;
+            /* Hide by default */
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* Style for the alert box */
+        .alert-box {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+            max-width: 300px;
+            text-align: center;
+            animation: slideIn 0.5s;
+        }
+
+        /* Slide in animation */
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        /* Style for the button */
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        /* Start This page design */
+
+
+
+        #taskForm {
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        textarea,
+        input[type="datetime-local"] {
+            width: calc(100% - 12px);
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+
+        button[type="submit"] {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        .task-list {
+            list-style-type: none;
+            padding: 0;
+            margin-top: 30px;
+        }
+
+        .task-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .task-item h3 {
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .task-item p {
+            margin: 0;
+            font-size: 14px;
+            color: #555;
+        }
+
+        @media (max-width: 600px) {
+            #taskForm {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Task Update</h1>
+    </header>
+    <div class="container-fluid">
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+                <div class="sidebar-sticky">
+                    <h5 class="text-center mt-3">Menu</h5>
+                    <ul class="nav flex-column">
+                        <li class="nav-item menu-item" onclick="moveToAttendance();">Attendance</li>
+                        <li class="nav-item menu-item" onclick="moveToLeave()">Leave Management</li>
+                        <li class="nav-item menu-item">Task Management</li>
+                        <li class="nav-item menu-item" onclick="changePassword();">Change Password</li>
+                        <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
+                    </ul>
+                </div>
+            </nav>
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="container">
+                    <form id="taskForm">
+                        <label for="taskTitle">Task Title:</label>
+                        <input type="text" id="taskTitle" name="taskTitle" required>
+
+                        <label for="taskDescription">Task Description:</label>
+                        <textarea id="taskDescription" name="taskDescription"></textarea>
+
+                        <label for="startTime">Start Time:</label>
+                        <input type="datetime-local" id="startTime" name="startTime" required>
+
+                        <label for="endTime">End Time:</label>
+                        <input type="datetime-local" id="endTime" name="endTime">
+
+                        <button type="submit">Add Task</button>
+                    </form>
+                    <br>
+                    <button style="float: right;" onclick="sendReport();">Send Report</button>
+                    <br><br>
+                    <h2 style="float: left;">Open Tasks</h2>
+                    <br>
+                    <ul id="openTaskList" class="task-list"></ul>
+
+                    <h2 style="float: left;">Closed Tasks</h2>
+                    <br>
+                    <ul id="closedTaskList" class="task-list"></ul>
+                </div>
+            </main>
+            <div id="overlay" class="overlay">
+                <div id="alertBox" class="alert-box">
+                    <h2 id="alertHeader">Custom Alert</h2>
+                    <p id="alertMessage">This is a custom alert box.</p>
+                    <button onclick="hideAlert('leave')" id="leaveButton" style="display: none;">Ok</button>
+                    <button onclick="hideAlert('logout')" id="logoutButton" style="display: none;">Ok</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        let userId = '';
+        let username = '';
+        let name = '';
+        let email = '';
+        window.onload = function () {
+            userId = localStorage.getItem('userId');
+            name = localStorage.getItem('name');
+            username = localStorage.getItem('username');
+            email = localStorage.getItem('email');
+            if (!userId || !name || !username || !email) {
+                window.location.href = "/user/";
+            }
+            else {
+                fetchTasks();
+            }
+        };
+        const taskForm = document.getElementById('taskForm');
+        const openTaskList = document.getElementById('openTaskList');
+        const closedTaskList = document.getElementById('closedTaskList');
+        // Function to format date and time
+        function formatDateTime(dateTime) {
+            var formattedDateTime = new Date(dateTime);
+            return formattedDateTime.toLocaleString();
+        }
+
+        document.getElementById("hamburgerMenu").addEventListener("click", function () {
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        });
+
+        function moveToAttendance() {
+            window.location.href = '/user/attendance.html'
+        }
+        function moveToLeave() {
+            window.location.href = '/user/leave.html'
+        }
+
+        function changePassword() {
+            window.location.href = '/user/password.html'
+        }
+
+        function taskUpdate() {
+            window.location.href = '/user/task.html'
+        }
+
+        taskForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const formData = new FormData(taskForm);
+            const taskData = Object.fromEntries(formData.entries());
+            taskData.userId = userId
+            taskData.status = 'open'
+
+            try {
+                const response = await fetch('/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(taskData)
+                });
+                const newTask = await response.json();
+                if (newTask.status) {
+                    // Clear form inputs
+                    document.getElementById("taskTitle").value = "";
+                    document.getElementById("taskDescription").value = "";
+                    document.getElementById("startTime").value = "";
+                    document.getElementById("endTime").value = "";
+                    displayTask(newTask.data[0]);
+                } else {
+                    console.error('Failed to add task:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error adding task:', error.message);
+            }
+        });
+
+        async function fetchTasks() {
+            try {
+                var open = 'open';
+                const response = await fetch(`/tasks/${userId}/${open}`);
+                const tasks = await response.json();
+                tasks.data.forEach(displayTask);
+
+            } catch (error) {
+                console.error('Error fetching open tasks:', error.message);
+            }
+
+            try {
+                var close = 'close';
+                const response = await fetch(`/tasks/${userId}/${close}`);
+                const tasks = await response.json();
+                tasks.data.forEach(displayClosedTask);
+
+            } catch (error) {
+                console.error('Error fetching closed tasks:', error.message);
+            }
+        }
+
+        function displayClosedTask(task) {
+            const taskItem = createTaskElement(task);
+            taskItem.innerHTML += '<p><strong>Status:</strong> Closed</p>';
+            closedTaskList.appendChild(taskItem);
+        }
+
+        function displayTask(task) {
+            const taskItem = createTaskElement(task);
+            const closeButton = document.createElement('button');
+            closeButton.textContent = 'Close Task';
+            closeButton.addEventListener('click', async function () {
+                await closeTask(task.id);
+                taskItem.remove();
+            });
+            taskItem.appendChild(closeButton);
+            openTaskList.appendChild(taskItem);
+        }
+
+
+        function createTaskElement(task) {
+            const taskItem = document.createElement('li');
+            taskItem.classList.add('task-item');
+            taskItem.innerHTML = `
+                <h4>${task.title}</h4>
+                <p><strong>Description:</strong> ${task.description}</p>
+                <p><strong>Start Time:</strong> ${new Date(task.start_time).toLocaleString()}</p>
+                ${task.end_time == null ? '<p><strong>End Time:</strong> ' : `<p><strong>End Time:</strong> ${new Date(task.end_time).toLocaleString()}</p>`}
+            `;
+            return taskItem;
+        }
+
+        async function closeTask(taskId) {
+            try {
+                const response = await fetch(`/tasks/${taskId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ status: 'closed' })
+                });
+                if (response.status) {
+                    window.location.reload()
+                }
+                else {
+                    console.error('Failed to close task:', response.statusText);
+                }
+            } catch (error) {
+                console.error('Error closing task:', error.message);
+            }
+        }
+
+        async function sendReport() {
+            try {
+                var today = new Date();
+                var dd = String(today.getDate()).padStart(2, '0');
+                var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+                var yyyy = today.getFullYear();
+
+                today = mm + '/' + dd + '/' + yyyy;
+
+                var completeReport = name + '\n' + today + '\n';
+                var taskName = null;
+                var taskDescription = null;
+                var startTime = null;
+                var endTime = null;
+                var status = null;
+                var all = 'all';
+                const response = await fetch(`/tasks/${userId}/${all}`);
+                const tasks = await response.json();
+                var dateStrEnd = null, dateFromDBEnd = null, formattedDateEnd = null, formattedTimeEnd = null
+                const dateOptions = {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                };
+                const timeOptions = {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: false,
+                };
+                for (let i = 0; i < tasks.data.length; i++) {
+                    if (tasks.data[i].end_time != null) {
+                        endTime = new Date(tasks.data[i].end_time.toLocaleString());
+                        dateStrEnd = endTime;
+                        dateFromDBEnd = new Date(dateStrEnd);
+                        formattedDateEnd = dateFromDBEnd.toLocaleDateString('en-IN', dateOptions);
+                        formattedTimeEnd = dateFromDBEnd.toLocaleTimeString('en-US', timeOptions);
+                    }
+                    else {
+                        formattedDateEnd = ''
+                        formattedTimeEnd = ''
+                    }
+                    taskName = tasks.data[i].title;
+                    taskDescription = tasks.data[i].description;
+                    status = tasks.data[i].status;
+
+                    startTime = new Date(tasks.data[i].start_time.toLocaleString());
+                    const dateStrStart = startTime;
+                    const dateFromDBStart = new Date(dateStrStart);
+                    const formattedDateStart = dateFromDBStart.toLocaleDateString('en-IN', dateOptions);
+                    const formattedTimeStart = dateFromDBStart.toLocaleTimeString('en-US', timeOptions);
+
+                    completeReport += i + 1 + ') Task name : ' + taskName + '\n' + 'Description : ' + taskDescription + '\n' + 'Start Time : ' + formattedDateStart + ' ' + formattedTimeStart + '\n' + 'End Time : ' + formattedDateEnd + ' ' + formattedTimeEnd + '\n' + 'Status : ' + status + '\n'
+                }
+                openWhatsAppGroup(completeReport)
+            } catch (e) {
+                console.log(e)
+            }
+        }
+        function openWhatsAppGroup(report) {
+            var tempTextarea = document.createElement("textarea");
+            tempTextarea.value = report;
+
+            // Append the textarea to the DOM
+            document.body.appendChild(tempTextarea);
+
+            // Select the content of the textarea
+            tempTextarea.select();
+
+            // Copy the selected text to the clipboard
+            document.execCommand("copy");
+
+            // Remove the temporary textarea from the DOM
+            document.body.removeChild(tempTextarea);
+            // Replace "YOUR_GROUP_INVITE_LINK" with the actual invite link for your WhatsApp group
+            var groupInviteLink = "https://chat.whatsapp.com/HIriEnbkKwAGKYdyiiXdZv";
+            var url = groupInviteLink;
+            // Open WhatsApp in a new tab/window
+            window.open(url);
+        }
+
+    </script>
+</body>
+
+</html>

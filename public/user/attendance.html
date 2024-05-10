@@ -284,10 +284,21 @@
         #dateRangeForm {
             display: none;
         }
+
+        /* Header Styles */
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body>
+    <header>
+        <h1>ATTENDANCE</h1>
+    </header>
     <div class="container-fluid">
         <!-- Hamburger Menu -->
         <div class="hamburger-menu" id="hamburgerMenu">
@@ -304,6 +315,7 @@
                     <ul class="nav flex-column">
                         <li class="nav-item menu-item">Attendance</li>
                         <li class="nav-item menu-item" onclick="moveToLeave();">Leave Management</li>
+                        <li class="nav-item menu-item" onclick="taskUpdate();">Task Management</li>
                         <li class="nav-item menu-item" onclick="changePassword();">Change Password</li>
                         <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
                     </ul>
@@ -689,6 +701,10 @@
 
         function moveToLeave() {
             window.location.href = '/user/leave.html'
+        }
+
+        function taskUpdate() {
+            window.location.href = '/user/task.html'
         }
 
         function changePassword() {
