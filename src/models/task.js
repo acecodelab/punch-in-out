@@ -3,12 +3,9 @@ const pool = require('../db/db');
 const nodemailer = require('nodemailer');
 
 class Task {
-    static async submitTask(title, description, startTime, endTime, userId, status) {
-        if (status == 'open') {
-            endTime = null
-        }
-        const query = 'INSERT INTO tasks (user_id,title, description, start_time, end_time,status) VALUES ($1, $2, $3, $4,$5,$6) RETURNING *';
-        const values = [userId, title, description, startTime, endTime, status];
+    static async submitTask(title, description, userId, status) {
+        const query = 'INSERT INTO tasks (user_id,title, description,status,start_time) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        const values = [userId, title, description, status, 'now()'];
         const { rows } = await pool.query(query, values);
         return rows;
     }
@@ -17,11 +14,11 @@ class Task {
         var query = null
         var values = null;
         if (status == 'all') {
-            query = 'SELECT * from tasks where user_id=$1 and date(start_time)=date(CURRENT_DATE) ORDER by id asc';
+            query = `SELECT * from tasks where user_id=$1 and date(start_time)=date(CURRENT_DATE) ORDER by id asc`;
             values = [userId];
         }
         else {
-            query = 'SELECT * from tasks where user_id=$1 and date(start_time)=date(CURRENT_DATE) and status=$2 ORDER by id desc';
+            query = `SELECT * from tasks where user_id=$1 and date(start_time)=date(CURRENT_DATE) and status=$2 ORDER by id desc`;
             values = [userId, status];
         }
 

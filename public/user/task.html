@@ -378,12 +378,6 @@
                         <label for="taskDescription">Task Description:</label>
                         <textarea id="taskDescription" name="taskDescription"></textarea>
 
-                        <label for="startTime">Start Time:</label>
-                        <input type="datetime-local" id="startTime" name="startTime" required>
-
-                        <label for="endTime">End Time:</label>
-                        <input type="datetime-local" id="endTime" name="endTime">
-
                         <button type="submit">Add Task</button>
                     </form>
                     <br>
@@ -480,8 +474,6 @@
                     // Clear form inputs
                     document.getElementById("taskTitle").value = "";
                     document.getElementById("taskDescription").value = "";
-                    document.getElementById("startTime").value = "";
-                    document.getElementById("endTime").value = "";
                     displayTask(newTask.data[0]);
                 } else {
                     console.error('Failed to add task:', response.statusText);
@@ -538,7 +530,7 @@
             taskItem.innerHTML = `
                 <h4>${task.title}</h4>
                 <p><strong>Description:</strong> ${task.description}</p>
-                <p><strong>Start Time:</strong> ${new Date(task.start_time)}</p>
+                <p><strong>Start Time:</strong> ${new Date(task.start_time).toLocaleString()}</p>
                 ${task.end_time == null ? '<p><strong>End Time:</strong> ' : `<p><strong>End Time:</strong> ${new Date(task.end_time).toLocaleString()}</p>`}
             `;
             return taskItem;
@@ -599,8 +591,8 @@
                         endTime = new Date(tasks.data[i].end_time.toLocaleString());
                         dateStrEnd = endTime;
                         dateFromDBEnd = new Date(dateStrEnd);
-                        formattedDateEnd = dateFromDBEnd('en-IN', dateOptions);
-                        formattedTimeEnd = dateFromDBEnd('en-US', timeOptions);
+                        formattedDateEnd = dateFromDBEnd.toLocaleDateString('en-IN', dateOptions);
+                        formattedTimeEnd = dateFromDBEnd.toLocaleTimeString('en-US', timeOptions);
                     }
                     else {
                         formattedDateEnd = ''
@@ -613,8 +605,8 @@
                     startTime = new Date(tasks.data[i].start_time.toLocaleString());
                     const dateStrStart = startTime;
                     const dateFromDBStart = new Date(dateStrStart);
-                    const formattedDateStart = dateFromDBStart('en-IN', dateOptions);
-                    const formattedTimeStart = dateFromDBStart('en-US', timeOptions);
+                    const formattedDateStart = dateFromDBStart.toLocaleDateString('en-IN', dateOptions);
+                    const formattedTimeStart = dateFromDBStart.toLocaleTimeString('en-US', timeOptions);
 
                     completeReport += i + 1 + ') Task name : ' + taskName + '\n' + 'Description : ' + taskDescription + '\n' + 'Start Time : ' + formattedDateStart + ' ' + formattedTimeStart + '\n' + 'End Time : ' + formattedDateEnd + ' ' + formattedTimeEnd + '\n' + 'Status : ' + status + '\n'
                 }

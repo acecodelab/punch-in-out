@@ -3,8 +3,8 @@ const Task = require('../models/task.js');
 const nodemailer = require('nodemailer');
 
 const submitTask = async (req, res) => {
-    const { taskTitle, taskDescription, startTime, endTime, userId, status } = req.body;
-    const data = await Task.submitTask(taskTitle, taskDescription, startTime, endTime, userId, status);
+    const { taskTitle, taskDescription, userId, status } = req.body;
+    const data = await Task.submitTask(taskTitle, taskDescription, userId, status);
     if (data.length > 0) {
         res.json({ "status": true, "data": data });
     }
