@@ -538,7 +538,7 @@
             taskItem.innerHTML = `
                 <h4>${task.title}</h4>
                 <p><strong>Description:</strong> ${task.description}</p>
-                <p><strong>Start Time:</strong> ${new Date(task.start_time).toLocaleString()}</p>
+                <p><strong>Start Time:</strong> ${new Date(task.start_time)}</p>
                 ${task.end_time == null ? '<p><strong>End Time:</strong> ' : `<p><strong>End Time:</strong> ${new Date(task.end_time).toLocaleString()}</p>`}
             `;
             return taskItem;
@@ -599,8 +599,8 @@
                         endTime = new Date(tasks.data[i].end_time.toLocaleString());
                         dateStrEnd = endTime;
                         dateFromDBEnd = new Date(dateStrEnd);
-                        formattedDateEnd = dateFromDBEnd.toLocaleDateString('en-IN', dateOptions);
-                        formattedTimeEnd = dateFromDBEnd.toLocaleTimeString('en-US', timeOptions);
+                        formattedDateEnd = dateFromDBEnd('en-IN', dateOptions);
+                        formattedTimeEnd = dateFromDBEnd('en-US', timeOptions);
                     }
                     else {
                         formattedDateEnd = ''
@@ -613,8 +613,8 @@
                     startTime = new Date(tasks.data[i].start_time.toLocaleString());
                     const dateStrStart = startTime;
                     const dateFromDBStart = new Date(dateStrStart);
-                    const formattedDateStart = dateFromDBStart.toLocaleDateString('en-IN', dateOptions);
-                    const formattedTimeStart = dateFromDBStart.toLocaleTimeString('en-US', timeOptions);
+                    const formattedDateStart = dateFromDBStart('en-IN', dateOptions);
+                    const formattedTimeStart = dateFromDBStart('en-US', timeOptions);
 
                     completeReport += i + 1 + ') Task name : ' + taskName + '\n' + 'Description : ' + taskDescription + '\n' + 'Start Time : ' + formattedDateStart + ' ' + formattedTimeStart + '\n' + 'End Time : ' + formattedDateEnd + ' ' + formattedTimeEnd + '\n' + 'Status : ' + status + '\n'
                 }
