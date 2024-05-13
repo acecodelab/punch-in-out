@@ -45,6 +45,10 @@ class Leave {
             leave_start_date = row.leave_start_date
         });
 
+        const queryUpdateLeaveCount = 'UPDATE salary set available = available - 1 , leave=leave + 1 where user_id=$1 and EXTRACT(YEAR FROM CURRENT_DATE)=year RETURNING *;';
+        const valuesUpdateLeaveCount = [userid];
+        await pool.query(queryUpdateLeaveCount, valuesUpdateLeaveCount);
+
         var userDetail = await Leave.getUserDetails(userid)
         const transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',

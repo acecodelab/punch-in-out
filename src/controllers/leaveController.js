@@ -59,7 +59,7 @@ const submitLeave = async (req, res) => {
         const mailOptions = {
             from: "infonxtgenvirtue@gmail.com",
             to: 'rajat.thakur@nxtgenvirtue.com', // User's email address
-            bcc: 'piyush@nxtgenvirtue.com',
+            // bcc: 'piyush@nxtgenvirtue.com',
             subject: leaveType + ' Requested by ' + userDetail.name,
             text: "Hello Sir, I " + userDetail.name + ' request a ' + leaveType + ' for ' + leaveStartDate + ' and reason for leave : -' + reason,
             html: htmlContent
