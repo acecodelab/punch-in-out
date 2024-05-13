@@ -202,7 +202,7 @@
         /* Style for the button */
         button {
             padding: 10px 20px;
-            background-color: #4CAF50;
+            background-color: #82af4c;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -329,11 +329,11 @@
                 </div>
             </nav>
             <!-- Main Content -->
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-0 main-content">
                 <header>
                     <h3>ATTENDANCE</h3>
                 </header>
-                <div class="dashboard mt-3">
+                <div class="dashboard" style="margin-left: 10px; margin-right: 10px;margin-top: 10px;">
                     <div class="totalOutTime" id="totalOutTime" style="float: right;"></div>
                     <div class="totalOutTime" id="total_time_till_now" style="float: left;"></div>
                     <br>
@@ -352,8 +352,10 @@
 
                     <div class="text-center" id="countdown"></div>
                 </div>
-
-                <div class="info-box mt-3">
+                <div class="info-box mt-3" style="margin-left: 10px; margin-right: 10px;">
+                    <header style="background-color: grey; padding:0">
+                        <h5>Attendance Details</h5>
+                    </header>
                     <div id="filter_button_div">
                         <!-- Buttons for Filter Options -->
                         <div class="btn-group mb-3 d-flex inner" role="group" aria-label="Filter options">

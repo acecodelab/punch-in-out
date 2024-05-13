@@ -313,7 +313,7 @@
         /* Style for the button */
         button {
             padding: 10px 20px;
-            background-color: #4CAF50;
+            background-color: #82af4c;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -449,19 +449,12 @@
                 </div>
             </nav>
 
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-0 main-content">
                 <header>
                     <h3>LEAVES</h3>
                 </header>
-                <div class="dashboard mt-3">
+                <div class="dashboard mt-3" style="margin-left: 10px; margin-right: 10px;margin-top: 10px;">
 
-                    <br>
-                    <div class="h4-container">
-                        <h4 style="text-align: left;" id="totalLeave"></h4>
-                        <h4 style="text-align: center;" id="usedLeave"></h4>
-                        <h4 style="text-align: right;" id="pendingLeave"></h4>
-                    </div>
-                    <br>
                     <form class="leave-request-form" id="leave-request-form">
                         <label for="leave-type">Leave Type:</label>
                         <select id="leaveType" name="leaveType" required>
@@ -481,12 +474,21 @@
                         <textarea id="reason" name="reason" rows="4" required></textarea>
                         <input type="submit" value="Request Leave">
                     </form>
+                    <header style="background-color: grey; padding:0">
+                        <h5>Leave Details</h5>
+                    </header>
+                    <div class="h4-container">
+                        <h4 style="text-align: left;" id="totalLeave"></h4>
+                        <h4 style="text-align: center;" id="usedLeave"></h4>
+                        <h4 style="text-align: right;" id="pendingLeave"></h4>
+                    </div>
+                    <br>
                     <button id="showRequest" onclick="showRequest()" class="btn"
                         style="   background-color: #007bff;color: #fff;cursor: pointer;margin-bottom: 10px;">Show
-                        All Requests</button>
+                        History</button>
                     <button id="hideRequest" onclick="hideRequest()" class="btn"
                         style="display: none;   background-color: #007bff;color: #fff;cursor: pointer;margin-bottom: 10px;">Hide
-                        All Requests</button>
+                        History</button>
 
                     <div id="allRequestDiv" style="display: none;">
                         <div id="filter_button_div" style="display: block;">

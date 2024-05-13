@@ -246,7 +246,7 @@
         /* Style for the button */
         button {
             padding: 10px 20px;
-            background-color: #4CAF50;
+            background-color: #82af4c;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -410,22 +410,26 @@
                     </ul>
                 </div>
             </nav>
-            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-0 main-content">
                 <header>
                     <h3>Task Update</h3>
                 </header>
-                <div class="container">
+                <div style="margin-left: 10px; margin-right: 10px;margin-top: 10px;">
                     <form id="taskForm">
                         <label for="taskTitle">Task Title:</label>
                         <input type="text" id="taskTitle" name="taskTitle" required>
 
                         <label for="taskDescription">Task Description:</label>
-                        <textarea id="taskDescription" name="taskDescription"></textarea>
+                        <textarea id="taskDescription" name="taskDescription" required></textarea>
 
                         <button type="submit">Add Task</button>
                     </form>
-                    <br>
-                    <button style="float: right;" onclick="sendReport();">Send Report</button>
+                    <header style="background-color: grey; padding:0">
+                        <h5>Task Details</h5>
+                    </header>
+
+                    <button style="float: right; background-color: #0056b3;" onclick="sendReport();">Send
+                        Report</button>
                     <div class="dropdown">
                         <button class="dropbtn">Filter</button>
                         <div class="dropdown-content">
@@ -581,7 +585,8 @@
         function displayTask(task) {
             const taskItem = createTaskElement(task);
             const closeButton = document.createElement('button');
-            closeButton.textContent = 'Close Task';
+            closeButton.style.backgroundColor = 'red'
+            closeButton.textContent = 'End Task';
             closeButton.addEventListener('click', async function () {
                 await closeTask(task.id);
                 taskItem.remove();
