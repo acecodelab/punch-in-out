@@ -2,7 +2,7 @@
 const Punch = require('../models/punch.js');
 const nodemailer = require('nodemailer');
 const punchIn = async (req, res) => {
-    const { user_id, email } = req.body;
+    const { user_id, email, overTimeReason } = req.body;
     try {
         var type = null;
         if (isSevenPMOrLater()) {
@@ -36,6 +36,7 @@ const punchIn = async (req, res) => {
         else {
             type = 'Normal'
         }
+        console.log(type)
         const punchCount = await Punch.count_punch_in(user_id)
         if (punchCount >= 9) {
             // Create a transporter using Gmail SMTP
@@ -65,11 +66,11 @@ const punchIn = async (req, res) => {
                 }
             });
 
-            const punch = await Punch.create({ user_id, punch_type: 'in', type });
+            const punch = await Punch.create({ user_id, punch_type: 'in', type, overTimeReason });
             res.json({ success: true, error: 'Exceeded maximum punch in limit for today.Your details are forward to Officials', data: punch });
         } else {
 
-            const punch = await Punch.create({ user_id, punch_type: 'in', type });
+            const punch = await Punch.create({ user_id, punch_type: 'in', type, overTimeReason });
             res.json({ success: true, data: punch, error: null });
         }
     } catch (error) {
@@ -79,7 +80,7 @@ const punchIn = async (req, res) => {
 };
 
 const punchOut = async (req, res) => {
-    const { user_id } = req.body;
+    const { user_id, overTimeReason } = req.body;
     try {
         var type = null;
         if (isSevenPMOrLater()) {
@@ -88,7 +89,7 @@ const punchOut = async (req, res) => {
         else {
             type = 'Normal'
         }
-        const punch = await Punch.create({ user_id, punch_type: 'out', type });
+        const punch = await Punch.create({ user_id, punch_type: 'out', type, overTimeReason });
         res.json({ success: true, data: punch });
     } catch (error) {
         console.error('Error punching out:', error);
@@ -224,11 +225,14 @@ const punchOutNow = async () => {
 }
 
 function isSevenPMOrLater() {
-    const currentTime = new Date();
-    const currentHour = currentTime.getHours();
+    var today = new Date().getHours();
 
-    // Check if the current hour is 7 or later
-    return currentHour >= 19;
+    if (today >= 12) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 const todaysDetail = async (req, res) => {

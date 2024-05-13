@@ -292,6 +292,16 @@
             padding: 10px 0;
             text-align: center;
         }
+
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+            box-sizing: border-box;
+            padding: 10px;
+            text-indent: 10px;
+        }
     </style>
 </head>
 
@@ -329,6 +339,11 @@
                     <br>
                     <h4 class="text-center" id="userName"> </h4>
                     <p class="text-center" id="timer"></p>
+
+                    <div>
+                        <textarea id="reason" name="reason" rows="4" placeholder="Please describe over time reason"
+                            style="display: none;"></textarea>
+                    </div>
 
                     <div class="hide_button">
                         <button class="btn btn-primary mt-3" id="punchBtn" style="display: none; width: 100%;">Punch
@@ -398,7 +413,8 @@
                     <div id="alertBox" class="alert-box">
                         <h2 id="alertHeader">Custom Alert</h2>
                         <p id="alertMessage">This is a custom alert box.</p>
-                        <button onclick="hideAlert('logout')">Ok</button>
+                        <button onclick="hideAlert('logout')" style="display: none;" id="logoutOk">Ok</button>
+                        <button onclick="hideAlert('ok')" style="display: none;" id="requierdOk">Ok</button>
                     </div>
                 </div>
 
@@ -418,6 +434,7 @@
         const punchList = document.getElementById('punchList');
         const totalOutTimeDiv = document.getElementById('totalOutTime');
         const countdownElement = document.getElementById('countdown');
+        var today = new Date().getHours();
 
         let userId = '';
         let username = '';
@@ -485,26 +502,42 @@
         }
 
         document.getElementById("punchBtn").addEventListener("click", async function () {
+            var overTimeReason = null;
             if (btn.innerText === "Punch In") {
+                if (today >= 19) {
+                    var textarea = document.getElementById("reason");
+                    if (textarea.value.trim() === '') {
+                        document.getElementById("overlay").style.display = "flex";
+                        document.getElementById("alertHeader").innerHTML = "Alert !!"
+                        document.getElementById("alertMessage").innerHTML = "Please enter reason for overtime"
+                        document.getElementById('requierdOk').style.display = 'block'
+                        return;
+                    }
+                    else {
+                        overTimeReason = textarea.value
+                    }
+                } else {
+
+                }
+                await submitPunch(userId, 'in', email, overTimeReason);
                 btn.innerText = "Punch Out";
                 btn.classList.remove("btn-primary");
                 btn.classList.add("btn-danger");
-                await submitPunch(userId, 'in', email);
             } else {
+                await submitPunch(userId, 'out', email, overTimeReason);
                 btn.innerText = "Punch In";
                 btn.classList.remove("btn-danger");
                 btn.classList.add("btn-primary");
-                await submitPunch(userId, 'out', email);
             }
         });
 
-        async function submitPunch(userId, type, email) {
+        async function submitPunch(userId, type, email, overTimeReason) {
             const response = await fetch(`/punch/${type}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ user_id: userId, email: email })
+                body: JSON.stringify({ user_id: userId, email: email, overTimeReason: overTimeReason })
             });
 
             const result = await response.json();
@@ -522,6 +555,11 @@
         async function fetchPunchHistory(userId, type) {
             if (type == 'm') {
                 return;
+            }
+            if (today >= 19) {
+                document.getElementById('reason').style.display = 'block';
+            } else {
+                document.getElementById('reason').style.display = 'none';
             }
             const response = await fetch(`/punches/${userId}`);
             const result = await response.json();
@@ -697,6 +735,7 @@
             document.getElementById("overlay").style.display = "flex";
             document.getElementById("alertHeader").innerHTML = "Bye " + name.split(' ')[0]
             document.getElementById("alertMessage").innerHTML = "Have a nice day"
+            document.getElementById("logoutOk").style.display = 'block'
         }
 
         function moveToLeave() {
@@ -844,7 +883,12 @@
         function hideAlert(type) {
             if (type == 'logout') {
                 document.getElementById("overlay").style.display = "none";
+                document.getElementById("logoutOk").style.display = 'none';
                 window.location.href = "/user/";
+            }
+            else if (type == 'ok') {
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("requierdOk").style.display = 'none';
             }
         }
 
