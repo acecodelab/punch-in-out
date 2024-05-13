@@ -496,37 +496,40 @@
                         <!-- Options will be populated via JavaScript -->
                     </select>
                 </div>
-                <div class="dropdown">
-                    <button class="dropbtn">Filter</button>
-                    <div class="dropdown-content">
-                        <a id="btnToday">Today's Reports</a>
-                        <a id="btnThisMonth">Month's Report</a>
-                        <a id="btnBetweenDates">Report b/w Dates</a>
+                <div id="main_data" style="display: none;">
+                    <div class="dropdown">
+                        <button class="dropbtn">Filter</button>
+                        <div class="dropdown-content">
+                            <a id="btnToday">Today's Reports</a>
+                            <a id="btnThisMonth">Month's Report</a>
+                            <a id="btnBetweenDates">Report b/w Dates</a>
+                        </div>
                     </div>
+                    <!-- Date Range Form (Hidden by default) -->
+                    <form id="dateRangeForm" class="form-inline mb-3 justify-content-center"
+                        style="display: none; margin-top: 10px;">
+                        <div class="btn-group mb-3 d-flex inner" role="group" aria-label="Filter options">
+                            <div class="form-group mr-2">
+                                <label for="startDate" class="mr-2">Start Date:</label>
+                                <input type="date" id="startDate" class="form-control" required>
+                            </div>
+                            <div class="form-group mr-2">
+                                <label for="endDate" class="mr-2">End Date:</label>
+                                <input type="date" id="endDate" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Get Report</button>
+                        </div>
+                    </form>
+                    <br><br>
+                    <h2 style="float: left;">Open Tasks</h2>
+                    <br>
+                    <ul id="openTaskList" class="task-list"></ul>
+                    <br>
+                    <h2 style="float: left;">Closed Tasks</h2>
+                    <br>
+                    <ul id="closedTaskList" class="task-list"></ul>
                 </div>
-                <!-- Date Range Form (Hidden by default) -->
-                <form id="dateRangeForm" class="form-inline mb-3 justify-content-center"
-                    style="display: none; margin-top: 10px;">
-                    <div class="btn-group mb-3 d-flex inner" role="group" aria-label="Filter options">
-                        <div class="form-group mr-2">
-                            <label for="startDate" class="mr-2">Start Date:</label>
-                            <input type="date" id="startDate" class="form-control" required>
-                        </div>
-                        <div class="form-group mr-2">
-                            <label for="endDate" class="mr-2">End Date:</label>
-                            <input type="date" id="endDate" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Get Report</button>
-                    </div>
-                </form>
-                <br><br>
-                <h2 style="float: left;">Open Tasks</h2>
-                <br>
-                <ul id="openTaskList" class="task-list"></ul>
-                <br>
-                <h2 style="float: left;">Closed Tasks</h2>
-                <br>
-                <ul id="closedTaskList" class="task-list"></ul>
+
             </main>
             <div id="overlay" class="overlay">
                 <div id="alertBox" class="alert-box">
@@ -567,6 +570,7 @@
         };
 
         async function fetchTasks(user_id) {
+            document.getElementById("main_data").style.display = 'block';
             try {
                 var open = 'open';
                 const response = await fetch(`/tasks/${user_id}/${open}`);
@@ -647,6 +651,7 @@
         });
 
         function fetchReports(filterType, user_id, startDate, endDate) {
+            document.getElementById("main_data").style.display = 'block';
             var status = 'open'
             let url = `/tasks/${filterType}?userId=${user_id}&status=${status}`;
             if (filterType === 'between-dates') {
