@@ -618,7 +618,7 @@
         function displayTask(task) {
             const taskItem = createTaskElement(task);
             const closeButton = document.createElement('button');
-            closeButton.style.backgroundColor = 'red'
+            closeButton.style.backgroundColor = '#ff0006'
             closeButton.textContent = 'End Task';
             closeButton.addEventListener('click', async function () {
                 await closeTask(task.id);
