@@ -15,6 +15,18 @@
             background-color: #f4f4f4;
         }
 
+        body::-webkit-scrollbar {
+            width: 0;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        body {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
         .container-fluid {
             min-height: 100vh;
         }
@@ -302,6 +314,25 @@
             padding: 10px;
             text-indent: 10px;
         }
+
+        .logo img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .sidebar-sticky {
+            position: sticky;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-sticky {
+                position: static;
+                padding: 10px;
+                border-right: none;
+            }
+        }
     </style>
 </head>
 
@@ -318,7 +349,10 @@
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
                 <div class="sidebar-sticky">
-                    <h5 class="text-center mt-3">Menu</h5>
+                    <div class="logo">
+                        <img src="logo_white.png" alt="Logo">
+                    </div>
+                    <br>
                     <ul class="nav flex-column">
                         <li class="nav-item menu-item">Attendance</li>
                         <li class="nav-item menu-item" onclick="moveToLeave();">Leave Management</li>

@@ -3,9 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, height=device-height,  initial-scale=1.0, user-scalable=no,user-scalable=0" />
-    <title>Leave Request and Approval System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Tasks</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="
     https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css
@@ -16,6 +15,18 @@
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
+        }
+
+        body::-webkit-scrollbar {
+            width: 0;
+        }
+
+        /* Hide scrollbar for IE, Edge and Firefox */
+        body {
+            -ms-overflow-style: none;
+            /* IE and Edge */
+            scrollbar-width: none;
+            /* Firefox */
         }
 
         h2 {
@@ -386,6 +397,25 @@
                 width: 100%;
             }
         }
+
+        .logo img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            margin-top: 10px;
+        }
+
+        .sidebar-sticky {
+            position: sticky;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-sticky {
+                position: static;
+                padding: 10px;
+                border-right: none;
+            }
+        }
     </style>
 </head>
 
@@ -400,7 +430,10 @@
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
                 <div class="sidebar-sticky">
-                    <h5 class="text-center mt-3">Menu</h5>
+                    <div class="logo">
+                        <img src="logo_white.png" alt="Logo">
+                    </div>
+                    <br>
                     <ul class="nav flex-column">
                         <li class="nav-item menu-item" onclick="moveToAttendance();">Attendance</li>
                         <li class="nav-item menu-item" onclick="moveToLeave()">Leave Management</li>
@@ -422,7 +455,7 @@
                         <label for="taskDescription">Task Description:</label>
                         <textarea id="taskDescription" name="taskDescription" required></textarea>
 
-                        <button type="submit">Add Task</button>
+                        <button type="submit" style="background-color: #4caf50;">Add Task</button>
                     </form>
                     <header style="background-color: grey; padding:0">
                         <h5>Task Details</h5>
