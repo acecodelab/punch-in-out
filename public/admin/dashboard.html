@@ -364,6 +364,12 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             z-index: 1000;
+            overflow-x: auto;
+            /* Enable horizontal scrolling */
+            -webkit-overflow-scrolling: touch;
+            /* Enable smooth scrolling on iOS */
+            max-width: 100%;
+            /* Ensure the container doesn't exceed the width of the screen */
         }
 
         .popup-overlay {
@@ -399,6 +405,7 @@
                         <li class="nav-item menu-item">Dashboard</li>
                         <li class=" nav-item menu-item" onclick="moveToAttendance();">Attendance</li>
                         <li class="nav-item menu-item" onclick="moveToLeave();">Leave Management</li>
+                        <li class="nav-item menu-item" onclick="moveToTask();">Task Details</li>
                         <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
                     </ul>
                 </div>
@@ -448,6 +455,7 @@
                                 <th>Status</th>
                                 <th>More Details</th>
                                 <th>Punch Out</th>
+                                <th>Tasks</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -517,6 +525,9 @@
     function moveToLeave() {
         window.location.href = '/admin/leave.html'
     }
+    function moveToTask() {
+        window.location.href = '/admin/tasks.html'
+    }
     function hideAlert(type) {
         if (type == 'ok') {
             document.getElementById("overlay").style.display = "none";
@@ -577,8 +588,9 @@
                     row.innerHTML = `
                     <td>${item.name}</td>
                     <td>${item.punch_type}</td>
-                    <td><button  value=${item.user_id} onclick="moreDetails(${item.user_id});">Click Here</button></td>
-                    ${item.punch_type == 'Online' ? ` <td><button onclick="punchOut(${item.user_id},'${item.email}');">Click Here</button></td>` : ''}
+                    <td><button  value=${item.user_id} onclick="moreDetails(${item.user_id});">Details</button></td>
+                    ${item.punch_type == 'Online' ? ` <td><button onclick="punchOut(${item.user_id},'${item.email}');" style="background-color:red">Punch Out</button></td>` : ''}
+                    <td><button  value=${item.user_id} onclick="checkTasks(${item.user_id});" style="background-color:green">Check Tasks</button></td>
                    
             `;
                     tbody.appendChild(row);
@@ -625,6 +637,11 @@
     async function moreDetails(user_id) {
         window.location.href = '/admin/attendance.html?user_id=' + user_id
     }
+
+    async function checkTasks(user_id) {
+        window.location.href = '/admin/tasks.html?user_id=' + user_id
+    }
+
     closePopupBtn.addEventListener('click', function () {
         popupTable.style.display = 'none';
         popupOverlay.style.display = 'none';

@@ -8,7 +8,7 @@ const { punchIn, punchOut, getPunchHistory, login, today, this_month, between_mo
 const { submitLeave, myLeaveRequests, approveLeave, rejectLeave, leaveCount,
     cancelLeaveRequest, allLeaveRequeststoday, allLeaveRequeststhis_month,
     allLeaveRequestsbetween_month } = require('../controllers/leaveController');
-const { submitTask, getTask, closeTask } = require('../controllers/taskController');
+const { submitTask, getTask, closeTask, taskToday, taskThisMonth, taskBetweenDates } = require('../controllers/taskController');
 const Middleware = require('../middleware/punchMiddleware');
 
 //EMPLOYEE API PUNCH
@@ -71,5 +71,12 @@ router.get('/fetchLeaveDetails', fetchLeaveDetails)
 router.post('/tasks', submitTask);
 router.get('/tasks/:userId/:status', getTask);
 router.put('/tasks/:id', closeTask);
+
+// Today's reports
+router.get('/tasks/today', taskToday);
+// This month's reports
+router.get('/tasks/this-month', taskThisMonth);
+// Reports between two dates
+router.get('/tasks/between-dates', taskBetweenDates);
 
 module.exports = router;

@@ -10,7 +10,23 @@ class Task {
         return rows;
     }
 
-    static async getTask(userId, status) {
+    static async getTask(userId, status, filter, startDate, endDate) {
+        var filterQuery = '';
+        if (filter == 'today') {
+            filterQuery = 'and date(start_time)=date(CURRENT_DATE)';
+        }
+        else if (filter == 'month') {
+            filterQuery = `and DATE_PART('month', start_time) = DATE_PART('month', CURRENT_DATE)`;
+        }
+        else if (filter == 'between') {
+            if (!startDate || !endDate) {
+                return res.status(400).json({ error: 'Start date and end date are required' });
+            }
+            filterQuery = `and DATE(start_time) BETWEEN '${startDate}' AND '${endDate}'`;
+        }
+        else {
+            filterQuery = 'and date(start_time)=date(CURRENT_DATE)';
+        }
         var query = null
         var values = null;
         if (status == 'all') {
@@ -18,7 +34,7 @@ class Task {
             values = [userId];
         }
         else {
-            query = `SELECT * from tasks where user_id=$1 and date(start_time)=date(CURRENT_DATE) and status=$2 ORDER by id desc`;
+            query = `SELECT * from tasks where user_id=$1 ` + filterQuery + ` and status=$2 ORDER by id desc`;
             values = [userId, status];
         }
 

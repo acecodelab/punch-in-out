@@ -36,7 +36,6 @@ const punchIn = async (req, res) => {
         else {
             type = 'Normal'
         }
-        console.log(type)
         const punchCount = await Punch.count_punch_in(user_id)
         if (punchCount >= 9) {
             // Create a transporter using Gmail SMTP
@@ -227,7 +226,7 @@ const punchOutNow = async () => {
 function isSevenPMOrLater() {
     var today = new Date().getHours();
 
-    if (today >= 12) {
+    if (today >= 19) {
         return true;
     }
     else {
