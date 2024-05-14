@@ -629,6 +629,9 @@
                 var calculateTotalTime = result.data.calculateTotalTime
                 var getLeaveDetail = result.data.getLeaveDetail
                 var getHolidayTillNow = result.data.getHolidayTillNow
+                if (getHolidayTillNow.length > 0) {
+                    getHolidayTillNow = getHolidayTillNow[0].weekday_holidays_count
+                }
                 punches.forEach(punch => {
                     dummyPunchHistory.push({ punch_type: punch.punch_type.toUpperCase(), timestamp: punch.timestamp })
                 });
@@ -684,9 +687,9 @@
                     }
                 }
                 var totalWeekdays = weekdaysUntilToday();
-                totalWeekdays = ((totalWeekdays - 1 - getHolidayTillNow.length) * 8)
+                totalWeekdays = ((totalWeekdays - 1 - getHolidayTillNow) * 8)
 
-                document.getElementById("totalYourHour").innerHTML = "Working Days : " + (weekdaysUntilToday() - 1 - getHolidayTillNow.length) + '<br><br> Present Days : ' + (weekdaysUntilToday() - 1 - getHolidayTillNow.length - totalLeaveCount)
+                document.getElementById("totalYourHour").innerHTML = "Working Days : " + (weekdaysUntilToday() - 1 - getHolidayTillNow) + '<br><br> Present Days : ' + (weekdaysUntilToday() - 1 - getHolidayTillNow - totalLeaveCount)
 
 
 
@@ -704,7 +707,7 @@
                     }
                 }
                 workingWeekdaysInCurrentMonth = workingWeekdaysInCurrentMonth - weekdayholidays
-                document.getElementById("totalMonthHour").innerHTML = "Total hours : " + ((weekdaysUntilToday() - 1 - getHolidayTillNow.length) * 8) + ' h 0m 0s <br><br> Your Hours : ' + document.getElementById("total_time_till_now").textContent.split(':')[1]
+                document.getElementById("totalMonthHour").innerHTML = "Total hours : " + ((weekdaysUntilToday() - 1 - getHolidayTillNow) * 8) + ' h 0m 0s <br><br> Your Hours : ' + document.getElementById("total_time_till_now").textContent.split(':')[1]
                 document.getElementById("totalMonthHour").style.color = 'green'
 
                 document.getElementById("totalLeaveTill").innerHTML = "Total Leave : 12 <br><br> On Leave : " + totalLeaveCount
