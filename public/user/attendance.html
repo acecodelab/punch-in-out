@@ -710,7 +710,7 @@
                 document.getElementById("totalMonthHour").innerHTML = "Total hours : " + ((weekdaysUntilToday() - 1 - getHolidayTillNow) * 8) + ' h 0m 0s <br><br> Your Hours : ' + document.getElementById("total_time_till_now").textContent.split(':')[1]
                 document.getElementById("totalMonthHour").style.color = 'green'
 
-                document.getElementById("totalLeaveTill").innerHTML = "Total Leave : 12 <br><br> On Leave : " + totalLeaveCount
+                document.getElementById("totalLeaveTill").innerHTML = "Monthly Leave : 1 <br><br> On Leave : " + totalLeaveCount
             } else {
                 alert('Error: ' + result.error);
             }
