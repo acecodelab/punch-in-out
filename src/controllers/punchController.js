@@ -106,7 +106,8 @@ const getPunchHistory = async (req, res) => {
         const calculateTotalTime = await Punch.getHolidayDetail();
         const getLeaveDetail = await Punch.getLeaveDetail(user_id)
         const getHolidayTillNow = await Punch.getHolidayDetailTillNow()
-        res.json({ success: true, data: { punches, totalOutTime, punchesMonth, totalOutTimeMonth, calculateTotalTime, getLeaveDetail, getHolidayTillNow } });
+        const getCurrentPunchDetail = await Punch.getCurrentPunchDetail(user_id)
+        res.json({ success: true, data: { punches, totalOutTime, punchesMonth, totalOutTimeMonth, calculateTotalTime, getLeaveDetail, getHolidayTillNow, getCurrentPunchDetail } });
     } catch (error) {
         console.error('Error fetching punches:', error);
         res.status(500).json({ success: false, error: 'Internal server error' });

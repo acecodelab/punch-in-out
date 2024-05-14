@@ -1,6 +1,8 @@
 const express = require('express');
 const cron = require('node-cron');
 const app = express();
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const useragent = require('express-useragent');
@@ -20,6 +22,7 @@ cron.schedule('0 19 * * *', async () => {
 cron.schedule('30 13 * * *', async () => {
     await punchOut.punchOutNow();
     console.log('Punch Out Lunch Time');
+    io.emit('lunchTime', '');
 }, {
     timezone: 'Asia/Kolkata' // Specify your timezone, e.g., 'Asia/Kolkata'
 });
@@ -40,8 +43,14 @@ app.get('/', (req, res) => {
     res.send(`Request received from network IP address: ${networkIpAddress}`);
 });
 
+//Whenever someone connects this gets executed
+io.on('connection', function (socket) {
+    //Whenever someone disconnects this piece of code executed
+    socket.on('disconnect', function () {
+    });
+});
 
 // Start server
-app.listen(PORT, () => {
+http.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

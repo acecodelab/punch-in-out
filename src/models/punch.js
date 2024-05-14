@@ -199,6 +199,12 @@ class Punch {
         return rows
     }
 
+    static async getCurrentPunchDetail(userId) {
+        const query = `select count(DISTINCT date(timestamp)) from punches where date(timestamp)<date(current_date) and user_id=$1;`
+        var { rows } = await pool.query(query, [userId])
+        return rows
+    }
+
     static async getHolidayDetailTillNow() {
         const query = `SELECT
         EXTRACT(MONTH FROM event_date) AS month,

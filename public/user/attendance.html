@@ -483,7 +483,7 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+    <script src="/socket.io/socket.io.js"></script>
     <script>
         var punchStatus = document.getElementById("punchStatus");
         var userName = document.getElementById("userName");
@@ -501,6 +501,13 @@
         var dummyPunchHistoryMonth = [];
         let intervalIdArray = [];
         let intervalId;
+        const socket = io();
+
+        socket.on('lunchTime', (data) => {
+            btn.innerText = "Punch In";
+            btn.classList.remove("btn-danger");
+            btn.classList.add("btn-primary");
+        });
 
         window.onload = function () {
             userId = localStorage.getItem('userId');
@@ -551,6 +558,7 @@
                 }
             }
         }
+
 
         async function showDashboard(type) {
             userName.innerText = "Welcome, " + name;
@@ -629,6 +637,8 @@
                 var calculateTotalTime = result.data.calculateTotalTime
                 var getLeaveDetail = result.data.getLeaveDetail
                 var getHolidayTillNow = result.data.getHolidayTillNow
+                var getCurrentPunchDetail = result.data.getCurrentPunchDetail
+                getCurrentPunchDetail = getCurrentPunchDetail[0].count
                 if (getHolidayTillNow.length > 0) {
                     getHolidayTillNow = getHolidayTillNow[0].weekday_holidays_count
                 }
@@ -680,6 +690,7 @@
                 var totalLeaveCount = 0;
                 for (let r = 0; r < getLeaveDetail.length; r++) {
                     if (getLeaveDetail[r].leave_type == 'Half Day Leave') {
+                        getCurrentPunchDetail = getCurrentPunchDetail - 0.5
                         totalLeaveCount = totalLeaveCount + 0.5
                     }
                     else {
@@ -689,7 +700,7 @@
                 var totalWeekdays = weekdaysUntilToday();
                 totalWeekdays = ((totalWeekdays - 1 - getHolidayTillNow) * 8)
 
-                document.getElementById("totalYourHour").innerHTML = "Working Days : " + (weekdaysUntilToday() - 1 - getHolidayTillNow) + '<br><br> Present Days : ' + (weekdaysUntilToday() - 1 - getHolidayTillNow - totalLeaveCount)
+                document.getElementById("totalYourHour").innerHTML = "Working Days : " + (weekdaysUntilToday() - 1 - getHolidayTillNow) + '<br><br> Present Days : ' + (getCurrentPunchDetail)
 
 
 
