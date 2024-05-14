@@ -407,9 +407,9 @@
                         <h5>Attendance Details</h5>
                     </header>
                     <div class="h4-container">
+                        <h4 style="text-align: center;" id="totalYourHour"></h4>
                         <h4 style="text-align: left;" id="totalMonthHour"></h4>
-                        <!-- <h4 style="text-align: center;" id="usedLeave">Short Time:1</h4>
-                        <h4 style="text-align: right;" id="pendingLeave">Present day :9</h4> -->
+                        <h4 style="text-align: right;" id="totalLeaveTill"></h4>
                     </div>
                     <div id="filter_button_div">
                         <!-- Buttons for Filter Options -->
@@ -627,6 +627,8 @@
                 var punches = result.data.punches
                 var monthPunches = result.data.punchesMonth
                 var calculateTotalTime = result.data.calculateTotalTime
+                var getLeaveDetail = result.data.getLeaveDetail
+                var getHolidayTillNow = result.data.getHolidayTillNow
                 punches.forEach(punch => {
                     dummyPunchHistory.push({ punch_type: punch.punch_type.toUpperCase(), timestamp: punch.timestamp })
                 });
@@ -668,6 +670,26 @@
                     }
                 }
 
+                renderPunchHistory(dummyPunchHistory, 1);
+                renderTotalOutTime(dummyPunchHistory, 'today');
+                renderTotalOutTime(dummyPunchHistoryMonth, 'month');
+
+                var totalLeaveCount = 0;
+                for (let r = 0; r < getLeaveDetail.length; r++) {
+                    if (getLeaveDetail[r].leave_type == 'Half Day Leave') {
+                        totalLeaveCount = totalLeaveCount + 0.5
+                    }
+                    else {
+                        totalLeaveCount = totalLeaveCount + 1
+                    }
+                }
+                var totalWeekdays = weekdaysUntilToday();
+                totalWeekdays = ((totalWeekdays - 1 - getHolidayTillNow.length) * 8)
+
+                document.getElementById("totalYourHour").innerHTML = "Working Days : " + (weekdaysUntilToday() - 1 - getHolidayTillNow.length) + '<br><br> Present Days : ' + (weekdaysUntilToday() - 1 - getHolidayTillNow.length - totalLeaveCount)
+
+
+
                 var month = new Date().getMonth() + 1;
                 var weekdayholidays = 0;
 
@@ -682,11 +704,10 @@
                     }
                 }
                 workingWeekdaysInCurrentMonth = workingWeekdaysInCurrentMonth - weekdayholidays
-                document.getElementById("totalMonthHour").innerHTML = "Requierd : " + workingWeekdaysInCurrentMonth * 8 + ' h'
+                document.getElementById("totalMonthHour").innerHTML = "Total hours : " + ((weekdaysUntilToday() - 1 - getHolidayTillNow.length) * 8) + ' h 0m 0s <br><br> Your Hours : ' + document.getElementById("total_time_till_now").textContent.split(':')[1]
                 document.getElementById("totalMonthHour").style.color = 'green'
-                renderPunchHistory(dummyPunchHistory, 1);
-                renderTotalOutTime(dummyPunchHistory, 'today');
-                renderTotalOutTime(dummyPunchHistoryMonth, 'month');
+
+                document.getElementById("totalLeaveTill").innerHTML = "Total Leave : 12 <br><br> On Leave : " + totalLeaveCount
             } else {
                 alert('Error: ' + result.error);
             }
@@ -980,6 +1001,22 @@
             for (let day = 1; day <= totalDays; day++) {
                 let date = new Date(year, month, day);
                 if (date.getDay() !== 0 && date.getDay() !== 6) {
+                    weekdays++;
+                }
+            }
+
+            return weekdays;
+        }
+
+        function weekdaysUntilToday() {
+            var today = new Date();
+            var firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+            var daysPassed = today.getDate();
+            var weekdays = 0;
+
+            for (var i = 0; i < daysPassed; i++) {
+                var currentDate = new Date(today.getFullYear(), today.getMonth(), i + 1);
+                if (currentDate.getDay() !== 0 && currentDate.getDay() !== 6) {
                     weekdays++;
                 }
             }

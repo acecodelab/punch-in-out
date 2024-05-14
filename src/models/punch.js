@@ -179,18 +179,44 @@ class Punch {
         return rows;
     }
 
-    static async calculateTotalTime() {
-        const detail = ` SELECT
+    static async getHolidayDetail() {
+        const detail = `SELECT
         EXTRACT(MONTH FROM event_date) AS month,
         COUNT(*) FILTER (WHERE EXTRACT(ISODOW FROM event_date AT TIME ZONE 'Asia/Kolkata') IN (6,7)) AS weekend_count,
         COUNT(*) FILTER (WHERE EXTRACT(ISODOW FROM event_date AT TIME ZONE 'Asia/Kolkata') NOT IN (6,7)) AS weekday_holidays_count,
         COUNT(*) AS total_holidays
     FROM
-        holiday_calender
+        holiday_calender where DATE_PART('YEAR',CURRENT_DATE)=year
     GROUP BY
         EXTRACT(MONTH FROM event_date) ORDER BY month asc`;
         const { rows } = await pool.query(detail);
         return rows;
+    }
+
+    static async getLeaveDetail(userId) {
+        const query = `SELECT * from leave_requests where date(CURRENT_DATE) > date(leave_start_date) and DATE_PART('month', leave_start_date) = DATE_PART('month', CURRENT_DATE) and userid=$1`
+        var { rows } = await pool.query(query, [userId])
+        return rows
+    }
+
+    static async getHolidayDetailTillNow() {
+        const query = `SELECT
+        EXTRACT(MONTH FROM event_date) AS month,
+        COUNT(*) FILTER (WHERE EXTRACT(ISODOW FROM event_date AT TIME ZONE 'Asia/Kolkata') IN (6,7)) AS weekend_count,
+        COUNT(*) FILTER (WHERE EXTRACT(ISODOW FROM event_date AT TIME ZONE 'Asia/Kolkata') NOT IN (6,7)) AS weekday_holidays_count,
+        COUNT(*) AS total_holidays
+    FROM
+        holiday_calender 
+		where
+		DATE_PART('month',CURRENT_DATE)=DATE_PART('month',event_date) 
+		and
+		date(CURRENT_DATE)>date(event_date)
+		and
+		DATE_PART('YEAR',CURRENT_DATE)=year
+    GROUP BY
+        EXTRACT(MONTH FROM event_date) ORDER BY month asc`;
+        var { rows } = await pool.query(query)
+        return rows
     }
 }
 
