@@ -333,6 +333,22 @@
                 border-right: none;
             }
         }
+
+        .h4-container {
+            display: flex;
+            justify-content: space-between;
+            /* Align items evenly along the main axis */
+        }
+
+        /* Responsive styles */
+        @media only screen and (max-width: 600px) {
+            .h4-container {
+                flex-direction: column;
+                /* Stack items vertically on smaller screens */
+                align-items: center;
+                /* Center items vertically */
+            }
+        }
     </style>
 </head>
 
@@ -390,6 +406,11 @@
                     <header style="background-color: grey; padding:0">
                         <h5>Attendance Details</h5>
                     </header>
+                    <div class="h4-container">
+                        <h4 style="text-align: left;" id="totalMonthHour"></h4>
+                        <!-- <h4 style="text-align: center;" id="usedLeave">Short Time:1</h4>
+                        <h4 style="text-align: right;" id="pendingLeave">Present day :9</h4> -->
+                    </div>
                     <div id="filter_button_div">
                         <!-- Buttons for Filter Options -->
                         <div class="btn-group mb-3 d-flex inner" role="group" aria-label="Filter options">
@@ -605,6 +626,7 @@
                 dummyPunchHistoryMonth = []
                 var punches = result.data.punches
                 var monthPunches = result.data.punchesMonth
+                var calculateTotalTime = result.data.calculateTotalTime
                 punches.forEach(punch => {
                     dummyPunchHistory.push({ punch_type: punch.punch_type.toUpperCase(), timestamp: punch.timestamp })
                 });
@@ -645,6 +667,23 @@
                         stopTimer();
                     }
                 }
+
+                var month = new Date().getMonth() + 1;
+                var weekdayholidays = 0;
+
+                // Get the total number of weekdays in the current month
+                let currentDate = new Date();
+                let currentYear = currentDate.getFullYear();
+                let currentMonth = currentDate.getMonth();
+                var workingWeekdaysInCurrentMonth = getWeekdaysInMonth(currentYear, currentMonth);
+                for (let i = 0; i < calculateTotalTime.length; i++) {
+                    if (calculateTotalTime[i].month == month) {
+                        weekdayholidays = weekdayholidays + calculateTotalTime[i].weekday_holidays_count
+                    }
+                }
+                workingWeekdaysInCurrentMonth = workingWeekdaysInCurrentMonth - weekdayholidays
+                document.getElementById("totalMonthHour").innerHTML = "Requierd : " + workingWeekdaysInCurrentMonth * 8 + ' h'
+                document.getElementById("totalMonthHour").style.color = 'green'
                 renderPunchHistory(dummyPunchHistory, 1);
                 renderTotalOutTime(dummyPunchHistory, 'today');
                 renderTotalOutTime(dummyPunchHistoryMonth, 'month');
@@ -933,6 +972,20 @@
             var sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("active");
         });
+
+        function getWeekdaysInMonth(year, month) {
+            let totalDays = new Date(year, month + 1, 0).getDate();
+            let weekdays = 0;
+
+            for (let day = 1; day <= totalDays; day++) {
+                let date = new Date(year, month, day);
+                if (date.getDay() !== 0 && date.getDay() !== 6) {
+                    weekdays++;
+                }
+            }
+
+            return weekdays;
+        }
     </script>
 </body>
 

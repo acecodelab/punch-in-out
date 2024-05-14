@@ -103,7 +103,8 @@ const getPunchHistory = async (req, res) => {
         const totalOutTime = calculateTotalOutTime(punches);
         const punchesMonth = await Punch.getByUserIdForMonth(user_id)
         const totalOutTimeMonth = calculateTotalOutTime(punchesMonth);
-        res.json({ success: true, data: { punches, totalOutTime, punchesMonth, totalOutTimeMonth } });
+        const calculateTotalTime = await Punch.calculateTotalTime();
+        res.json({ success: true, data: { punches, totalOutTime, punchesMonth, totalOutTimeMonth, calculateTotalTime } });
     } catch (error) {
         console.error('Error fetching punches:', error);
         res.status(500).json({ success: false, error: 'Internal server error' });
@@ -273,6 +274,7 @@ const fetchLeaveDetails = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
 module.exports = {
     punchIn, punchOut, getPunchHistory, login, today, this_month, between_month,
     getUserList, updatePassword, punchOutNow, loginAdmin, todaysDetail, todaysDetailMore,

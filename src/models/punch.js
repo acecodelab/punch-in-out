@@ -33,7 +33,7 @@ class Punch {
     }
 
     static async getByUserIdForMonth(user_id) {
-        const query = `SELECT * FROM punches WHERE user_id = $1 and DATE_PART('month', timestamp) = DATE_PART('month', CURRENT_DATE) ORDER BY timestamp DESC`;
+        const query = `SELECT * FROM punches WHERE user_id = $1 and DATE_PART('month', timestamp) = DATE_PART('month', CURRENT_DATE) and date(timestamp)!=date(CURRENT_DATE) ORDER BY timestamp DESC`;
         const { rows } = await pool.query(query, [user_id]);
         return rows;
     }
@@ -176,6 +176,20 @@ class Punch {
     static async fetchLeaveDetails() {
         const getUserListMOre = `select t1.*,t2.name from leave_requests t1,users t2 where date(t1.leave_start_date)=date(CURRENT_DATE) and t1.userid=t2.id and t1.status='Approve'`
         const { rows } = await pool.query(getUserListMOre);
+        return rows;
+    }
+
+    static async calculateTotalTime() {
+        const detail = ` SELECT
+        EXTRACT(MONTH FROM event_date) AS month,
+        COUNT(*) FILTER (WHERE EXTRACT(ISODOW FROM event_date AT TIME ZONE 'Asia/Kolkata') IN (6,7)) AS weekend_count,
+        COUNT(*) FILTER (WHERE EXTRACT(ISODOW FROM event_date AT TIME ZONE 'Asia/Kolkata') NOT IN (6,7)) AS weekday_holidays_count,
+        COUNT(*) AS total_holidays
+    FROM
+        holiday_calender
+    GROUP BY
+        EXTRACT(MONTH FROM event_date) ORDER BY month asc`;
+        const { rows } = await pool.query(detail);
         return rows;
     }
 }
