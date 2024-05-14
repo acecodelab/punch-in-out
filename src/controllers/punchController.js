@@ -20,7 +20,7 @@ const punchIn = async (req, res) => {
             const mailOptions = {
                 from: 'infonxtgenvirtue@gmail.com',
                 to: 'rajat.thakur@nxtgenvirtue.com', // User's email address
-                //   bcc: 'piyush@nxtgenvirtue.com',
+                bcc: 'piyush@nxtgenvirtue.com',
                 subject: 'Overtime by ' + email,
                 text: 'Overtime by' + email
             };
@@ -52,7 +52,7 @@ const punchIn = async (req, res) => {
             const mailOptions = {
                 from: 'rajat.thakur.1903@gmail.com',
                 to: email, // User's email address
-                //   bcc: 'piyush@nxtgenvirtue.com',
+                bcc: 'piyush@nxtgenvirtue.com',
                 subject: 'Exceeded Punch In Limit',
                 text: email + ' have exceeded the maximum allowed punch in limit for today.'
             };

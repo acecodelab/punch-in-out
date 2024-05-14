@@ -7,35 +7,11 @@
     <title>Nxtgen Virtue</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./common.css">
 
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-
-        .btn {
-            margin-right: 10px;
-        }
-
-        label {
-            margin-bottom: 10px;
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
             padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-        }
-
-        h1,
-        h2 {
-            margin-top: 0;
         }
 
         .leave-request-form {
@@ -132,368 +108,6 @@
             }
         }
 
-        h2 {
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #45a049;
-        }
-
-        /* Media Query for Mobile */
-        @media only screen and (max-width: 600px) {
-            .container {
-                width: 90%;
-                margin-top: 50px;
-                /* Adjust the distance from the top */
-            }
-        }
-
-        .container-fluid {
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            background-color: #333;
-            color: #fff;
-            height: 100%;
-            position: fixed;
-            top: 0;
-            left: 0;
-            transition: left 0.3s ease-in-out;
-            z-index: 1000;
-        }
-
-        .menu-item {
-            padding: 10px 20px;
-            border-bottom: 1px solid #555;
-            cursor: pointer;
-        }
-
-        .menu-item:hover {
-            background-color: #555;
-        }
-
-        .dashboard {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .info-box {
-            background-color: #fff;
-            padding: 20px;
-            margin-top: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .btn {
-            width: 100%;
-            margin-right: 10px;
-        }
-
-        .punch-status {
-            text-align: center;
-            margin-top: 30px;
-            font-size: 24px;
-            color: #333;
-        }
-
-        /* Hamburger menu styles */
-        .hamburger-menu {
-            display: none;
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            cursor: pointer;
-            z-index: 1001;
-            /* Increased z-index */
-        }
-
-        .hamburger-menu .line {
-            width: 30px;
-            height: 3px;
-            background-color: #ce0101;
-            margin: 5px 0;
-            transition: all 0.3s ease;
-        }
-
-        .hamburger-menu.active .line:nth-child(1) {
-            transform: translateY(8px) rotate(45deg);
-        }
-
-        .hamburger-menu.active .line:nth-child(2) {
-            opacity: 0;
-        }
-
-        .hamburger-menu.active .line:nth-child(3) {
-            transform: translateY(-8px) rotate(-45deg);
-        }
-
-        /* Style for the overlay */
-        .overlay {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            /* semi-transparent black */
-            display: none;
-            /* Hide by default */
-            justify-content: center;
-            align-items: center;
-        }
-
-        /* Style for the alert box */
-        .alert-box {
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            max-width: 300px;
-            text-align: center;
-        }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 250px;
-                left: -250px;
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
-
-            .sidebar.active {
-                left: 0;
-            }
-
-            .hamburger-menu {
-                display: block;
-            }
-
-            .totalOutTime {
-                display: none;
-            }
-
-            .hide_button {
-                display: none;
-            }
-
-            .logo-img {
-                visibility: hidden;
-            }
-
-            .logo {
-                visibility: hidden;
-            }
-
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            /* semi-transparent black */
-            display: none;
-            /* Hide by default */
-            justify-content: center;
-            align-items: center;
-            animation: fadeIn 0.5s;
-        }
-
-        /* Fade in animation */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        /* Style for the alert box */
-        .alert-box {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-            max-width: 300px;
-            text-align: center;
-            animation: slideIn 0.5s;
-        }
-
-        /* Slide in animation */
-        @keyframes slideIn {
-            from {
-                transform: translateY(-50px);
-            }
-
-            to {
-                transform: translateY(0);
-            }
-        }
-
-        /* Style for the button */
-        button {
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            transition: background-color 0.3s;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        .logo {
-            font-size: 24px;
-            margin-top: 20px;
-        }
-
-        .logo img {
-            width: 200px;
-            /* Adjust width as needed */
-            height: auto;
-            /* Maintain aspect ratio */
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .card {
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-            margin: 20px;
-            overflow: hidden;
-            width: calc(33.33% - 40px);
-            /* Three cards per row */
-            max-width: 300px;
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-        }
-
-        .card img {
-            width: 30%;
-            height: auto;
-            object-fit: fill;
-        }
-
-        .card-content {
-            padding: 20px;
-            color: #fff;
-        }
-
-        .card-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .card-description {
-            font-size: 20px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        @media screen and (max-width: 768px) {
-            .card {
-                width: calc(50% - 20px);
-                /* Two cards per row on tablets */
-            }
-        }
-
-        @media screen and (max-width: 480px) {
-            .card {
-                width: calc(100% - 20px);
-                /* One card per row on mobile */
-            }
-        }
-
-        /* Your CSS styles for the table */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
-        /* Additional styles for the popup */
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            z-index: 1000;
-        }
-
-        .popup-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
-
         table {
             width: 100%;
             border-collapse: collapse;
@@ -562,6 +176,7 @@
                         <li class=" nav-item menu-item" onclick="moveToAttendance()">Attendance</li>
                         <li class="nav-item menu-item">Leave Management</li>
                         <li class="nav-item menu-item" onclick="moveToTask();">Task Details</li>
+                        <li class="nav-item menu-item" onclick="moveToNewUser();">New User</li>
                         <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
                     </ul>
                 </div>
@@ -589,33 +204,31 @@
                 </div>
 
                 <div id="filter_button_div" style="display: none;">
-                    <!-- Buttons for Filter Options -->
-                    <div class="btn-group mb-3 d-flex justify-content-center inner" role="group"
-                        aria-label="Filter options">
-                        <button id="btnToday" type="button" class="btn btn-primary filter-btn"
-                            style="display: block;">Today's
-                            Request</button>
-                        <button id="btnThisMonth" type="button" class="btn btn-primary filter-btn"
-                            style="display: block;">
-                            Month's Request</button>
-                        <button id="btnBetweenDates" type="button" class="btn btn-primary filter-btn"
-                            style="display: block;">
-                            Request b/w Dates</button>
+                    <div class="dropdown">
+                        <button class="dropbtn">Filter</button>
+                        <div class="dropdown-content">
+                            <a id="btnToday">Today's Reports</a>
+                            <a id="btnThisMonth">Month's Report</a>
+                            <a id="btnBetweenDates">Report b/w Dates</a>
+                        </div>
                     </div>
+
                     <!-- Date Range Form (Hidden by default) -->
                     <form id="dateRangeForm" class="form-inline mb-3 justify-content-center" style="display: none;">
-                        <div class="form-group mr-2">
-                            <label for="startDate" class="mr-2">Start Date:</label>
-                            <input type="date" id="startDate" class="form-control" required>
+                        <div class="btn-group mb-3 d-flex inner" role="group" aria-label="Filter options">
+                            <div class="form-group mr-2">
+                                <label for="startDate" class="mr-2">Start Date:</label>
+                                <input type="date" id="startDate" class="form-control" required>
+                            </div>
+                            <div class="form-group mr-2">
+                                <label for="endDate" class="mr-2">End Date:</label>
+                                <input type="date" id="endDate" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Get Report</button>
                         </div>
-                        <div class="form-group mr-2">
-                            <label for="endDate" class="mr-2">End Date:</label>
-                            <input type="date" id="endDate" class="form-control" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Get Reports</button>
                     </form>
                 </div>
-
+                <br>
                 <ul class="leave-request-counts">
                     <!-- Leave requests will be dynamically added here -->
                 </ul>
@@ -930,6 +543,9 @@
         }
         function moveToTask() {
             window.location.href = '/admin/tasks.html'
+        }
+        function moveToNewUser() {
+            window.location.href = '/admin/new_user.html'
         }
     </script>
 </body>

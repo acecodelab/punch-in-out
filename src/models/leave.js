@@ -63,7 +63,7 @@ class Leave {
         const mailOptions = {
             from: "infonxtgenvirtue@gmail.com",
             to: userDetail.email, // User's email address
-            //bcc: 'piyush@nxtgenvirtue.com',
+            bcc: 'piyush@nxtgenvirtue.com',
             subject: "Approved",
             text: "Hello " + userDetail.name + " ,your " + leave_type + ' for date ' + leave_start_date + " are approved.",
         };
@@ -107,7 +107,7 @@ class Leave {
         const mailOptions = {
             from: "infonxtgenvirtue@gmail.com",
             to: userDetail.email, // User's email address
-            //bcc: 'piyush@nxtgenvirtue.com',
+            bcc: 'piyush@nxtgenvirtue.com',
             subject: "Rejected",
             text: "Hello " + userDetail.name + " ,your " + leave_type + ' for date ' + leave_start_date + " are rejected.Please contact your manager",
         };

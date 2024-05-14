@@ -1,0 +1,324 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+body::-webkit-scrollbar {
+    width: 0;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+body {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.container-fluid {
+    min-height: 100vh;
+}
+
+.sidebar {
+    background-color: #333;
+    color: #fff;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: left 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.menu-item {
+    padding: 10px 20px;
+    border-bottom: 1px solid #555;
+    cursor: pointer;
+}
+
+.menu-item:hover {
+    background-color: #555;
+}
+
+.dashboard {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.info-box {
+    background-color: #fff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    width: auto;
+    margin-right: 10px;
+}
+
+/* Hamburger menu styles */
+.hamburger-menu {
+    display: none;
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+    z-index: 1001;
+    /* Increased z-index */
+}
+
+.hamburger-menu .line {
+    width: 30px;
+    height: 3px;
+    background-color: #ce0101;
+    margin: 5px 0;
+    transition: all 0.3s ease;
+}
+
+.hamburger-menu.active .line:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+
+.hamburger-menu.active .line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger-menu.active .line:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
+/* Style for the overlay */
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* semi-transparent black */
+    display: none;
+    /* Hide by default */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Style for the alert box */
+.alert-box {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    max-width: 300px;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 250px;
+        left: -250px;
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .sidebar.active {
+        left: 0;
+    }
+
+    .hamburger-menu {
+        display: block;
+    }
+
+    .totalOutTime {
+        display: none;
+    }
+
+    .hide_button {
+        display: none;
+    }
+
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* semi-transparent black */
+    display: none;
+    /* Hide by default */
+    justify-content: center;
+    align-items: center;
+    animation: fadeIn 0.5s;
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Style for the alert box */
+.alert-box {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    max-width: 300px;
+    text-align: center;
+    animation: slideIn 0.5s;
+}
+
+/* Slide in animation */
+@keyframes slideIn {
+    from {
+        transform: translateY(-50px);
+    }
+
+    to {
+        transform: translateY(0);
+    }
+}
+
+/* Style for the button */
+button {
+    padding: 10px 20px;
+    background-color: #82af4c;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Styles for dropdown */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    padding: 12px 16px;
+    z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Style for dropdown items */
+.dropdown-content a {
+    color: black;
+    padding: 8px 0;
+    display: block;
+    text-decoration: none;
+}
+
+.dropdown-content a:hover {
+    background-color: #ddd;
+}
+
+/* Responsive styles */
+@media only screen and (max-width: 600px) {
+    .dropdown {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .dropdown-content {
+        width: 100%;
+    }
+}
+
+/* Common styles for form elements */
+.form-group {
+    margin-bottom: 10px;
+}
+
+label {
+    margin-right: 5px;
+}
+
+/* Responsive styles */
+@media only screen and (max-width: 600px) {
+    .form-inline .inner {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-group {
+        margin-right: 0;
+    }
+}
+
+/* Initially hidden */
+#dateRangeForm {
+    display: none;
+}
+
+/* Header Styles */
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+    text-align: center;
+}
+
+.logo img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-top: 10px;
+}
+
+.sidebar-sticky {
+    position: sticky;
+}
+
+@media (max-width: 768px) {
+    .sidebar-sticky {
+        position: static;
+        padding: 10px;
+        border-right: none;
+    }
+}
+
+.h4-container {
+    display: flex;
+    justify-content: space-between;
+    /* Align items evenly along the main axis */
+}
+
+/* Responsive styles */
+@media only screen and (max-width: 600px) {
+    .h4-container {
+        flex-direction: column;
+        /* Stack items vertically on smaller screens */
+        align-items: center;
+        /* Center items vertically */
+    }
+}

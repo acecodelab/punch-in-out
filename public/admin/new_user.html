@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="./common.css">
+    <style>
+        body {
+            padding: 20px;
+        }
+
+        .container {
+            margin: 20px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+        }
+
+        .form-group input[type="text"] {
+            width: 100%;
+            height: 30px;
+        }
+
+        .form-group input[type="submit"] {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .form-group input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <div class="row">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+                <div class="sidebar-sticky">
+                    <div class="logo" id="logo-img"><img src="logo_white.png" alt="Your Logo">
+                        <hr style="background-color: white;">
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item menu-item" onclick="moveToDashboard();">Dashboard</li>
+                        <li class=" nav-item menu-item" onclick="moveToAttendance();">Attendance</li>
+                        <li class="nav-item menu-item" onclick="moveToLeave();">Leave Management</li>
+                        <li class="nav-item menu-item" onclick="moveToTask();">Task Details</li>
+                        <li class="nav-item menu-item">New User</li>
+                        <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
+                    </ul>
+                </div>
+            </nav>
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="container">
+                    <form action="submit_user.php" method="POST">
+                        <div class="form-group">
+                            <label for="name">Name:</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="username">Username:</label>
+                            <input type="text" id="username" name="username">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email:</label>
+                            <input type="text" id="email" name="email">
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" value="Submit">
+                        </div>
+                    </form>
+                </div>
+            </main>
+
+        </div>
+
+    </div>
+
+</body>
+
+</html>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    let userId = '';
+    let username = '';
+    let name = '';
+    let email = '';
+    window.onload = function () {
+        userId = localStorage.getItem('userId');
+        name = localStorage.getItem('name');
+        username = localStorage.getItem('username');
+        email = localStorage.getItem('email');
+        if (!userId || !name || !username || !email) {
+            window.location.href = "/admin/";
+        }
+    };
+    function moveToLeave() {
+        window.location.href = '/admin/leave.html'
+    }
+    function moveToTask() {
+        window.location.href = '/admin/tasks.html'
+    }
+    function moveToAttendance() {
+        window.location.href = '/admin/attendance.html'
+    }
+    function moveToDashboard() {
+        window.location.href = '/admin/dashboard.html'
+    }
+    function clearLocalStorage() {
+        localStorage.removeItem('userId');
+        localStorage.removeItem('name');
+        localStorage.removeItem('username');
+        localStorage.removeItem('email');
+        localStorage.removeItem('ecived');
+        var sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("active");
+        document.getElementById("overlay").style.display = "flex";
+        document.getElementById("okButton").style.display = 'block';
+        document.getElementById("alertHeader").innerHTML = "Bye " + name.split(' ')[0]
+        document.getElementById("alertMessage").innerHTML = "Have a nice day"
+    }
+    function hideAlert(type) {
+        if (type == 'ok') {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("okButton").style.display = 'none';
+            window.location.reload();
+        }
+        else if (type == 'logout') {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("logoutButton").style.display = 'none';
+            window.location.reload();
+        }
+    }
+    document.getElementById("hamburgerMenu").addEventListener("click", function () {
+        var sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("active");
+    });
+
+</script>
