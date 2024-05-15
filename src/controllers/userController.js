@@ -77,6 +77,27 @@ const new_user = async (req, res) => {
     }
 };
 
+const get_user_list = async (req, res) => {
+    const data = await User.get_user_list()
+    if (data.length > 0) {
+        res.json({ "status": true, "data": data });
+    }
+    else {
+        res.json({ "status": false, "data": null });
+    }
+}
+
+const sendPassword = async (req, res) => {
+    const { id } = req.body;
+    await User.sendPassword(id)
+    res.json({ "status": true, "data": [] });
+}
+const changeStatus = async (req, res) => {
+    const { id } = req.body;
+    await User.changeStatus(id)
+    res.json({ "status": true, "data": [] });
+}
+
 module.exports = {
-    new_user
+    new_user, get_user_list, sendPassword, changeStatus
 };

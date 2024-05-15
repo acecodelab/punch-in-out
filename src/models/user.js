@@ -10,6 +10,22 @@ class User {
         return rows[0];
     }
 
+    static async get_user_list() {
+        const query = 'SELECT * from users';
+        const { rows } = await pool.query(query);
+        return rows;
+    }
+
+    static async sendPassword(id) {
+        const query = 'SELECT * from users where id=$1';
+        const { rows } = await pool.query(query, [id]);
+        return rows;
+    }
+    static async changeStatus(id) {
+        const query = `UPDATE users SET status = CASE WHEN status = 'active' THEN 'deactive' WHEN status = 'deactive' THEN 'active' END WHERE id = $1`;
+        const { rows } = await pool.query(query, [id]);
+        return rows;
+    }
 
 }
 

@@ -45,6 +45,67 @@
         .form-group input[type="submit"]:hover {
             background-color: #0056b3;
         }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        @media screen and (max-width: 600px) {
+            table {
+                border: 0;
+            }
+
+            table caption {
+                font-size: 1.3em;
+            }
+
+            table thead {
+                border: none;
+                clip: rect(0 0 0 0);
+                height: 1px;
+                margin: -1px;
+                overflow: hidden;
+                padding: 0;
+                position: absolute;
+                width: 1px;
+            }
+
+            table tr {
+                border-bottom: 3px solid #ddd;
+                display: block;
+                margin-bottom: .625em;
+            }
+
+            table td {
+                border-bottom: 1px solid #ddd;
+                display: block;
+                font-size: .8em;
+                text-align: right;
+            }
+
+            table td::before {
+                content: attr(data-label);
+                float: left;
+                font-weight: bold;
+                text-transform: uppercase;
+            }
+
+            table td:last-child {
+                border-bottom: 0;
+            }
+        }
     </style>
 </head>
 
@@ -91,6 +152,24 @@
                         </div>
                     </form>
                 </div>
+                <div>
+                    <table>
+                        <caption>User Details</caption>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <!-- Data will be inserted here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
             </main>
 
         </div>
@@ -118,6 +197,7 @@
     let username = '';
     let name = '';
     let email = '';
+    var data = [];
     window.onload = function () {
         userId = localStorage.getItem('userId');
         name = localStorage.getItem('name');
@@ -201,4 +281,65 @@
             alert('Failed to submit leave request');
         }
     });
+
+    function populateTable() {
+        fetch('/get_user_list')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status) {
+                    var tableBody = document.getElementById("tableBody");
+                    tableBody.innerHTML = "";
+
+                    data.data.forEach(function (item) {
+                        var row = document.createElement("tr");
+                        row.innerHTML = `
+                <td data-label="Firstname">${item.name}</td>
+                <td data-label="Lastname">${item.email}</td>
+                <td data-label="Username">${item.username}</td>
+                <td data-label="Password"><button onclick="sendPassword(${item.id})">Send Password</button></td>
+                <td data-label="Status">${item.status}</td>
+                <td data-label="Action"><button onclick="changeStatus(${item.id})" style="${item.status == 'active' ? 'background-color:red' : 'background-color:green'}">${item.status == 'active' ? 'In-Active' : 'Active'}</button></td>
+            `;
+                        tableBody.appendChild(row);
+                    });
+                }
+                else {
+                    alert("No data found")
+                }
+            })
+            .catch(error => console.error('Error fetching users:', error));
+
+    }
+
+    // Populate the table initially
+    populateTable();
+
+    async function sendPassword(id) {
+        var requestBody = { "id": id }
+        const response = await fetch('/sendPassword/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (response.status) {
+            window.location.reload();
+        }
+    }
+    async function changeStatus(id) {
+        var requestBody = { "id": id }
+        const response = await fetch('/changeStatus/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (response.status) {
+            window.location.reload();
+        }
+    }
 </script>
