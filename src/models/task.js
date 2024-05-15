@@ -13,7 +13,7 @@ class Task {
     static async getTask(userId, status, filter, startDate, endDate) {
         var filterQuery = '';
         if (filter == 'today') {
-            filterQuery = 'and date(start_time)=date(CURRENT_DATE) and date(end_time)=date(CURRENT_DATE) and status=$2 or date(start_time) < date(CURRENT_DATE) and date(end_time)=date(CURRENT_DATE) and status=$2';
+            filterQuery = 'and date(start_time)=date(CURRENT_DATE) and date(end_time)=date(CURRENT_DATE) and status=$2 or date(start_time) < date(CURRENT_DATE) and date(end_time)=date(CURRENT_DATE) and status=$3';
         }
         else if (filter == 'month') {
             filterQuery = `and DATE_PART('month', start_time) = DATE_PART('month', CURRENT_DATE) and status=$2`;
@@ -35,7 +35,12 @@ class Task {
         }
         else {
             query = `SELECT * from tasks where user_id=$1 ` + filterQuery + `  ORDER by id desc`;
-            values = [userId, status];
+            if (filter == 'today') {
+                values = [userId, status, status]
+            }
+            else {
+                values = [userId, status];
+            }
         }
 
         const { rows } = await pool.query(query, values);
