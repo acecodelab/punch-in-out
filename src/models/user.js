@@ -11,7 +11,7 @@ class User {
     }
 
     static async get_user_list() {
-        const query = 'SELECT * from users';
+        const query = 'SELECT * from users order by status asc';
         const { rows } = await pool.query(query);
         return rows;
     }
