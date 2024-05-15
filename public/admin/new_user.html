@@ -73,7 +73,7 @@
             </nav>
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
                 <div class="container">
-                    <form action="submit_user.php" method="POST">
+                    <form id="newUser">
                         <div class="form-group">
                             <label for="name">Name:</label>
                             <input type="text" id="name" name="name" required>
@@ -93,6 +93,14 @@
                 </div>
             </main>
 
+        </div>
+        <div id="overlay" class="overlay">
+            <div id="alertBox" class="alert-box">
+                <h2 id="alertHeader">Custom Alert</h2>
+                <p id="alertMessage">This is a custom alert box.</p>
+                <button onclick="hideAlert('ok')" id="okButton" style="display: none;">Ok</button>
+                <button onclick="hideAlert('logout')" id="logoutButton" style="display: none;">Ok</button>
+            </div>
         </div>
 
     </div>
@@ -161,4 +169,36 @@
         sidebar.classList.toggle("active");
     });
 
+    document.getElementById('newUser').addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(event.target);
+        const requestBody = Object.fromEntries(formData.entries());
+        requestBody.password = 'password@123';
+        requestBody.usertype = 'employee';
+        requestBody.status = 'active';
+        try {
+            const response = await fetch('/new_user/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (response.status) {
+                console.log(response.data)
+                document.getElementById("overlay").style.display = "flex";
+                document.getElementById("okButton").style.display = 'block';
+                document.getElementById("alertHeader").innerHTML = "Created successfully"
+                document.getElementById("alertMessage").innerHTML = "Details sent over email"
+            } else {
+                const responseData = await response.json();
+                alert(responseData.message || 'Failed to submit leave request');
+            }
+        } catch (error) {
+            console.error('Error submitting leave request:', error);
+            alert('Failed to submit leave request');
+        }
+    });
 </script>
