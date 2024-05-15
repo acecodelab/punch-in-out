@@ -133,10 +133,10 @@
         const openTaskList = document.getElementById('openTaskList');
         const closedTaskList = document.getElementById('closedTaskList');
         window.onload = function () {
-            userId = localStorage.getItem('userId');
-            name = localStorage.getItem('name');
-            username = localStorage.getItem('username');
-            email = localStorage.getItem('email');
+            userId = localStorage.getItem('adminuserId');
+            name = localStorage.getItem('adminname');
+            username = localStorage.getItem('adminusername');
+            email = localStorage.getItem('adminemail');
             if (!userId || !name || !username || !email) {
                 window.location.href = "/admin/";
             }
@@ -270,10 +270,10 @@
         });
 
         function clearLocalStorage() {
-            localStorage.removeItem('userId');
-            localStorage.removeItem('name');
-            localStorage.removeItem('username');
-            localStorage.removeItem('email');
+            localStorage.removeItem('adminuserId');
+            localStorage.removeItem('adminname');
+            localStorage.removeItem('adminusername');
+            localStorage.removeItem('adminemail');
             localStorage.removeItem('ecived');
             var sidebar = document.getElementById("sidebar");
             sidebar.classList.toggle("active");

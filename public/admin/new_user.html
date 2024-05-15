@@ -165,6 +165,7 @@
                                 <th>Password</th>
                                 <th>Status</th>
                                 <th>Action</th>
+                                <th>Dashboard</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -201,10 +202,14 @@
     let email = '';
     var data = [];
     window.onload = function () {
-        userId = localStorage.getItem('userId');
-        name = localStorage.getItem('name');
-        username = localStorage.getItem('username');
-        email = localStorage.getItem('email');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('name');
+        localStorage.removeItem('username');
+        localStorage.removeItem('email');
+        userId = localStorage.getItem('adminuserId');
+        name = localStorage.getItem('adminname');
+        username = localStorage.getItem('adminusername');
+        email = localStorage.getItem('adminemail');
         if (!userId || !name || !username || !email) {
             window.location.href = "/admin/";
         }
@@ -222,10 +227,10 @@
         window.location.href = '/admin/dashboard.html'
     }
     function clearLocalStorage() {
-        localStorage.removeItem('userId');
-        localStorage.removeItem('name');
-        localStorage.removeItem('username');
-        localStorage.removeItem('email');
+        localStorage.removeItem('adminuserId');
+        localStorage.removeItem('adminname');
+        localStorage.removeItem('adminusername');
+        localStorage.removeItem('adminemail');
         localStorage.removeItem('ecived');
         var sidebar = document.getElementById("sidebar");
         sidebar.classList.toggle("active");
@@ -301,6 +306,7 @@
                 <td data-label="Password"><button onclick="sendPassword(${item.id})">Send Password</button></td>
                 <td data-label="Status">${item.status}</td>
                 <td data-label="Action"><button onclick="changeStatus(${item.id})" style="${item.status == 'active' ? 'background-color:red' : 'background-color:green'}">${item.status == 'active' ? 'In-Active' : 'Active'}</button></td>
+                <td data-label="Action"><button onclick="openDashboard(${item.id}, '${item.name}', '${item.username}', '${item.email}')">View</button></td>
             `;
                         tableBody.appendChild(row);
                     });
@@ -343,5 +349,12 @@
         if (response.status) {
             window.location.reload();
         }
+    }
+    async function openDashboard(id, name, username, email) {
+        localStorage.setItem('userId', id);
+        localStorage.setItem('name', name);
+        localStorage.setItem('username', username);
+        localStorage.setItem('email', email);
+        window.open('http://156.67.210.176:3000/user/attendance.html', '_blank');
     }
 </script>
