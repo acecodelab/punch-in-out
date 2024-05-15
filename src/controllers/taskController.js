@@ -60,7 +60,15 @@ const taskBetweenDates = async (req, res) => {
     }
 }
 
-
+const getCurrentTask = async (req, res) => {
+    const data = await Task.getCurrentTask();
+    if (data.length > 0) {
+        res.json({ "status": true, "data": data });
+    }
+    else {
+        res.json({ "status": false, "data": [] });
+    }
+}
 module.exports = {
-    submitTask, getTask, closeTask, taskToday, taskThisMonth, taskBetweenDates
+    submitTask, getTask, closeTask, taskToday, taskThisMonth, taskBetweenDates, getCurrentTask
 };

@@ -47,6 +47,21 @@ class Task {
         await pool.query(query, values);
         return true
     }
+
+    static async getCurrentTask() {
+        const query = `WITH latest_entries AS (
+            SELECT user_id, MAX(start_time) AS start_time
+            FROM tasks
+            WHERE DATE_TRUNC('day', start_time) = DATE_TRUNC('day', CURRENT_DATE)
+            GROUP BY user_id
+        )
+        SELECT t.*, u.name
+        FROM tasks t
+        INNER JOIN latest_entries le ON t.user_id = le.user_id AND t.start_time = le.start_time
+        INNER JOIN users u ON t.user_id = u.id;`
+        const { rows } = await pool.query(query, [])
+        return rows
+    }
 }
 
 module.exports = Task;

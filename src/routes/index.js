@@ -8,7 +8,7 @@ const { punchIn, punchOut, getPunchHistory, login, today, this_month, between_mo
 const { submitLeave, myLeaveRequests, approveLeave, rejectLeave, leaveCount,
     cancelLeaveRequest, allLeaveRequeststoday, allLeaveRequeststhis_month,
     allLeaveRequestsbetween_month } = require('../controllers/leaveController');
-const { submitTask, getTask, closeTask, taskToday, taskThisMonth, taskBetweenDates } = require('../controllers/taskController');
+const { submitTask, getTask, closeTask, taskToday, taskThisMonth, taskBetweenDates, getCurrentTask } = require('../controllers/taskController');
 const { new_user, get_user_list, sendPassword, changeStatus } = require('../controllers/userController');
 const Middleware = require('../middleware/punchMiddleware');
 
@@ -85,5 +85,6 @@ router.post('/new_user', new_user);
 router.get('/get_user_list', get_user_list);
 router.post('/sendPassword', sendPassword);
 router.post('/changeStatus', changeStatus);
+router.get('/get_current_task', getCurrentTask);
 
 module.exports = router;

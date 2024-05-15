@@ -99,23 +99,6 @@
             }
         }
 
-        /* Your CSS styles for the table */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f2f2f2;
-        }
-
         /* Additional styles for the popup */
         .popup {
             display: none;
@@ -206,6 +189,23 @@
                             <button onclick="moreDetailsAttendance();" style="background-color: #0458b1;">More
                                 Details</button>
                         </div>
+                    </div>
+
+                    <div>
+                        <table>
+                            <caption>Task Details</caption>
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Details</th>
+                                    <th>Start</th>
+                                    <th>End</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Data will be inserted here dynamically -->
+                            </tbody>
+                        </table>
                     </div>
 
                 </div>
@@ -343,22 +343,19 @@
             .then(response => response.json())
             .then(data => {
                 data = data.data
-                popupTable.style.display = 'block';
-                popupOverlay.style.display = 'block';
 
-                const tbody = document.querySelector('#popupTable tbody');
-                tbody.innerHTML = '';
-                data.forEach(item => {
-                    const row = document.createElement('tr');
+                var tableBody = document.getElementById("tableBody");
+                tableBody.innerHTML = "";
+
+                data.data.forEach(function (item) {
+                    var row = document.createElement("tr");
                     row.innerHTML = `
-                    <td>${item.name}</td>
-                    <td>${item.punch_type}</td>
-                    <td><button  value=${item.user_id} onclick="moreDetails(${item.user_id});">Details</button></td>
-                    ${item.punch_type == 'Online' ? ` <td><button onclick="punchOut(${item.user_id},'${item.email}');" style="background-color:red">Punch Out</button></td>` : '<td>Offline</td>'}
-                    <td><button  value=${item.user_id} onclick="checkTasks(${item.user_id});" style="background-color:green">Check Tasks</button></td>
-                   
-            `;
-                    tbody.appendChild(row);
+                <td data-label="Firstname">${item.name}</td>
+                <td data-label="Lastname">Title : ${item.title} <br> Description : ${item.description}</td>
+                <td data-label="Username">${item.start_time}</td>
+                <td data-label="Username">${item.close_time}</td>
+               `;
+                    tableBody.appendChild(row);
                 });
             })
             .catch(error => console.error('Error fetching users:', error));
@@ -416,6 +413,33 @@
         window.location.href = '/admin/new_user.html'
     }
 
+    function curerentTask() {
+        fetch('/get_current_task')
+            .then(response => response.json())
+            .then(data => {
+                if (data.data.length > 0) {
+                    var tableBody = document.getElementById("tableBody");
+                    tableBody.innerHTML = "";
+
+                    data.data.forEach(function (item) {
+                        var row = document.createElement("tr");
+                        row.innerHTML = `
+                <td data-label="Firstname">${item.name}</td>
+                <td data-label="Lastname">Title : ${item.title} <br> Description : ${item.description}</td>
+                <td data-label="Username">${new Date(item.start_time).toLocaleString()}</td>
+                <td data-label="Username">${new Date(item.end_time).toLocaleString()}</td>
+                   `;
+                        tableBody.appendChild(row);
+                    });
+                }
+                else {
+                    //
+                }
+
+            })
+            .catch(error => console.error('Error fetching users:', error));
+    }
+    curerentTask()
 </script>
 
 </html>
