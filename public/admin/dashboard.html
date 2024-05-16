@@ -342,8 +342,6 @@
         fetch('/todaysDetailMore')
             .then(response => response.json())
             .then(data => {
-                data = data.data
-
                 var tableBody = document.getElementById("tableBodyMore");
                 tableBody.innerHTML = "";
                 console.log()
