@@ -350,9 +350,9 @@
                     var row = document.createElement("tr");
                     row.innerHTML = `
                 <td data-label="Firstname">${item.name}</td>
-                <td data-label="Lastname">${item.punch_type == 'in' ? 'Online' : 'Offline'}</td>
-                <td data-label="Username"><button onclic="moreDetails(${item.user_id})">Attendance</button></td>
-                <td data-label="Username">${item.punch_type == 'in' ? `<button onclic="punchOut(${item.user_id, item.email})">Attendance</button>` : 'Offline'}</td>
+                <td data-label="Lastname">${item.punch_type == 'Online' ? 'Online' : 'Offline'}</td>
+                <td data-label="Username"><button onclick="moreDetails(${item.user_id})">Attendance</button></td>
+                <td data-label="Username">${item.punch_type == 'Online' ? `<button onclic="punchOut(${item.user_id, item.email})" style="background-color='red'">Attendance</button>` : 'Offline'}</td>
                 <td data-label="Username"><button onclick="checkTasks(${item.user_id})">Tasks</button></td>
                `;
                     tableBody.appendChild(row);
