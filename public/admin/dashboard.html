@@ -352,7 +352,7 @@
                 <td data-label="Firstname">${item.name}</td>
                 <td data-label="Lastname">${item.punch_type == 'Online' ? 'Online' : 'Offline'}</td>
                 <td data-label="Username"><button onclick="moreDetails(${item.user_id})">Attendance</button></td>
-                <td data-label="Username">${item.punch_type == 'Online' ? `<button style="background-color='red'" onclick="punchOut(${item.user_id, item.email})">Punch Out</button>` : 'Offline'}</td>
+                <td data-label="Username">${item.punch_type == 'Online' ? `<button style="color: RED;" onclick="punchOut(${item.user_id, item.email})">Punch Out</button>` : 'Offline'}</td>
                 <td data-label="Username"><button onclick="checkTasks(${item.user_id})">Tasks</button></td>
                `;
                     tableBody.appendChild(row);
