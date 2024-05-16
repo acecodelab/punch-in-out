@@ -427,7 +427,7 @@
                 <td data-label="Firstname">${item.name}</td>
                 <td data-label="Lastname">Title : ${item.title} <br> Description : ${item.description}</td>
                 <td data-label="Username">${new Date(item.start_time).toLocaleString()}</td>
-                <td data-label="Username">${item.end_time != null ? Date(item.end_time).toLocaleString() : 'Open'}</td>
+                <td data-label="Username">${item.end_time != null ? new Date(item.end_time).toLocaleString() : 'Open'}</td>
                    `;
                         tableBody.appendChild(row);
                     });
