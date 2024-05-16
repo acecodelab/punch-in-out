@@ -52,7 +52,7 @@ class Task {
         const query = `WITH latest_entries AS (
             SELECT user_id, MAX(start_time) AS start_time
             FROM tasks
-            WHERE DATE_TRUNC('day', start_time) = DATE_TRUNC('day', CURRENT_DATE) and status='Open'
+            WHERE DATE_TRUNC('day', start_time) = DATE_TRUNC('day', CURRENT_DATE) and status='open'
             GROUP BY user_id
         )
         SELECT t.*, u.name
