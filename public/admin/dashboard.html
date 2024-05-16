@@ -223,7 +223,7 @@
                                 <th>Tasks</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tableBodyMore">
 
                         </tbody>
                     </table>
@@ -344,16 +344,17 @@
             .then(data => {
                 data = data.data
 
-                var tableBody = document.getElementById("tableBody");
+                var tableBody = document.getElementById("tableBodyMore");
                 tableBody.innerHTML = "";
-
+                console.log()
                 data.data.forEach(function (item) {
                     var row = document.createElement("tr");
                     row.innerHTML = `
                 <td data-label="Firstname">${item.name}</td>
-                <td data-label="Lastname">Title : ${item.title} <br> Description : ${item.description}</td>
-                <td data-label="Username">${item.start_time}</td>
-                <td data-label="Username">${item.close_time}</td>
+                <td data-label="Lastname">${item.punch_type == 'in' ? 'Online' : 'Offline'}</td>
+                <td data-label="Username"><button onclic="moreDetails(${item.user_id})">Attendance</button></td>
+                <td data-label="Username">${item.punch_type == 'in' ? `<button onclic="punchOut(${item.user_id, item.email})">Attendance</button>` : 'Offline'}</td>
+                <td data-label="Username"><button onclick="checkTasks(${item.user_id})">Tasks</button></td>
                `;
                     tableBody.appendChild(row);
                 });
@@ -427,7 +428,7 @@
                 <td data-label="Firstname">${item.name}</td>
                 <td data-label="Lastname">Title : ${item.title} <br> Description : ${item.description}</td>
                 <td data-label="Username">${new Date(item.start_time).toLocaleString()}</td>
-                <td data-label="Username">${new Date(item.end_time).toLocaleString()}</td>
+                <td data-label="Username">${item.end_time != null ? Date(item.end_time).toLocaleString() : 'Open'}</td>
                    `;
                         tableBody.appendChild(row);
                     });

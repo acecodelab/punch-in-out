@@ -30,7 +30,7 @@ class Task {
         var query = null
         var values = null;
         if (status == 'all') {
-            query = `SELECT * from tasks where user_id=$1 and date(start_time)=date(CURRENT_DATE) ORDER by id asc`;
+            query = `SELECT * from tasks where user_id=$1 and date(start_time)=date(CURRENT_DATE) or user_id=$1 and date(end_time)=date(CURRENT_DATE) ORDER by id asc`;
             values = [userId];
         }
         else {
