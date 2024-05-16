@@ -342,9 +342,10 @@
         fetch('/todaysDetailMore')
             .then(response => response.json())
             .then(data => {
+                popupTable.style.display = 'block';
+                popupOverlay.style.display = 'block';
                 var tableBody = document.getElementById("tableBodyMore");
                 tableBody.innerHTML = "";
-                console.log()
                 data.data.forEach(function (item) {
                     var row = document.createElement("tr");
                     row.innerHTML = `
