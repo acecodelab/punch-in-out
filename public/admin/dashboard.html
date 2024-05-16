@@ -425,7 +425,7 @@
                         var row = document.createElement("tr");
                         row.innerHTML = `
                 <td data-label="Firstname">${item.name}</td>
-                <td data-label="Lastname">Title : ${item.title} <br> Description : ${item.description}</td>
+                <td data-label="Lastname"><b>Title</b> : ${item.title} <br> <b>Description</b> : ${item.description}</td>
                 <td data-label="Username">${new Date(item.start_time).toLocaleString()}</td>
                 <td data-label="Username">${item.end_time != null ? new Date(item.end_time).toLocaleString() : 'Open'}</td>
                    `;
