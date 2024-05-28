@@ -148,7 +148,7 @@
                         <li class="nav-item menu-item" onclick="moveToDashboard();">Dashboard</li>
                         <li class=" nav-item menu-item" onclick="moveToAttendance();">Attendance</li>
                         <li class="nav-item menu-item" onclick="moveToLeave();">Leave Management</li>
-                        <li class="nav-item menu-item">Task Details</li>
+                        <li class="nav-item menu-item" onclick="moveToTask()">Task Details</li>
                         <li class="nav-item menu-item" onclick="moveToNewUser();">User Management</li>
                         <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
                     </ul>
@@ -463,6 +463,34 @@
             link.href = dataURL;
             link.download = 'profile.png';
             link.click();
+        }
+        function clearLocalStorage() {
+            localStorage.removeItem('adminuserId');
+            localStorage.removeItem('adminname');
+            localStorage.removeItem('adminusername');
+            localStorage.removeItem('adminemail');
+            localStorage.removeItem('ecived');
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+            document.getElementById("overlay").style.display = "flex";
+            document.getElementById("okButton").style.display = 'block';
+            document.getElementById("alertHeader").innerHTML = "Bye " + name.split(' ')[0]
+            document.getElementById("alertMessage").innerHTML = "Have a nice day"
+        }
+        function moveToAttendance() {
+            window.location.href = '/admin/attendance.html'
+        }
+        function moveToLeave() {
+            window.location.href = '/admin/leave.html'
+        }
+        function moveToDashboard() {
+            window.location.href = '/admin/dashboard.html'
+        }
+        function moveToTask() {
+            window.location.href = '/admin/tasks.html'
+        }
+        function moveToNewUser() {
+            window.location.href = '/admin/new_user.html'
         }
     </script>
 </body>
