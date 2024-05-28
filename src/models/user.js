@@ -46,29 +46,35 @@ class User {
     static async getUserDetails(id) {
         const query = `SELECT t1.*,t2.* from users t1,employee_details t2 where t1.id=t2.user_id and t1.id=$1`;
         const { rows } = await pool.query(query, [id])
-        const profileData = {
-            name: rows[0].name,
-            email: rows[0].email,
-            phone: rows[0].phone,
-            address: rows[0].address,
-            aadhar: rows[0].aadhar_card_no,
-            pan: rows[0].pan_no,
-            country: rows[0].country,
-            state: rows[0].state,
-            city: rows[0].city,
-            pincode: rows[0].pincode,
-            aadhar_card_no: rows[0].aadhar_card_no,
-            pan_no: rows[0].pan_no,
-            emergencyContact: {
-                name: rows[0].e_name,
-                relationship: rows[0].e_relation,
-                phone: rows[0].e_phone
-            },
-            experience: rows[0].job_details,
-            dob: rows[0].dob,
-            profile_pic: rows[0].profile_pic
-        };
-        return [profileData]
+        if (rows.length > 0) {
+            const profileData = {
+                name: rows[0].name,
+                email: rows[0].email,
+                phone: rows[0].phone,
+                address: rows[0].address,
+                aadhar: rows[0].aadhar_card_no,
+                pan: rows[0].pan_no,
+                country: rows[0].country,
+                state: rows[0].state,
+                city: rows[0].city,
+                pincode: rows[0].pincode,
+                aadhar_card_no: rows[0].aadhar_card_no,
+                pan_no: rows[0].pan_no,
+                emergencyContact: {
+                    name: rows[0].e_name,
+                    relationship: rows[0].e_relation,
+                    phone: rows[0].e_phone
+                },
+                experience: rows[0].job_details,
+                dob: rows[0].dob,
+                profile_pic: rows[0].profile_pic
+            };
+            return [profileData]
+        }
+        else {
+            return {}
+        }
+
     }
 
     static async update_details(req, res) {
