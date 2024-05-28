@@ -246,7 +246,9 @@
                 <td data-label="Status">${item.status}</td>
                 <td data-label="Action"><button onclick="changeStatus(${item.id})" style="${item.status == 'active' ? 'background-color:red' : 'background-color:green'}">${item.status == 'active' ? 'In-Active' : 'Active'}</button></td>
                 <td data-label="Action"><button onclick="openDashboard(${item.id}, '${item.name}', '${item.username}', '${item.email}')">View</button></td>
-            `;
+                <td data-label="Password"><button onclick="updateDetail(${item.id})">Update Details</button></td>
+            
+                `;
                         tableBody.appendChild(row);
                     });
                 }
@@ -275,6 +277,11 @@
             window.location.reload();
         }
     }
+
+    async function updateDetail(id) {
+        window.location.href = '/admin/update_details.html?user_id=' + id
+    }
+
     async function changeStatus(id) {
         var requestBody = { "id": id }
         const response = await fetch('/changeStatus/', {

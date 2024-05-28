@@ -9,7 +9,7 @@ const { submitLeave, myLeaveRequests, approveLeave, rejectLeave, leaveCount,
     cancelLeaveRequest, allLeaveRequeststoday, allLeaveRequeststhis_month,
     allLeaveRequestsbetween_month } = require('../controllers/leaveController');
 const { submitTask, getTask, closeTask, taskToday, taskThisMonth, taskBetweenDates, getCurrentTask } = require('../controllers/taskController');
-const { new_user, get_user_list, sendPassword, changeStatus } = require('../controllers/userController');
+const { new_user, get_user_list, sendPassword, changeStatus, getUserDetails, update_details } = require('../controllers/userController');
 const Middleware = require('../middleware/punchMiddleware');
 
 //EMPLOYEE API PUNCH
@@ -86,5 +86,7 @@ router.get('/get_user_list', get_user_list);
 router.post('/sendPassword', sendPassword);
 router.post('/changeStatus', changeStatus);
 router.get('/get_current_task', getCurrentTask);
+router.get('/getUserDetails/:id', getUserDetails);
+router.post('/update_details', update_details);
 
 module.exports = router;

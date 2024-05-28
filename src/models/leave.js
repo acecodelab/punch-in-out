@@ -44,9 +44,19 @@ class Leave {
             leave_type = row.leave_type
             leave_start_date = row.leave_start_date
         });
+        var minus_holdiay = 0;
+        if (leave_type == 'Half Day Leave') {
+            minus_holdiay = parseFloat(minus_holdiay) + 0.5
+        }
+        else if (leave_type == 'Full Day Leave') {
+            minus_holdiay = parseFloat(minus_holdiay) + 1
+        }
+        else if (leave_type == 'Surprise Leave') {
+            minus_holdiay = parseFloat(minus_holdiay) + 1
+        }
 
-        const queryUpdateLeaveCount = 'UPDATE salary set available = available - 1 , leave=leave + 1 where user_id=$1 and EXTRACT(YEAR FROM CURRENT_DATE)=year RETURNING *;';
-        const valuesUpdateLeaveCount = [userid];
+        const queryUpdateLeaveCount = 'UPDATE salary set available = available - $1 , leave=leave + $1 where user_id=$2 and EXTRACT(YEAR FROM CURRENT_DATE)=year RETURNING *;';
+        const valuesUpdateLeaveCount = [minus_holdiay, userid];
         await pool.query(queryUpdateLeaveCount, valuesUpdateLeaveCount);
 
         var userDetail = await Leave.getUserDetails(userid)

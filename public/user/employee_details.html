@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Profile</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="
+    https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css
+    " rel="stylesheet">
+    <link rel="stylesheet" href="common.css"> <!-- Include your CSS file -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+
+            margin: 20px auto;
+            padding: 20px;
+        }
+
+        .profile {
+
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .cover-photo img {
+            width: 100%;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            float: right;
+        }
+
+        .profile-header img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-left: 20px;
+        }
+
+        .profile-header .name {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .info {
+            padding: 20px;
+        }
+
+        .info p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        .info p:first-child {
+            margin-top: 0;
+        }
+
+        .info p:last-child {
+            margin-bottom: 0;
+        }
+
+        .emergency-details {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .emergency-details h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .emergency-details p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+
+        /* Existing styles */
+
+        .experience {
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .experience h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .job {
+            margin-bottom: 20px;
+        }
+
+        .job h3 {
+            margin-bottom: 5px;
+        }
+
+        .job p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="hamburger-menu" id="hamburgerMenu">
+            <div class="line"></div>
+            <div class="line"></div>
+            <div class="line"></div>
+        </div>
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar" id="sidebar">
+                <div class="sidebar-sticky">
+                    <div class="logo">
+                        <img src="logo_white.png" alt="Logo">
+                    </div>
+                    <br>
+                    <ul class="nav flex-column">
+                        <li class="nav-item menu-item" onclick="moveToAttendance();">Attendance</li>
+                        <li class="nav-item menu-item">Leave Management</li>
+                        <li class="nav-item menu-item" onclick="taskUpdate()">Task Management</li>
+                        <li class="nav-item menu-item" onclick="changePassword();">Change Password</li>
+                        <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
+                    </ul>
+                </div>
+            </nav>
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-0 main-content">
+                <header>
+                    <h3>Details</h3>
+                </header>
+                <div class="container">
+                    <div class="profile">
+                        <div class="profile-details" id="profileDetails">
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        let userId = '';
+        let username = '';
+        let name = '';
+        let email = '';
+
+        window.onload = function () {
+            userId = localStorage.getItem('userId');
+            name = localStorage.getItem('name');
+            username = localStorage.getItem('username');
+            email = localStorage.getItem('email');
+
+            if (!userId || !name || !username || !email) {
+                window.location.href = "/user/";
+            }
+            else {
+                getDetails(userId)
+            }
+        };
+
+        async function getDetails(userId) {
+            const profileDetails = document.getElementById('profileDetails');
+            // Fetch profile data from the server
+            fetch('/getUserDetails/' + userId)
+                .then(response => response.json())
+                .then(profile => {
+                    profile = profile.data[0]
+                    console.log(profile.experience)
+                    // Generate HTML for profile details
+                    profileDetails.innerHTML = `
+                <div class="profile-header">
+                    <img src="profile-pic.jpg" alt="Profile Picture">
+                    <h1 class="name">${profile.name}</h1>
+                </div>
+                <div class="info">
+                    <p>Email: ${profile.email}</p>
+                    <p>Phone: ${profile.phone}</p>
+                    <p>Address: ${profile.address}</p>
+                    <p>Aadhar Card: ${profile.aadhar}</p>
+                    <p>PAN Card: ${profile.pan}</p>
+                </div>
+                <div class="emergency-details">
+                    <h2>Emergency Contact</h2>
+                    <p>Name: ${profile.emergencyContact.name}</p>
+                    <p>Relationship: ${profile.emergencyContact.relationship}</p>
+                    <p>Phone: ${profile.emergencyContact.phone}</p>
+                </div>
+                <div class="experience">
+                    <h2>Experience</h2>
+                    ${profile.experience.map(job => `
+                        <div class="job">
+                            <h3>${job.jobTitles}</h3>
+                            <p>Company: ${job.companies}</p>
+                            <p>Duration: ${job.durations}</p>
+                            <p>Description: ${job.descriptions}</p>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+                })
+                .catch(error => console.error('Error fetching profile data:', error));
+        }
+    </script>
+</body>
+
+</html>

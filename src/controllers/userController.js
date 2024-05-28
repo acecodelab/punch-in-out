@@ -98,6 +98,17 @@ const changeStatus = async (req, res) => {
     res.json({ "status": true, "data": [] });
 }
 
+const getUserDetails = async (req, res) => {
+    const { id } = req.params;
+    var data = await User.getUserDetails(id)
+    res.json({ "status": true, "data": data });
+}
+
+const update_details = async (req, res) => {
+    var data = await User.update_details(req, res)
+    res.json({ "status": true, data: data });
+}
+
 module.exports = {
-    new_user, get_user_list, sendPassword, changeStatus
+    new_user, get_user_list, sendPassword, changeStatus, getUserDetails, update_details
 };
