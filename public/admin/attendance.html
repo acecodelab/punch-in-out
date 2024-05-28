@@ -113,7 +113,10 @@
     <!-- Custom JavaScript -->
     <script>
         const totalOutTimeDiv = document.getElementById('totalOutTime');
-
+        let userId = '';
+        let username = '';
+        let name = '';
+        let email = '';
         window.onload = function () {
             userId = localStorage.getItem('adminuserId');
             name = localStorage.getItem('adminname');
