@@ -352,7 +352,7 @@
                 <td data-label="Firstname">${item.name}</td>
                 <td data-label="Lastname">${item.punch_type == 'Online' ? 'Online' : 'Offline'}</td>
                 <td data-label="Username"><button onclick="moreDetails(${item.user_id})">Attendance</button></td>
-                <td data-label="Username">${item.punch_type == 'Online' ? `<button style="background-color: RED;" onclick="punchOut(${item.user_id, item.email})">Punch Out</button>` : 'Offline'}</td>
+                <td data-label="Username">${item.punch_type == 'Online' ? `<button style="background-color: RED;" onclick="punchOut(${item.user_id})">Punch Out</button>` : 'Offline'}</td>
                 <td data-label="Username"><button onclick="checkTasks(${item.user_id})">Tasks</button></td>
                `;
                     tableBody.appendChild(row);
@@ -368,14 +368,14 @@
     function moreDetailsLeave() {
         window.location.href = '/admin/leave.html'
     }
-    async function punchOut(user_id, email) {
+    async function punchOut(user_id) {
         var type = 'out';
         const response = await fetch(`/punch/${type}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ user_id: user_id, email: email })
+            body: JSON.stringify({ user_id: user_id, email: '' })
         });
 
         const result = await response.json();
