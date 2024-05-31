@@ -120,6 +120,7 @@
                         <li class="nav-item menu-item" onclick="moveToAttendance();">Attendance</li>
                         <li class="nav-item menu-item">Leave Management</li>
                         <li class="nav-item menu-item" onclick="taskUpdate()">Task Management</li>
+                        <li class="nav-item menu-item" onclick="moveToProfile();">Profile</li>
                         <li class="nav-item menu-item" onclick="changePassword();">Change Password</li>
                         <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
                     </ul>
@@ -524,7 +525,9 @@
         function moveToAttendance() {
             window.location.href = '/user/attendance.html'
         }
-
+        function moveToProfile() {
+            window.location.href = '/user/employee_details.html'
+        }
         function taskUpdate() {
             window.location.href = '/user/task.html'
         }

@@ -214,12 +214,7 @@
                         <label for="emergencyPhone">Phone:</label>
                         <input type="tel" id="emergencyPhone" required>
 
-                        <h2>Work Experience</h2>
-                        <div id="experienceFields">
 
-                        </div>
-                        <button type="button" id="addExperienceBtn">Add Experience</button>
-                        <br><br>
                         <button type="submit">Submit</button>
                     </form>
                 </div>
@@ -248,52 +243,9 @@
             }
         };
 
-        const experienceFields = document.getElementById('experienceFields');
-        const addExperienceBtn = document.getElementById('addExperienceBtn');
-        let experienceCount = 1;
-
-        function createExperienceFields() {
-            const div = document.createElement('div');
-            div.classList.add('experienceField');
-            div.id = `experience${experienceCount}`;
-
-            div.innerHTML = `
-                <button type="button" class="closeExperienceBtn" data-id="${experienceCount}">
-                  X
-                </button>
-                <label for="jobTitle${experienceCount}">Job Title:</label>
-                <input type="text" id="jobTitle${experienceCount}" name="jobTitle${experienceCount}" required>
-                <label for="company${experienceCount}">Company:</label>
-                <input type="text" id="company${experienceCount}" name="company${experienceCount}" required>
-                <label for="duration${experienceCount}">Duration:</label>
-                <input type="text" id="duration${experienceCount}" name="duration${experienceCount}" required>
-                <label for="description${experienceCount}">Description:</label>
-                <textarea id="description${experienceCount}" name="description${experienceCount}" required></textarea>
-            `;
-
-            experienceFields.appendChild(div);
-            experienceCount++;
-            attachCloseListeners(); // Attach event listeners to new close buttons
-        }
-
-        function attachCloseListeners() {
-            const closeButtons = document.querySelectorAll('.closeExperienceBtn');
-            closeButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    experienceCount--;
-                    const experienceId = this.getAttribute('data-id');
-                    const experienceDiv = document.getElementById(`experience${experienceId}`);
-                    experienceDiv.remove();
-                });
-            });
-        }
-
-        addExperienceBtn.addEventListener('click', createExperienceFields);
 
         document.getElementById('profileForm').addEventListener('submit', async (event) => {
             event.preventDefault();
-            const formDataExp = new FormData(event.target);
-            const requestBody = Object.fromEntries(formDataExp.entries());
 
             var userSelect = user_id
             var phone = document.getElementById("phone").value
@@ -308,35 +260,6 @@
             var relationSelect = document.getElementById("relationSelect").value
             var emergencyPhone = document.getElementById("emergencyPhone").value
             var dob = document.getElementById("dob").value
-            // Create arrays to hold the grouped data
-            const companies = [];
-            const descriptions = [];
-            const durations = [];
-            const jobTitles = [];
-
-            for (const key in requestBody) {
-                // Check if the property starts with "company", "description", "duration", or "jobTitle"
-                if (key.startsWith('company')) {
-                    companies.push(requestBody[key]);
-                } else if (key.startsWith('description')) {
-                    descriptions.push(requestBody[key]);
-                } else if (key.startsWith('duration')) {
-                    durations.push(requestBody[key]);
-                } else if (key.startsWith('jobTitle')) {
-                    jobTitles.push(requestBody[key]);
-                }
-            }
-
-            const dataArray = [companies, descriptions, durations, jobTitles];
-            var finalArray = []
-            for (let i = 0; i < companies.length; i++) {
-                finalArray.push({
-                    "companies": companies[i],
-                    "descriptions": descriptions[i],
-                    "durations": durations[i],
-                    "jobTitles": jobTitles[i]
-                })
-            }
 
             formData.append("userSelect", userSelect);
             formData.append("phone", phone);
@@ -350,7 +273,6 @@
             formData.append("emergencyName", emergencyName);
             formData.append("relationSelect", relationSelect);
             formData.append("emergencyPhone", emergencyPhone);
-            formData.append("experience", finalArray);
             formData.append("dob", dob);
 
             const response = await fetch('/update_details', {
@@ -392,33 +314,6 @@
 
                         document.getElementById("dob").value = formattedDate
                     }
-
-                    const div = document.createElement('div');
-                    div.classList.add('experienceField');
-                    div.id = `experience${experienceCount}`;
-
-
-                    for (let i = 0; i < profile.experience.length > 0; i++) {
-                        div.innerHTML = `
-                    <button type="button" class="closeExperienceBtn" data-id="${experienceCount}">
-                    X
-                    </button>
-                    <label for="jobTitle${experienceCount}">Job Title:</label>
-                    <input type="text" id="jobTitle${experienceCount}" name="jobTitle${experienceCount}" value=${profile.experience[i].companies} required>
-                    <label for="company${experienceCount}">Company:</label>
-                    <input type="text" id="company${experienceCount}" name="company${experienceCount}" value=${profile.experience[i].jobTitles} required>
-                    <label for="duration${experienceCount}">Duration:</label>
-                    <input type="text" id="duration${experienceCount}" name="duration${experienceCount}" value=${profile.experience[i].durations} required>
-                    <label for="description${experienceCount}" >Description:</label>
-                    <textarea id="description${experienceCount}" name="description${experienceCount}"  required>${profile.experience[i].descriptions}</textarea>
-                `;
-
-                        experienceFields.appendChild(div);
-                        attachCloseListeners(); // Attach event listeners to new close buttons
-                        experienceCount++;
-                    }
-
-
                 })
                 .catch(error => console.error('Error fetching profile data:', error));
         }
@@ -449,21 +344,6 @@
             reader.readAsDataURL(file);
         });
 
-        function uploadImage() {
-            var canvas = document.createElement('canvas');
-            var ctx = canvas.getContext('2d');
-            var img = document.getElementById('uploadedImage');
-
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx.drawImage(img, 0, 0, img.width, img.height);
-
-            var dataURL = canvas.toDataURL('image/png');
-            var link = document.createElement('a');
-            link.href = dataURL;
-            link.download = 'profile.png';
-            link.click();
-        }
         function clearLocalStorage() {
             localStorage.removeItem('adminuserId');
             localStorage.removeItem('adminname');

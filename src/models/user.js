@@ -5,7 +5,7 @@ const multer = require('multer');
 const path = require('path');
 // Set storage engine
 const storage = multer.diskStorage({
-    destination: './uploads/',
+    destination: './public/uploads/',
     filename: function (req, file, cb) {
         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
     }
@@ -65,7 +65,6 @@ class User {
                     relationship: rows[0].e_relation,
                     phone: rows[0].e_phone
                 },
-                experience: rows[0].job_details,
                 dob: rows[0].dob,
                 profile_pic: rows[0].profile_pic
             };
@@ -78,36 +77,35 @@ class User {
     }
 
     static async update_details(req, res) {
-        var profile_photo = null;
-        return upload(req, res, async (err) => {
+        upload(req, res, async (err) => {
+            var profile_photo = null;
             if (err) {
                 console.error(err);
                 return;
             } else {
                 if (req.file) {
                     // File uploaded successfully
-                    profile_photo = req.protocol + '://' + req.get('host') + '/' + req.file.path;
-                    const { userSelect, phone, region, address, stateSelect, city, pincode, aadhar, pan, emergencyName, relationSelect, emergencyPhone, experience, dob } = req.body;
-                    const checkQuery = `SELECT * from employee_details where user_id=$1`;
-                    var { rows } = await pool.query(checkQuery, [userSelect])
-                    if (rows.length > 0) {
-                        if (profile_photo == null) {
-                            profile_photo = rows[0].profile_pic
-                        }
-                        const query = `UPDATE employee_details set phone=$1,address=$2,country=$3,state=$4,city=$5,pincode=$6,aadhar_card_no=$7,pan_no=$8,e_name=$9,e_relation=$10, e_phone=$11, job_details=$12, profile_pic=$13,dob=$14 where user_id=$15 RETURNING *;`;
-                        const experienceJSON = JSON.stringify(experience);
-                        var { rows } = await pool.query(query, [phone, address, region, stateSelect, city, pincode, aadhar, pan, emergencyName, relationSelect, emergencyPhone, experienceJSON, profile_photo, dob, userSelect]);
-                        return rows
+                    var path = req.file.path.replace('public/', '');
+                    profile_photo = req.protocol + '://' + req.get('host') + '/' + path;
+                }
+                const { userSelect, phone, region, address, stateSelect, city, pincode, aadhar, pan, emergencyName, relationSelect, emergencyPhone, dob } = req.body;
+                const checkQuery = `SELECT * from employee_details where user_id=$1`;
+                var { rows } = await pool.query(checkQuery, [userSelect])
+                if (rows.length > 0) {
+                    if (profile_photo == null) {
+                        profile_photo = rows[0].profile_pic
                     }
-                    else {
-                        const query = `INSERT INTO public.employee_details(
+                    const query = `UPDATE employee_details set phone=$1,address=$2,country=$3,state=$4,city=$5,pincode=$6,aadhar_card_no=$7,pan_no=$8,e_name=$9,e_relation=$10, e_phone=$11,profile_pic=$12,dob=$13 where user_id=$14 RETURNING *;`;
+                    var { rows } = await pool.query(query, [phone, address, region, stateSelect, city, pincode, aadhar, pan, emergencyName, relationSelect, emergencyPhone, profile_photo, dob, userSelect]);
+                    return rows
+                }
+                else {
+                    const query = `INSERT INTO public.employee_details(
                             user_id, phone, address, country, state, city, pincode, aadhar_card_no, pan_no, e_name, e_relation,
-                            e_phone, job_details, profile_pic,dob)
-                            VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14,$15) RETURNING *;`
-                        const experienceJSON = JSON.stringify(experience);
-                        var { rows } = await pool.query(query, [userSelect, phone, address, region, stateSelect, city, pincode, aadhar, pan, emergencyName, relationSelect, emergencyPhone, experienceJSON, profile_photo, dob]);
-                        return rows
-                    }
+                            e_phone, profile_pic,dob)
+                            VALUES ( $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING *;`
+                    var { rows } = await pool.query(query, [userSelect, phone, address, region, stateSelect, city, pincode, aadhar, pan, emergencyName, relationSelect, emergencyPhone, profile_photo, dob]);
+                    return rows
                 }
             }
         });

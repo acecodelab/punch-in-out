@@ -133,8 +133,9 @@
                     <br>
                     <ul class="nav flex-column">
                         <li class="nav-item menu-item" onclick="moveToAttendance();">Attendance</li>
-                        <li class="nav-item menu-item">Leave Management</li>
+                        <li class="nav-item menu-item" onclick="moveToLeave()">Leave Management</li>
                         <li class="nav-item menu-item" onclick="taskUpdate()">Task Management</li>
+                        <li class="nav-item menu-item">Profile</li>
                         <li class="nav-item menu-item" onclick="changePassword();">Change Password</li>
                         <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
                     </ul>
@@ -142,7 +143,7 @@
             </nav>
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-0 main-content">
                 <header>
-                    <h3>Details</h3>
+                    <h3>Profile</h3>
                 </header>
                 <div class="container">
                     <div class="profile">
@@ -189,7 +190,7 @@
                     // Generate HTML for profile details
                     profileDetails.innerHTML = `
                 <div class="profile-header">
-                    <img src="profile-pic.jpg" alt="Profile Picture">
+                    <img src="${profile.profile_pic}" alt="Profile Picture">
                     <h1 class="name">${profile.name}</h1>
                 </div>
                 <div class="info">
@@ -205,20 +206,55 @@
                     <p>Relationship: ${profile.emergencyContact.relationship}</p>
                     <p>Phone: ${profile.emergencyContact.phone}</p>
                 </div>
-                <div class="experience">
-                    <h2>Experience</h2>
-                    ${profile.experience.map(job => `
-                        <div class="job">
-                            <h3>${job.jobTitles}</h3>
-                            <p>Company: ${job.companies}</p>
-                            <p>Duration: ${job.durations}</p>
-                            <p>Description: ${job.descriptions}</p>
-                        </div>
-                    `).join('')}
-                </div>
             `;
                 })
                 .catch(error => console.error('Error fetching profile data:', error));
+        }
+        function moveToAttendance() {
+            window.location.href = '/user/attendance.html'
+        }
+        function moveToProfile() {
+            window.location.href = '/user/employee_details.html'
+        }
+        function taskUpdate() {
+            window.location.href = '/user/task.html'
+        }
+
+        function changePassword() {
+            window.location.href = '/user/password.html'
+        }
+        document.getElementById("hamburgerMenu").addEventListener("click", function () {
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+        });
+        // Function to hide the custom alert
+        function hideAlert(type) {
+            if (type == 'leave') {
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("leaveButton").style.display = 'none';
+                window.location.reload();
+            }
+            if (type == 'logout') {
+                document.getElementById("overlay").style.display = "none";
+                document.getElementById("logoutButton").style.display = 'none';
+                window.location.reload();
+            }
+        }
+        function clearLocalStorage() {
+            localStorage.removeItem('userId');
+            localStorage.removeItem('name');
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('ecived');
+            var sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("active");
+            document.getElementById("overlay").style.display = "flex";
+            document.getElementById("logoutButton").style.display = 'block';
+            document.getElementById("alertHeader").innerHTML = "Bye " + name.split(' ')[0]
+            document.getElementById("alertMessage").innerHTML = "Have a nice day"
+        }
+        function moveToLeave() {
+            window.location.href = '/user/leave.html'
         }
     </script>
 </body>

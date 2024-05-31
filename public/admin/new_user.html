@@ -105,6 +105,7 @@
                                 <th>Status</th>
                                 <th>Action</th>
                                 <th>Dashboard</th>
+                                <th>Details</th>
                             </tr>
                         </thead>
                         <tbody id="tableBody">
@@ -242,11 +243,11 @@
                 <td data-label="Firstname">${item.name}</td>
                 <td data-label="Lastname">${item.email}</td>
                 <td data-label="Username">${item.username}</td>
-                <td data-label="Password"><button onclick="sendPassword(${item.id})">Send Password</button></td>
+                <td data-label="Password"><button onclick="sendPassword(${item.id})">Send</button></td>
                 <td data-label="Status">${item.status}</td>
                 <td data-label="Action"><button onclick="changeStatus(${item.id})" style="${item.status == 'active' ? 'background-color:red' : 'background-color:green'}">${item.status == 'active' ? 'In-Active' : 'Active'}</button></td>
                 <td data-label="Action"><button onclick="openDashboard(${item.id}, '${item.name}', '${item.username}', '${item.email}')">View</button></td>
-                <td data-label="Password"><button onclick="updateDetail(${item.id})">Update Details</button></td>
+                <td data-label="Password"><button onclick="updateDetail(${item.id})">View</button></td>
             
                 `;
                         tableBody.appendChild(row);
