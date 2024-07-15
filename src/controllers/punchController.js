@@ -114,6 +114,12 @@ const getPunchHistory = async (req, res) => {
     }
 };
 
+const getNotifications = async (req, res) => {
+    const notification = await Punch.getNotification();
+    res.json({ success: true, data: { notification } });
+
+}
+
 const calculateTotalOutTime = (punches) => {
     let totalOutTime = 0;
     let lastPunch = null;
@@ -222,6 +228,17 @@ const updatePassword = async (req, res) => {
     }
 }
 
+const addNotification = async (req, res) => {
+    const { message } = req.body
+    const data = await Punch.addNotification(message);
+    if (data) {
+        res.json({ status: true });
+    }
+    else {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
 const punchOutNow = async () => {
     await Punch.punchOutNow()
     return true;
@@ -291,5 +308,5 @@ const fetchAbsentDetails = async (req, res) => {
 module.exports = {
     punchIn, punchOut, getPunchHistory, login, today, this_month, between_month,
     getUserList, updatePassword, punchOutNow, loginAdmin, todaysDetail, todaysDetailMore,
-    todaysLeaveDetail, fetchLeaveDetails, fetchAbsentDetails
+    todaysLeaveDetail, fetchLeaveDetails, fetchAbsentDetails, getNotifications, addNotification
 };

@@ -3,9 +3,9 @@ const express = require('express');
 //const puppeteer = require('puppeteer');
 
 const router = express.Router();
-const { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month,
-    getUserList, updatePassword, loginAdmin, todaysDetail, todaysDetailMore, todaysLeaveDetail, fetchLeaveDetails, fetchAbsentDetails } = require('../controllers/punchController');
-const { submitLeave,submitAbsent, myLeaveRequests, allAbsent, approveLeave, rejectLeave, leaveCount,
+const { punchIn, punchOut, getPunchHistory, getNotifications, login, today, this_month, between_month,
+    getUserList, updatePassword,addNotification, loginAdmin, todaysDetail, todaysDetailMore, todaysLeaveDetail, fetchLeaveDetails, fetchAbsentDetails } = require('../controllers/punchController');
+const { submitLeave, submitAbsent, myLeaveRequests, allAbsent, approveLeave, rejectLeave, leaveCount,
     cancelLeaveRequest, allLeaveRequeststoday, allLeaveRequeststhis_month,
     allLeaveRequestsbetween_month, allAbsentToday, allAbsentthis_month, allAbsentbetween_month } = require('../controllers/leaveController');
 const { submitTask, getTask, closeTask, taskToday, taskThisMonth, taskBetweenDates, getCurrentTask } = require('../controllers/taskController');
@@ -19,11 +19,13 @@ router.post('/punch/in', Middleware.restrictAccessByIP, punchIn);
 router.post('/punch/out', Middleware.restrictAccessByIP, punchOut);
 // Get Punches and Total Out Time for a User
 router.get('/punches/:user_id', Middleware.restrictAccessByIP, getPunchHistory);
+router.get('/notifications', Middleware.restrictAccessByIP, getNotifications);
 //LOGIN MIDDLEWARE 
 router.post('/login', login);
 router.post('/loginAdmin', loginAdmin);
 //Update Password
 router.post('/updatePassword', updatePassword);
+router.post('/add-notification', addNotification);
 
 
 //ADMIN API PUNCH

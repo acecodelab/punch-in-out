@@ -25,6 +25,19 @@
             padding: 10px;
             text-indent: 10px;
         }
+        #notification-container {
+            background-color: red;
+            color:white;
+            text-align: center;
+            padding: 10px;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 
@@ -57,9 +70,13 @@
             </nav>
             <!-- Main Content -->
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-0 main-content">
+                <div id="notification-container" class="hidden">
+                    <p id="notification-text"></p>
+                </div>
                 <header>
                     <h3>ATTENDANCE</h3>
                 </header>
+               
                 <div class="dashboard" style="margin-left: 10px; margin-right: 10px;margin-top: 10px;">
                     <div class="totalOutTime" id="totalOutTime" style="float: right;"></div>
                     <div class="totalOutTime" id="total_time_till_now" style="float: left;"></div>
@@ -718,6 +735,23 @@
 
             return weekdays;
         }
+       
+        document.addEventListener('DOMContentLoaded', () => {
+         fetch('/notifications')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            if (data.data.notification.length > 0) {
+                const notificationContainer = document.getElementById('notification-container');
+                const notificationText = document.getElementById('notification-text');
+                
+                notificationText.textContent = data.data.notification.map(n => n.message).join(' | ');
+                notificationContainer.classList.remove('hidden');
+            }
+        })
+        .catch(error => console.error('Error fetching notification:', error));
+    });
+
     </script>
 </body>
 

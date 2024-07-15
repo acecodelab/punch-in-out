@@ -32,6 +32,13 @@ class Punch {
         return rows;
     }
 
+    static async getNotification() {
+        var date = new Date().toISOString().slice(0, 10)
+        const query = `SELECT message FROM notifications WHERE date = '${date}'`;
+        const { rows } = await pool.query(query);
+        return rows;
+    }
+
     static async getByUserIdForMonth(user_id) {
         const query = `SELECT * FROM punches WHERE user_id = $1 and DATE_PART('month', timestamp) = DATE_PART('month', CURRENT_DATE) and date(timestamp)!=date(CURRENT_DATE) ORDER BY timestamp DESC`;
         const { rows } = await pool.query(query, [user_id]);
@@ -92,6 +99,12 @@ class Punch {
         else {
             return false
         }
+    }
+
+    static async addNotification(message) {
+        const addNotification = `INSERT INTO notifications (message) values ($1)`;
+        await pool.query(addNotification, [message]);
+        return true;
     }
 
     static async punchOutNow() {
