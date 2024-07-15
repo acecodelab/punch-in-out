@@ -745,7 +745,7 @@
                 const notificationContainer = document.getElementById('notification-container');
                 const notificationText = document.getElementById('notification-text');
                 
-                notificationText.textContent = data.data.notification.map(n => n.message).join(' \n /n <br> ');
+                notificationText.textContent = data.data.notification.map(n => n.message).join(' | ');
                 notificationContainer.classList.remove('hidden');
             }
         })
