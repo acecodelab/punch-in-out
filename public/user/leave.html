@@ -159,6 +159,7 @@
                         <h4 style="text-align: left;" id="totalLeave"></h4>
                         <h4 style="text-align: center;" id="usedLeave"></h4>
                         <h4 style="text-align: right;" id="pendingLeave"></h4>
+                        <h4 style="text-align: right;" id="absent"></h4>
                     </div>
                     <br>
                     <button id="showRequest" onclick="showRequest()" class="btn"
@@ -167,6 +168,9 @@
                     <button id="hideRequest" onclick="hideRequest()" class="btn"
                         style="display: none;   background-color: #007bff;color: #fff;cursor: pointer;margin-bottom: 10px;">Hide
                         History</button>
+
+                    <button id="showRequestA" onclick="showRequestAbsent()" class="btn"
+                        style="   background-color: #007bff;color: #fff;cursor: pointer;margin-bottom: 10px;">Absent Details</button>
 
                     <div id="allRequestDiv" style="display: none;">
                         <div id="filter_button_div" style="display: block;">
@@ -410,6 +414,7 @@
                 var total_leaves = result.data[0].total_leaves
                 var available = result.data[0].available
                 var leave = result.data[0].leave
+                var absent = result.dataAbsent[0].count
 
                 if (total_leaves > 6) {
                     document.getElementById('totalLeave').style.color = 'green'
@@ -430,9 +435,11 @@
                 else {
                     document.getElementById('pendingLeave').style.color = 'red'
                 }
+                 document.getElementById('absent').style.color = 'red'
                 document.getElementById('totalLeave').innerHTML = "Total : " + total_leaves
                 document.getElementById('usedLeave').innerHTML = "Used : " + leave
                 document.getElementById('pendingLeave').innerHTML = "Pending : " + available
+                document.getElementById('absent').innerHTML = "Absent (Month Wise) : " + absent
             }
         }
         // Initialize flatpickr
@@ -498,10 +505,60 @@
             document.getElementById("no_request").style.display = 'none'
         }
         function showRequest() {
+            const absentRequest = document.querySelector('.leave-request-counts');
+            absentRequest.style.display='block';
             document.getElementById("showRequest").style.display = 'none';
             document.getElementById("hideRequest").style.display = 'block';
             document.getElementById("allRequestDiv").style.display = 'block';
             getLeaveRequest(userId)
+        }
+        function showRequestAbsent(){
+            document.getElementById("allRequestDiv").style.display = 'block';
+            const absentRequest = document.querySelector('.leave-request-counts');
+            absentRequest.style.display='none';
+            getAbsentList(userId); // Fetch today's reports for selected user by default
+        }
+        var absents = [];
+        async function getAbsentList(userId) {
+            document.getElementById('filter_button_div').style.display = 'none';
+            document.getElementById("showRequest").style.display = 'block';
+            document.getElementById("hideRequest").style.display = 'none';
+            absents = []
+            const response = await fetch(`/allAbsent/${userId}`);
+            const result = await response.json();
+            if (result.data.length > 0) {
+                for (let i = 0; i < result.data.length; i++) {
+                    var date_ = result.data[i].absent_date.split('T')[0]
+                    absents.push({
+                        id: result.data[i].id, employeeName: result.data[i].name, absent_date: date_, reason: result.data[i].reason
+                    })
+                }
+            }
+            else {
+                absents = []
+            }
+            // Initial rendering of leave requests
+            renderAbsentList();
+        }
+
+        function renderAbsentList() {
+            const leaveRequestList = document.querySelector('.leave-request-list');
+            leaveRequestList.innerHTML = '';
+
+            absents.forEach(request => {
+                const leaveRequestItem = document.createElement('li');
+                leaveRequestItem.classList.add('leave-request');
+                leaveRequestItem.innerHTML = `
+                <div class="leave-info">
+                    <div>
+                        <strong>Employee Name:</strong> ${request.employeeName}<br>
+                        <strong>Reason:</strong> ${request.reason}<br>
+                        <strong>Date:</strong> ${request.absent_date}<br>
+                    </div>
+                </div>
+            `;
+                leaveRequestList.appendChild(leaveRequestItem);
+            });
         }
         function hideRequest() {
             document.getElementById("showRequest").style.display = 'block';

@@ -260,8 +260,9 @@ const todaysDetailMore = async (req, res) => {
 
 const todaysLeaveDetail = async (req, res) => {
     const data = await Punch.todaysLeaveDetail();
+    const dataAbsent = await Punch.todaysAbsentDetail();
     if (data) {
-        res.json({ "data": data });
+        res.json({ "data": data, "dataAbsent": dataAbsent });
     }
     else {
         res.status(500).json({ error: 'Internal server error' });
@@ -277,9 +278,18 @@ const fetchLeaveDetails = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+const fetchAbsentDetails = async (req, res) => {
+    const data = await Punch.fetchAbsentDetails();
+    if (data) {
+        res.json({ "data": data });
+    }
+    else {
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
 
 module.exports = {
     punchIn, punchOut, getPunchHistory, login, today, this_month, between_month,
     getUserList, updatePassword, punchOutNow, loginAdmin, todaysDetail, todaysDetailMore,
-    todaysLeaveDetail, fetchLeaveDetails
+    todaysLeaveDetail, fetchLeaveDetails, fetchAbsentDetails
 };

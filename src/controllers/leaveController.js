@@ -79,6 +79,17 @@ const submitLeave = async (req, res) => {
     }
 };
 
+const submitAbsent = async (req, res) => {
+    const { reason, userId } = req.body;
+    var userDetail = await Leave.getUserDetails(userId)
+    const data = await Leave.submitAbsent(reason, userId);
+    if (data) {
+        res.json({ "status": true });
+    } else {
+        res.status(500).json({ "status": flase, error: 'Internal server error' });
+    }
+}
+
 const myLeaveRequests = async (req, res) => {
     const { userId } = req.params;
     const data = await Leave.myLeaveRequests(userId);
@@ -90,6 +101,17 @@ const myLeaveRequests = async (req, res) => {
         res.status(200).json({ "status": false, error: 'Internal server error', data: [], dataCount: [] });
     }
 };
+
+const allAbsent = async (req, res) => {
+    const { userId } = req.params;
+    const data = await Leave.allAbsent(userId);
+    if (data.length > 0) {
+        res.json({ "data": data, });
+    }
+    else {
+        res.status(200).json({ "status": false, error: 'Internal server error', data: [], dataCount: [] });
+    }
+}
 
 const cancelLeaveRequest = async (req, res) => {
     const { userId, id } = req.params;
@@ -161,9 +183,9 @@ const allLeaveRequestsbetween_month = async (req, res) => {
 
 }
 
-const leaveCount = async (req, res) => {
-    const { userId } = req.params;
-    const data = await Leave.leaveCount(userId);
+const allAbsentToday = async (req, res) => {
+    const { userId } = req.query;
+    const data = await Leave.allAbsentToday(userId);
     if (data.length > 0) {
         res.json({ "data": data });
     }
@@ -172,7 +194,43 @@ const leaveCount = async (req, res) => {
     }
 }
 
+const allAbsentthis_month = async (req, res) => {
+    const { userId } = req.query;
+    const data = await Leave.allAbsent_this_month(userId)
+    if (data.length > 0) {
+        res.json({ "data": data });
+    }
+    else {
+        res.status(200).json({ "status": false, error: 'Internal server error', data: [], dataCount: [] });
+    }
+}
+
+const allAbsentbetween_month = async (req, res) => {
+    const { startDate, endDate, userId } = req.query;
+    const data = await Leave.allAbsent_between_month(startDate, endDate, userId);
+    if (data.length > 0) {
+        res.json({ "data": data });
+    }
+    else {
+        res.status(200).json({ "status": false, error: 'Internal server error', data: [], dataCount: [] });
+    }
+
+}
+
+const leaveCount = async (req, res) => {
+    const { userId } = req.params;
+    const data = await Leave.leaveCount(userId);
+    const dataAbsent = await Leave.absentCount(userId);
+    if (data.length > 0) {
+        res.json({ "data": data, "dataAbsent": dataAbsent });
+    }
+    else {
+        res.status(200).json({ "status": false, error: 'Internal server error', data: [], dataCount: [] });
+    }
+}
+
 module.exports = {
-    submitLeave, myLeaveRequests, approveLeave, rejectLeave, leaveCount,
-    cancelLeaveRequest, allLeaveRequeststoday, allLeaveRequeststhis_month, allLeaveRequestsbetween_month
+    submitLeave, submitAbsent, myLeaveRequests, approveLeave, rejectLeave, leaveCount,
+    cancelLeaveRequest, allLeaveRequeststoday, allLeaveRequeststhis_month, allLeaveRequestsbetween_month, allAbsent,
+    allAbsentToday, allAbsentthis_month, allAbsentbetween_month
 };

@@ -10,6 +10,13 @@ class Leave {
         return rows[0];
     }
 
+    static async submitAbsent(reason, userId) {
+        const query = 'INSERT INTO absent_details (userId, reason) VALUES ($1,$2) RETURNING *';
+        const values = [userId, reason];
+        const { rows } = await pool.query(query, values);
+        return rows[0];
+    }
+
     static async myLeaveRequests(userId) {
         const query = 'SELECT t1.name,t2.id,t2.leave_type,t2.reason,t2.status,t2.leave_start_date from users t1,leave_requests t2 where t1.id=t2.userid and t1.id=$1 ORDER BY t2.id desc';
         const values = [userId];
@@ -19,6 +26,13 @@ class Leave {
 
     static async countStatusWise(userId) {
         const query = 'SELECT  count(*), status  from leave_requests  where userid=$1 GROUP BY status';
+        const values = [userId];
+        const { rows } = await pool.query(query, values);
+        return rows;
+    }
+
+    static async allAbsent(userId) {
+        const query = 'SELECT t1.name,t2.id,t2.reason,t2.absent_date from users t1,absent_details t2 where t1.id=t2.userid and t1.id=$1 ORDER BY t2.id desc';
         const values = [userId];
         const { rows } = await pool.query(query, values);
         return rows;
@@ -180,6 +194,29 @@ class Leave {
         return rows;
     }
 
+    static async allAbsentToday(userId) {
+        const query = 'SELECT t1.name,t2.id,t2.reason,t2.absent_date from users t1,absent_details t2 where DATE(t2.absent_date) = CURRENT_DATE and t1.id=t2.userid and t1.id=$1 ORDER BY t2.id desc';
+        const values = [userId];
+        const { rows } = await pool.query(query, values);
+        return rows;
+    }
+    static async allAbsent_this_month(userId) {
+        const query = `SELECT t1.name,t2.id,t2.reason,t2.absent_date from users t1,absent_details t2 where DATE_PART('month', t2.absent_date) = DATE_PART('month', CURRENT_DATE) and t1.id=t2.userid and t1.id=$1 ORDER BY t2.id desc`;
+        const values = [userId];
+        const { rows } = await pool.query(query, values);
+        return rows;
+    }
+    static async allAbsent_between_month(startDate, endDate, userId) {
+        if (!startDate || !endDate) {
+            return res.status(400).json({ error: 'Start date and end date are required' });
+        }
+
+        const query = `SELECT t1.name,t2.id,t2.reason,t2.absent_date from users t1,absent_details t2 where DATE(t2.absent_date) BETWEEN $1 AND $2  and t1.id=t2.userid and t1.id=$3 ORDER BY t2.id desc`;
+        const values = [startDate, endDate, userId];
+        const { rows } = await pool.query(query, values);
+        return rows;
+    }
+
     static async getUserDetails(userId) {
         const query = `SELECT * from users where id=$1`;
         const values = [userId];
@@ -189,6 +226,12 @@ class Leave {
 
     static async leaveCount(userId) {
         const query = 'SELECT * from salary where user_id=$1 and EXTRACT(YEAR FROM CURRENT_DATE)=year';
+        const values = [userId];
+        const { rows } = await pool.query(query, values);
+        return rows;
+    }
+    static async absentCount(userId) {
+        const query = 'SELECT count(*) from absent_details where userid=$1 and EXTRACT(MONTH FROM CURRENT_DATE)=EXTRACT(MONTH from absent_date)';
         const values = [userId];
         const { rows } = await pool.query(query, values);
         return rows;

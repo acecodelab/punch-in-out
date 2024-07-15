@@ -176,8 +176,14 @@
                         <div class="card-content">
                             <h2 class="card-title">On Leave</h2>
                             <p class="card-description" id="todayOnLeave"></p>
-                            <button onclick="moreDetailsLeave();" style="background-color: #440102;">More
-                                Details</button>
+                            <p class="card-description" id="todayOnAbsent"></p>
+                            <div class="row" style="display: flex;justify-content: space-around;">
+                                <button onclick="moreDetailsLeave();" style="background-color: #440102;">Leave
+                                    Details</button>
+                                <button onclick="moreDetailsAbsent();" style="background-color: #440102;">Absent
+                                        Details</button>
+                            </div>
+                           
                         </div>
                     </div>
 
@@ -326,10 +332,18 @@
             .then(data => {
                 if (data.data.length > 0) {
                     var count = data.data[0].count;
-                    document.getElementById("todayOnLeave").innerHTML = "Total :" + count
+                    document.getElementById("todayOnLeave").innerHTML = "Total Leaves: " + count
                 }
                 else {
-                    document.getElementById("todayOnLeave").innerHTML = "Total :" + ' 0'
+                    document.getElementById("todayOnLeave").innerHTML = "Total Leaves: " + ' 0'
+                }
+
+                if (data.dataAbsent.length > 0) {
+                    var count = data.dataAbsent[0].count;
+                    document.getElementById("todayOnAbsent").innerHTML = "Total Absent: " + count
+                }
+                else {
+                    document.getElementById("todayOnAbsent").innerHTML = "Total Absent: " + ' 0'
                 }
 
             })
@@ -367,6 +381,9 @@
 
     function moreDetailsLeave() {
         window.location.href = '/admin/leave.html'
+    }
+    function moreDetailsAbsent() {
+        window.location.href = '/admin/absent.html'
     }
     async function punchOut(user_id) {
         var type = 'out';

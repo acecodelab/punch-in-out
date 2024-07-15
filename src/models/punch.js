@@ -172,9 +172,20 @@ class Punch {
         const { rows } = await pool.query(getUserListMOre);
         return rows;
     }
+    static async todaysAbsentDetail() {
+        const getUserListMOre = `select count(*) from absent_details where date(absent_date)=date(CURRENT_DATE)`
+        const { rows } = await pool.query(getUserListMOre);
+        return rows;
+    }
 
     static async fetchLeaveDetails() {
         const getUserListMOre = `select t1.*,t2.name from leave_requests t1,users t2 where date(t1.leave_start_date)=date(CURRENT_DATE) and t1.userid=t2.id and t1.status='Approve'`
+        const { rows } = await pool.query(getUserListMOre);
+        return rows;
+    }
+
+    static async fetchAbsentDetails() {
+        const getUserListMOre = `select t1.*,t2.name from absent_details t1,users t2 where date(t1.absent_date)=date(CURRENT_DATE) and t1.userid=t2.id`
         const { rows } = await pool.query(getUserListMOre);
         return rows;
     }
@@ -200,7 +211,7 @@ class Punch {
     }
 
     static async getCurrentPunchDetail(userId) {
-        const query = `select count(DISTINCT date(timestamp)) from punches where date(timestamp)<date(current_date) and user_id=$1;`
+        const query = `select count(DISTINCT date(timestamp)) from punches where date(timestamp)<date(current_date) and EXTRACT(MONTH from timestamp)=EXTRACT(MONTH from CURRENT_DATE) and user_id=$1;`
         var { rows } = await pool.query(query, [userId])
         return rows
     }

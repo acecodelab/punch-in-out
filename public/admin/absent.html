@@ -13,85 +13,11 @@
         body {
             padding: 20px;
         }
-        .popup {
-    display: none; /* Hidden by default */
-    position: fixed;
-    z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-}
-
-/* Popup content */
-.popup-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    max-width: 500px;
-}
-
-/* Close button */
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-        .leave-request-form {
-            margin-bottom: 20px;
-        }
-
-        .leave-request-form label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-        }
-
-        .leave-request-form input[type="text"],
-        .leave-request-form select,
-        .leave-request-form textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 6px;
-            box-sizing: border-box;
-            padding: 10px;
-            text-indent: 10px;
-        }
-
-        .leave-request-form input[type="submit"] {
-            background-color: #4caf50;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            cursor: pointer;
-            border-radius: 6px;
-            transition: background-color 0.3s ease;
-        }
-
-        .leave-request-form input[type="submit"]:hover {
-            background-color: #45a049;
-        }
 
         .leave-request-list {
             list-style-type: none;
             padding: 0;
         }
-
         .leave-request {
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -100,30 +26,6 @@
             background-color: #f9f9f9;
             transition: transform 0.3s ease;
         }
-
-        .leave-request:hover {
-            transform: translateY(-5px);
-        }
-
-        .leave-request .leave-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .leave-request .leave-actions button {
-            padding: 8px 16px;
-            margin-right: 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .leave-request .leave-actions button:hover {
-            background-color: #ddd;
-        }
-
         .calendar-container {
             position: relative;
         }
@@ -211,7 +113,7 @@
                     <ul class="nav flex-column">
                         <li class="nav-item menu-item" onclick="moveToDashboard();">Dashboard</li>
                         <li class=" nav-item menu-item" onclick="moveToAttendance()">Attendance</li>
-                        <li class="nav-item menu-item">Leave Management</li>
+                        <li class="nav-item menu-item" >Leave Management</li>
                         <li class="nav-item menu-item" onclick="moveToTask();">Task Details</li>
                         <li class="nav-item menu-item" onclick="moveToNewUser();">User Management</li>
                         <li class="nav-item menu-item" onclick="clearLocalStorage();">Logout</li>
@@ -220,11 +122,11 @@
             </nav>
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4 main-content">
                 <table>
-                    <caption>Today's Leave</caption>
+                    <caption>Today's Absent</caption>
                     <thead>
                         <tr>
                             <th scope="col">Name</th>
-                            <th scope="col">Leave Type</th>
+                            <th scope="col">Reason</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -239,7 +141,6 @@
                         <!-- Options will be populated via JavaScript -->
                     </select>
                 </div>
-
                 <div id="filter_button_div" style="display: none;">
                     <div class="dropdown">
                         <button class="dropbtn">Filter</button>
@@ -249,7 +150,6 @@
                             <a id="btnBetweenDates">Report b/w Dates</a>
                         </div>
                     </div>
-                    <button class="dropbtn" style="color: white;background-color: red;" id="openPopupBtn">Mark Absent</button>
 
                     <!-- Date Range Form (Hidden by default) -->
                     <form id="dateRangeForm" class="form-inline mb-3 justify-content-center" style="display: none;">
@@ -267,30 +167,11 @@
                     </form>
                 </div>
                 <br>
-                <ul class="leave-request-counts">
-                    <!-- Leave requests will be dynamically added here -->
-                </ul>
                 <ul class="leave-request-list" id="list_request">
                     <!-- Leave requests will be dynamically added here -->
                 </ul>
                 <div id="no_request" style="display: none;">
                     <p>No Request Found</p>
-                </div>
-                <div id="overlay" class="overlay">
-                    <div id="alertBox" class="alert-box">
-                        <h2 id="alertHeader">Custom Alert</h2>
-                        <p id="alertMessage">This is a custom alert box.</p>
-                        <button onclick="hideAlert('logout')" id="logoutButton" style="display: none;">Ok</button>
-                        <button onclick="hideAlert('ok')" id="okButton" style="display: none;">Ok</button>
-                    </div>
-                </div>
-                <div id="popup" class="popup">
-                    <div class="popup-content">
-                        <span id="closePopupBtn" class="close">&times;</span>
-                        <h2>Reason</h2>
-                        <input type="text" id="dataInput" placeholder="Enter Reason">
-                        <button id="submitBtn">Submit</button>
-                    </div>
                 </div>
             </main>
 
@@ -346,68 +227,48 @@
         }
         fetchUsers();
 
-        function fetchLeaveDetails() {
-            fetch('/fetchLeaveDetails')
+        function fetchAbsentDetails() {
+            fetch('/fetchAbsentDetails')
                 .then(response => response.json())
                 .then(data => {
                     data = data.data
                     var tableBody = document.getElementById("table-body");
                     tableBody.innerHTML = ""; // Clear previous data
                     data.forEach(function (row) {
-                        var newRow = "<tr><td data-label='Month'>" + row.name + "</td><td data-label='Savings'>" + row.leave_type + "</td></tr>";
+                        var newRow = "<tr><td data-label='Month'>" + row.name + "</td><td data-label='Savings'>" + row.reason + "</td></tr>";
                         tableBody.innerHTML += newRow;
                     });
                 })
                 .catch(error => console.error('Error fetching users:', error));
         }
-        fetchLeaveDetails();
+        fetchAbsentDetails();
 
         document.getElementById('userSelect').addEventListener('change', (event) => {
             const userId = event.target.value;
             const selectedUser = event.target.options[event.target.selectedIndex].text;
-            getLeaveRequest(userId); // Fetch today's reports for selected user by default
+            getAbsentList(userId); // Fetch today's reports for selected user by default
         });
 
         // Simulated leave requests data
-        var leaveRequests = [];
-        var totalCount = [];
-
-        async function getLeaveRequest(userId) {
-            leaveRequests = []
-            totalCount = []
-            const response = await fetch(`/allLeaveRequests/${userId}`);
+        var absents = [];
+        async function getAbsentList(userId) {
+            absents = []
+            const response = await fetch(`/allAbsent/${userId}`);
             const result = await response.json();
             if (result.data.length > 0) {
                 for (let i = 0; i < result.data.length; i++) {
-                    var date_ = result.data[i].leave_start_date.split('T')[0]
-                    leaveRequests.push({
-                        id: result.data[i].id, employeeName: result.data[i].name, leaveType: result.data[i].leave_type, leave_start_date: date_, reason: result.data[i].reason, status: result.data[i].status
-                    })
-                }
-
-                for (let i = 0; i < result.dataCount.length; i++) {
-                    var count = result.dataCount[i].count
-                    var status = result.dataCount[i].status
-                    totalCount.push({
-                        count: count, status: status,
+                    var date_ = result.data[i].absent_date.split('T')[0]
+                    absents.push({
+                        id: result.data[i].id, employeeName: result.data[i].name, absent_date: date_, reason: result.data[i].reason
                     })
                 }
             }
             else {
-                leaveRequests = []
-                totalCount = []
+                absents = []
             }
             // Initial rendering of leave requests
-            renderLeaveRequests();
-        }
-        // Function to render leave requests
-        function renderLeaveRequests() {
-            const leaveRequestList = document.querySelector('.leave-request-list');
-            leaveRequestList.innerHTML = '';
-
-            const leaveRequestCount = document.querySelector('.leave-request-counts');
-            leaveRequestCount.innerHTML = '';
-            if (leaveRequests.length == 0) {
+            renderAbsentList();
+            if (absents.length == 0) {
                 document.getElementById('filter_button_div').style.display = 'none';
                 document.getElementById("no_request").style.display = 'block'
             }
@@ -415,46 +276,22 @@
                 document.getElementById('filter_button_div').style.display = 'block';
                 document.getElementById("no_request").style.display = 'none'
             }
-            totalCount.forEach(request => {
-                const leaveRequestItemCount = document.createElement('li');
-                leaveRequestItemCount.classList.add('leave-request');
-                if (request.status == 'Approve') {
-                    leaveRequestItemCount.style.backgroundColor = 'green'
-                }
-                else if (request.status == 'Reject') {
-                    leaveRequestItemCount.style.backgroundColor = 'red'
-                }
-                else if (request.status == 'Pending') {
-                    leaveRequestItemCount.style.backgroundColor = 'grey'
-                }
-                else {
-                    leaveRequestItemCount.style.backgroundColor = 'blue'
-                }
-                leaveRequestItemCount.innerHTML = `
-                <div class="leave-info">
-                    <div style="color:white">
-                        <strong>Status:</strong> ${request.status}(${request.count})<br>
-                    </div>
-                </div>
-            `;
-                leaveRequestCount.appendChild(leaveRequestItemCount);
-            });
+        }
+       
+        // Function to render leave requests
+        function renderAbsentList() {
+            const leaveRequestList = document.querySelector('.leave-request-list');
+            leaveRequestList.innerHTML = '';
 
-            leaveRequests.forEach(request => {
+            absents.forEach(request => {
                 const leaveRequestItem = document.createElement('li');
                 leaveRequestItem.classList.add('leave-request');
                 leaveRequestItem.innerHTML = `
                 <div class="leave-info">
                     <div>
                         <strong>Employee Name:</strong> ${request.employeeName}<br>
-                        <strong>Leave Type:</strong> ${request.leaveType}<br>
-                        <strong>Date:</strong> ${request.leave_start_date}<br>
                         <strong>Reason:</strong> ${request.reason}<br>
-                        <strong>Status:</strong> ${request.status}
-                    </div>
-                    <div class="leave-actions">
-                        <button style="margin-bottom:10px;width:100%;background-color:green;color:white;  ${request.status !== 'Pending' ? 'display:none;' : ''}" onclick="approveRequest(${request.id})" ${request.status !== 'Pending' ? 'disabled' : ''}>Approve</button>
-                        <button style="margin-bottom:10px;width:100%;background-color:red;color:white; ${request.status !== 'Pending' ? 'display:none;' : ''}" onclick="rejectRequest(${request.id})" ${request.status !== 'Pending' ? 'disabled' : ''}>Reject</button>
+                        <strong>Date:</strong> ${request.absent_date}<br>
                     </div>
                 </div>
             `;
@@ -462,49 +299,16 @@
             });
         }
 
-        // Function to approve a leave request
-        async function approveRequest(id) {
-            const response = await fetch(`/approveLeaveRequest/${id}`);
-            const result = await response.json();
-            if (result.status) {
-                alert('Request approved successfully')
-                window.location.reload();
-            }
-            else {
-                alert('Something went wrong')
-            }
-        }
-
-        // Function to reject a leave request
-        async function rejectRequest(id) {
-            const response = await fetch(`/rejectLeaveRequest/${id}`);
-            const result = await response.json();
-            if (result.status) {
-                alert('Request approved successfully')
-                window.location.reload();
-            }
-            else {
-                alert('Something went wrong')
-            }
-        }
-
-        // Initialize flatpickr
-        const leaveStartDatePicker = flatpickr("#leaveStartDate", {
-            enableTime: false,
-            dateFormat: "Y-m-d",
-        });
-
-        // Button Event Listeners
         document.getElementById('btnToday').addEventListener('click', () => {
             const userId = document.getElementById('userSelect').value;
             document.getElementById("dateRangeForm").style.display = 'none'
-            getLeaveRequestFilter('today', userId);
+            getAbsentFilter('today', userId);
         });
 
         document.getElementById('btnThisMonth').addEventListener('click', () => {
             const userId = document.getElementById('userSelect').value;
             document.getElementById("dateRangeForm").style.display = 'none'
-            getLeaveRequestFilter('this-month', userId);
+            getAbsentFilter('this-month', userId);
         });
 
         // Show date range form when 'Reports Between Dates' button is clicked
@@ -518,39 +322,29 @@
             const userId = document.getElementById('userSelect').value;
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
-            getLeaveRequestFilter('between-dates', userId, startDate, endDate);
+            getAbsentFilter('between-dates', userId, startDate, endDate);
         });
 
-        async function getLeaveRequestFilter(filterType, userId, startDate, endDate) {
-            leaveRequests = []
-            totalCount = []
-            let url = `/allLeaveRequest/${filterType}?userId=${userId}`;
+        async function getAbsentFilter(filterType, userId, startDate, endDate) {
+            absents = []
+            let url = `/allAbsents/${filterType}?userId=${userId}`;
             if (filterType === 'between-dates') {
                 url += `&startDate=${startDate}&endDate=${endDate}`;
             }
             var response = await fetch(url)
             const result = await response.json();
-            console.log(result)
             if (result.data.length > 0) {
                 for (let i = 0; i < result.data.length; i++) {
-                    var date_ = result.data[i].leave_start_date.split('T')[0]
-                    leaveRequests.push({
-                        id: result.data[i].id, employeeName: result.data[i].name, leaveType: result.data[i].leave_type, leave_start_date: date_, reason: result.data[i].reason, status: result.data[i].status
-                    })
-                }
-                for (let i = 0; i < result.dataCount.length; i++) {
-                    var count = result.dataCount[i].count
-                    var status = result.dataCount[i].status
-                    totalCount.push({
-                        count: count, status: status,
+                    var date_ = result.data[i].absent_date.split('T')[0]
+                    absents.push({
+                        id: result.data[i].id, employeeName: result.data[i].name,  absent_date: date_, reason: result.data[i].reason
                     })
                 }
             }
             else {
-                leaveRequests = []
-                totalCount = []
+                absents = []
             }
-            renderLeaveRequests();
+            renderAbsentList();
             document.getElementById('filter_button_div').style.display = 'block';
             document.getElementById("no_request").style.display = 'none'
         }
@@ -597,61 +391,9 @@
         function moveToNewUser() {
             window.location.href = '/admin/new_user.html'
         }
-
-        const openPopupBtn = document.getElementById('openPopupBtn');
-        const closePopupBtn = document.getElementById('closePopupBtn');
-        const popup = document.getElementById('popup');
-        const submitBtn = document.getElementById('submitBtn');
-        const dataInput = document.getElementById('dataInput');
-
-                // Open popup
-        openPopupBtn.onclick = function() {
-            popup.style.display = 'block';
-        }
-        
-        closePopupBtn.onclick = function() {
-            popup.style.display = 'none';
-        }
-
-        // Submit data
-        submitBtn.onclick = async function() {
-            const userId = document.getElementById('userSelect').value;
-            const data = dataInput.value;
-            if(data=='' || data==null || data==undefined)
-            {
-                alert("Please enter reason");
-                return;
-            }
-            try {
-                var requestBody={
-                    userId:userId,
-                    reason:data
-                }
-                const response = await fetch('/submitAbsent/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(requestBody)
-                });
-
-                if (response.status) {
-                    popup.style.display = 'none';
-                } else {
-                    alert(responseData.message || 'Failed to submit leave request');
-                }
-            } catch (error) {
-                console.error('Error submitting absent request:', error);
-                alert('Failed to submit absent request');
-            }
-        }
-
-        // Close the popup if the user clicks outside of it
-        window.onclick = function(event) {
-            if (event.target == popup) {
-                popup.style.display = 'none';
-            }
-        }
+        function moveToLeave() {
+        window.location.href = '/admin/leave.html'
+    }
     </script>
 </body>
 

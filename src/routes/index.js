@@ -4,10 +4,10 @@ const express = require('express');
 
 const router = express.Router();
 const { punchIn, punchOut, getPunchHistory, login, today, this_month, between_month,
-    getUserList, updatePassword, loginAdmin, todaysDetail, todaysDetailMore, todaysLeaveDetail, fetchLeaveDetails } = require('../controllers/punchController');
-const { submitLeave, myLeaveRequests, approveLeave, rejectLeave, leaveCount,
+    getUserList, updatePassword, loginAdmin, todaysDetail, todaysDetailMore, todaysLeaveDetail, fetchLeaveDetails, fetchAbsentDetails } = require('../controllers/punchController');
+const { submitLeave,submitAbsent, myLeaveRequests, allAbsent, approveLeave, rejectLeave, leaveCount,
     cancelLeaveRequest, allLeaveRequeststoday, allLeaveRequeststhis_month,
-    allLeaveRequestsbetween_month } = require('../controllers/leaveController');
+    allLeaveRequestsbetween_month, allAbsentToday, allAbsentthis_month, allAbsentbetween_month } = require('../controllers/leaveController');
 const { submitTask, getTask, closeTask, taskToday, taskThisMonth, taskBetweenDates, getCurrentTask } = require('../controllers/taskController');
 const { new_user, get_user_list, sendPassword, changeStatus, getUserDetails, update_details } = require('../controllers/userController');
 const Middleware = require('../middleware/punchMiddleware');
@@ -45,6 +45,7 @@ router.get('/todaysLeaveDetail', todaysLeaveDetail)
 //EMPLOYEE Leaves API 
 // Leave routes USER 
 router.post('/submitLeave', submitLeave);
+router.post('/submitAbsent', submitAbsent);
 router.get('/myLeaveRequests/:userId', myLeaveRequests);
 router.get('/cancelLeaveRequest/:userId/:id', cancelLeaveRequest);
 router.get('/myLeaveRequest/today', allLeaveRequeststoday);
@@ -58,6 +59,7 @@ router.get('/myLeaveRequest/between-dates', allLeaveRequestsbetween_month);
 router.get('/approveLeaveRequest/:id', approveLeave);
 router.get('/rejectLeaveRequest/:id', rejectLeave);
 router.get('/allLeaveRequests/:userId', myLeaveRequests);
+router.get('/allAbsent/:userId', allAbsent);
 // Today's reports
 router.get('/allLeaveRequest/today', allLeaveRequeststoday);
 // This month's reports
@@ -65,7 +67,14 @@ router.get('/allLeaveRequest/this-month', allLeaveRequeststhis_month);
 // Reports between two dates
 router.get('/allLeaveRequest/between-dates', allLeaveRequestsbetween_month);
 
+router.get('/allAbsents/today', allAbsentToday);
+// This month's reports
+router.get('/allAbsents/this-month', allAbsentthis_month);
+// Reports between two dates
+router.get('/allAbsents/between-dates', allAbsentbetween_month);
+
 router.get('/fetchLeaveDetails', fetchLeaveDetails)
+router.get('/fetchAbsentDetails', fetchAbsentDetails)
 
 
 //Employee Task Api
